@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -101,11 +102,7 @@ public class LoginFragment extends Fragment {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild(user.getUid())) {
-                                mProgress.hide();
-                                Intent intent = new Intent(getActivity(), MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
+                                chageIntent();
                             } else {//CHECKING IF NEW USER VIA GOOGLE LOGIN
                                 UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
                                         .setDisplayName(account.getDisplayName())
@@ -118,11 +115,7 @@ public class LoginFragment extends Fragment {
 
                                             mUserRef.child(user.getUid()).child("username").setValue(account.getDisplayName());
                                             mUserRef.child(user.getUid()).child("email").setValue(account.getEmail());
-                                            mProgress.hide();
-                                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            startActivity(intent);
+                                            chageIntent();
                                         }
                                     }
                                 });
@@ -194,6 +187,15 @@ public class LoginFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        SharedPreferences loginState =getActivity().getSharedPreferences("LOGIN_STATE",Context.MODE_PRIVATE);
+
+        if(loginState.getInt("LOGIN_STATE",0)==1)
+        {
+            mProgress.setMessage("Logging in your last session");
+            mProgress.show();
+            mProgress.setCancelable(false);
+        }
 
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -293,8 +295,6 @@ public class LoginFragment extends Fragment {
                         if (!task.isSuccessful()) {
                             Toast.makeText(getActivity(), "Cant Log in.", Toast.LENGTH_SHORT).show();
                             mProgress.hide();
-                        } else {
-
                         }
                     }
                 });
@@ -303,5 +303,18 @@ public class LoginFragment extends Fragment {
     private void signInGoogle() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
+    }
+
+    private void chageIntent()
+    {
+        SharedPreferences loginState = getActivity().getSharedPreferences("LOGIN_STATE",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor =loginState.edit();
+        editor.putInt("LOGIN_STATE",1);
+        editor.apply();
+        mProgress.hide();
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }

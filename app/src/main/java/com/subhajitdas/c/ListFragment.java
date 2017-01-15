@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -69,6 +70,10 @@ public class ListFragment extends Fragment {
                 if (mCurrentUser != null) {
                     // User is signed in
                 } else {
+                    SharedPreferences loginState =getActivity().getSharedPreferences("LOGIN_STATE",Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = loginState.edit();
+                    editor.putInt("LOGIN_STATE",0);
+                    editor.apply();
                     mProgress.hide();
                     Intent intent = new Intent(getActivity(), com.subhajitdas.c.LoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
