@@ -1,6 +1,7 @@
 package com.subhajitdas.c;
 
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -8,6 +9,7 @@ import android.os.Bundle;
 
 public class LoginActivity extends AppCompatActivity {
 
+    LoginFragment login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,7 +17,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.login_activity);
 
         if(findViewById(R.id.frag_container)!= null) {
-            LoginFragment login = new LoginFragment();
+            login = new LoginFragment();
             getFragmentManager().beginTransaction().add(R.id.frag_container,login).commit();
         }
 
@@ -36,5 +38,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        login.onActivityResult(requestCode,resultCode,data);
     }
 }
