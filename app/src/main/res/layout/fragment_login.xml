@@ -117,32 +117,18 @@
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:drawableStart="@mipmap/ic_fb_logo"
-        android:text="@string/continue_with_facebook"
-        android:textColor="@android:color/white"
-        android:gravity="center|center_vertical"
-        android:background="@color/fbBlue"
-        android:layout_below="@id/password_layout"
-        android:layout_alignParentStart="true"
-        android:padding="4dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:id="@+id/login_fb_button"
-        android:layout_marginBottom="8dp" />
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
         android:drawableStart="@mipmap/ic_google_logo"
         android:text="Continue With Google"
         android:textColor="@android:color/black"
         android:gravity="center|center_vertical"
         android:background="@android:color/white"
-        android:layout_below="@id/login_fb_button"
+        android:layout_below="@id/password_layout"
         android:layout_alignParentStart="true"
         android:padding="4dp"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
-        android:id="@+id/login_google_button" />
+        android:id="@+id/login_google_button"
+        android:layout_marginTop="10dp" />
 
     <TextView
         android:text="Need a new account?"
