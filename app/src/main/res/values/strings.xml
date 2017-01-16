@@ -31,4 +31,7 @@
     <string name="back">Back</string>
     <string name="post_title">Post title goes here…</string>
     <string name="post_content">Post content goes here…</string>
+    <string name="likes">Likes</string>
+    <string name="bookmarks">Bookmarks</string>
+    <string name="no_bookmarks">No Bookmarks</string>
 </resources>

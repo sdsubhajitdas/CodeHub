@@ -19,16 +19,26 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
     View mView;
     ImageButton mLikeButton;
+    ImageButton mBookmarkButton;
+    TextView mLikeText;
+
 
     private DatabaseReference mLikeRef;
+    private DatabaseReference mBookmarkRef;
+    private DatabaseReference mProgRef;
 
     public PostViewHolder(View itemView) {
         super(itemView);
         mView=itemView;
         mLikeButton= (ImageButton) itemView.findViewById(R.id.like_button);
+        mBookmarkButton=(ImageButton)itemView.findViewById(R.id.bookmark_button);
+        mLikeText=(TextView)itemView.findViewById(R.id.post_like) ;
 
         mLikeRef=FirebaseDatabase.getInstance().getReference().child("Like");
+        mBookmarkRef =FirebaseDatabase.getInstance().getReference().child("bookmark");
+        mProgRef =FirebaseDatabase.getInstance().getReference().child("program");
         mLikeRef.keepSynced(true);
+        mBookmarkRef.keepSynced(true);
     }
 
     public void setPostTitle(String title)
@@ -65,6 +75,69 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
                 else
                     mLikeButton.setImageResource(R.drawable.ic_thumb_up_gray_48px);
             }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void setBookmarkButton(String postKey, final String userId)
+    {
+            mBookmarkRef.child(postKey).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.hasChild(userId))
+                        mBookmarkButton.setImageResource(R.drawable.ic_bookmark_black_24px);
+                    else
+                        mBookmarkButton.setImageResource(R.drawable.ic_bookmark_border_black_24px);
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+    }
+
+    public void setBookmarkTitle(String postKey) {
+        mProgRef.child(postKey).child("title").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                TextView postTitle = (TextView)mView.findViewById(R.id.post_title);
+                postTitle.setText(dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void setBookmarkPoster(String postKey) {
+        mProgRef.child(postKey).child("userName").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                TextView postPoster = (TextView)mView.findViewById(R.id.poster_name);
+                postPoster.setText(dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public void setBookmarkDate(String postKey) {
+        mProgRef.child(postKey).child("date").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                TextView postDate = (TextView)mView.findViewById(R.id.post_date);
+                postDate.setText(dataSnapshot.getValue().toString());
+            }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 

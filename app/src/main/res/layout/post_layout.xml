@@ -63,12 +63,28 @@
                 android:paddingStart="10dp" />
 
             <TextView
-                android:text="Likes"
+                android:text="@string/likes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/post_like"
                 android:paddingBottom="10dp"
                 android:paddingEnd="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_bookmark_border_black_24px"
+                android:background="@android:color/white"
+                android:id="@+id/bookmark_button"
+                android:paddingBottom="10dp"
+                android:paddingEnd="8dp"
+                android:paddingStart="10dp" />
+
         </LinearLayout>
     </LinearLayout>
 

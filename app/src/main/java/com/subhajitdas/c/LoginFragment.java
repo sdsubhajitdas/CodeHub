@@ -193,8 +193,8 @@ public class LoginFragment extends Fragment {
         if(loginState.getInt("LOGIN_STATE",0)==1)
         {
             mProgress.setMessage("Logging in your last session");
-            mProgress.show();
             mProgress.setCancelable(false);
+            mProgress.show();
         }
 
         mRegister.setOnClickListener(new View.OnClickListener() {

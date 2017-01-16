@@ -10,6 +10,7 @@ public class Post {
     private String userName;
     private String date;
     private String likes;
+    private String bookmark;
 
 
     public Post() {
@@ -51,5 +52,13 @@ public class Post {
 
     public void setLikes(String likes) {
         this.likes = likes;
+    }
+
+    public String getBookmark(){
+        return bookmark;
+    }
+
+    public void setBookmark(String bookmark){
+        this.bookmark=bookmark;
     }
 }

@@ -48,8 +48,10 @@ public class ListFragment extends Fragment {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private DatabaseReference mProgramRef;
     private DatabaseReference mLikeRef;
+    private DatabaseReference mBookmarkRef;
     private FirebaseRecyclerAdapter<Post, PostViewHolder> adapter;
     private boolean mProcessLike = false;
+    private boolean mProcessBookmark = false;
 
     public ListFragment() {
 
@@ -62,6 +64,7 @@ public class ListFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mProgramRef = FirebaseDatabase.getInstance().getReference().child("program");
         mLikeRef = FirebaseDatabase.getInstance().getReference().child("Like");
+        mBookmarkRef = FirebaseDatabase.getInstance().getReference().child("bookmark");
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -70,9 +73,9 @@ public class ListFragment extends Fragment {
                 if (mCurrentUser != null) {
                     // User is signed in
                 } else {
-                    SharedPreferences loginState =getActivity().getSharedPreferences("LOGIN_STATE",Context.MODE_PRIVATE);
+                    SharedPreferences loginState = getActivity().getSharedPreferences("LOGIN_STATE", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = loginState.edit();
-                    editor.putInt("LOGIN_STATE",0);
+                    editor.putInt("LOGIN_STATE", 0);
                     editor.apply();
                     mProgress.hide();
                     Intent intent = new Intent(getActivity(), com.subhajitdas.c.LoginActivity.class);
@@ -97,9 +100,7 @@ public class ListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         mProgress = new ProgressDialog(getActivity());
-        mProgress.setMessage("Loading content");
-        mProgress.setCancelable(false);
-        mProgress.show();
+
 
         mEmptyView = (TextView) getActivity().findViewById(R.id.empty_view);
 
@@ -130,6 +131,9 @@ public class ListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        mProgress.setMessage("Loading content");
+        mProgress.setCancelable(false);
+        mProgress.show();
         mAuth.addAuthStateListener(mAuthListener);
         setHasOptionsMenu(true);
         mProgramRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -172,7 +176,8 @@ public class ListFragment extends Fragment {
                 viewHolder.setPostPoster(model.getUserName());
                 viewHolder.setPostDate(model.getDate());
                 viewHolder.setPostLike(model.getLikes());
-                viewHolder.setLikeButton(getRef(position).getKey(),mCurrentUser.getUid());
+                viewHolder.setLikeButton(getRef(position).getKey(), mCurrentUser.getUid());
+                viewHolder.setBookmarkButton(getRef(position).getKey(),mCurrentUser.getUid());
 
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -200,15 +205,44 @@ public class ListFragment extends Fragment {
                                         if (dataSnapshot.hasChild(mCurrentUser.getUid())) {
                                             mLikeRef.child(getRef(position).getKey()).child(mCurrentUser.getUid()).removeValue();
                                             int tempLike = Integer.parseInt(model.getLikes());
-                                            tempLike=tempLike-1;
+                                            tempLike = tempLike - 1;
                                             mProgramRef.child(getRef(position).getKey()).child("likes").setValue(Integer.toString(tempLike));
                                             mProcessLike = false;
                                         } else {
                                             mLikeRef.child(getRef(position).getKey()).child(mCurrentUser.getUid()).setValue(mCurrentUser.getDisplayName());
                                             int tempLike = Integer.parseInt(model.getLikes());
-                                            tempLike=tempLike+1;
+                                            tempLike = tempLike + 1;
                                             mProgramRef.child(getRef(position).getKey()).child("likes").setValue(Integer.toString(tempLike));
                                             mProcessLike = false;
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+
+                    }
+                });
+
+                viewHolder.mBookmarkButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mProcessBookmark = true;
+                        if (mProcessBookmark) {
+                            mBookmarkRef.child(getRef(position).getKey()).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (mProcessBookmark) {
+                                        if (dataSnapshot.hasChild(mCurrentUser.getUid())) {
+                                            mBookmarkRef.child(getRef(position).getKey()).child(mCurrentUser.getUid()).removeValue();
+                                            mProcessBookmark = false;
+                                        } else {
+                                            mBookmarkRef.child(getRef(position).getKey()).child(mCurrentUser.getUid()).setValue("yes");
+                                            mProcessBookmark = false;
                                         }
                                     }
                                 }
@@ -269,6 +303,13 @@ public class ListFragment extends Fragment {
                 tempTransaction.replace(R.id.main_activity_frag_container, addFile);
                 tempTransaction.addToBackStack(null);
                 tempTransaction.commit();
+                return true;
+            case R.id.action_bookmarks_page:
+                BookmarksFragment bookmarksFragment =new BookmarksFragment();
+                FragmentTransaction tempTransaction2=getActivity().getFragmentManager().beginTransaction();
+                tempTransaction2.replace(R.id.main_activity_frag_container,bookmarksFragment);
+                tempTransaction2.addToBackStack(null);
+                tempTransaction2.commit();
                 return true;
 
             default:

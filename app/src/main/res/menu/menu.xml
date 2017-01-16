@@ -4,6 +4,14 @@
 
     <!-- "Mark Favorite", should appear as action button if possible -->
     <item
+        android:id="@+id/action_bookmarks_page"
+        android:title="@string/bookmarks"
+        android:icon="@drawable/ic_bookmark_white_24px"
+        app:showAsAction="always"
+
+        />
+
+    <item
         android:id="@+id/action_add_program"
         android:icon="@drawable/ic_add_white_24px"
         android:title="@string/add"
@@ -15,5 +23,7 @@
         android:id="@+id/action_log_out"
         android:title="@string/log_out"
         app:showAsAction="never"/>
+
+
 
 </menu>
