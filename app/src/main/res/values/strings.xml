@@ -34,4 +34,6 @@
     <string name="likes">Likes</string>
     <string name="bookmarks">Bookmarks</string>
     <string name="no_bookmarks">No Bookmarks</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
 </resources>

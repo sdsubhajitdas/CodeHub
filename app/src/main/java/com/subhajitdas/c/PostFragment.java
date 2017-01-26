@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -95,7 +97,7 @@ public class PostFragment extends Fragment {
         mProgress.setMessage("Loading content");
         mProgress.setCancelable(false);
         mProgress.show();
-        mProgRef.child("title").addValueEventListener(new ValueEventListener() {
+        mProgRef.child("title").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mPostTitle.setText(dataSnapshot.getValue().toString());
@@ -112,7 +114,7 @@ public class PostFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                final File localFile = new File(getActivity().getFilesDir()+"/cfile.txt");
+                final File localFile = new File(getActivity().getFilesDir() + "/cfile.txt");
                 mProgramFile.child(dataSnapshot.getValue().toString() + ".txt").getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
@@ -120,23 +122,22 @@ public class PostFragment extends Fragment {
                         FileInputStream fis = null;
                         StringBuffer stringBuffer = new StringBuffer();
                         try {
-                            fis=getActivity().openFileInput(localFile.getName());
-                            int read=-1;
-                            while ((read=fis.read())!=-1){
-                                stringBuffer.append((char)read);
+                            fis = getActivity().openFileInput(localFile.getName());
+                            int read = -1;
+                            while ((read = fis.read()) != -1) {
+                                stringBuffer.append((char) read);
                             }
                             mPostContent.setText(stringBuffer.toString());
                             mProgress.hide();
                         } catch (IOException e) {
-                            Toast.makeText(getActivity(),"File Reading Error",Toast.LENGTH_SHORT).show();
-                        }
-                        finally {
+                            Toast.makeText(getActivity(), "File Reading Error", Toast.LENGTH_SHORT).show();
+                        } finally {
                             if (fis != null) {
                                 try {
                                     fis.close();
                                     mProgress.hide();
                                 } catch (IOException e) {
-                                    Toast.makeText(getActivity(),"File Reading Error",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "File Reading Error", Toast.LENGTH_SHORT).show();
                                     mProgress.hide();
                                 }
                             }
@@ -170,7 +171,7 @@ public class PostFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu2, menu);
+        inflater.inflate(R.menu.menu3, menu);
     }
 
     @Override
@@ -181,8 +182,58 @@ public class PostFragment extends Fragment {
             case R.id.action_back:
                 getFragmentManager().popBackStack();
                 return true;
+            case R.id.action_del:
+                delPost();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void delPost() {
+
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        mProgress.setMessage("Deleting post");
+        mProgress.setCancelable(false);
+        mProgress.show();
+        mProgRef.child("userId").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (currentUser.getUid().equals(dataSnapshot.getValue().toString())) {
+
+                    mProgRef.child("fileUid").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            StorageReference delPath = FirebaseStorage.getInstance().getReferenceFromUrl("gs://codehub-7e17a.appspot.com/programs/")
+                                    .child(dataSnapshot.getValue().toString() + ".txt");
+                            delPath.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    mProgRef.removeValue();
+                                    mProgress.dismiss();
+                                    getFragmentManager().popBackStack();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            mProgress.dismiss();
+                        }
+                    });
+                }
+                else {
+                    mProgress.dismiss();
+                    Toast.makeText(getActivity(),"You cannot delete this post.\nYou are not the owner",Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mProgress.dismiss();
+            }
+        });
+
+
     }
 
 }

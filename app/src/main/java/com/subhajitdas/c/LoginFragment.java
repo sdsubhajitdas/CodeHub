@@ -48,7 +48,7 @@ public class LoginFragment extends Fragment {
     private EditText mEmail, mPassword;
     private FloatingActionButton mGo;
     private ProgressDialog mProgress;
-    private TextView mRegister;
+    private TextView mRegister,mForgotPassword;
     private Button mGoogleLogin;
 
     private FirebaseAuth mAuth;
@@ -167,6 +167,7 @@ public class LoginFragment extends Fragment {
         mRegister = (TextView) getActivity().findViewById(R.id.register);
         mProgress = new ProgressDialog(getActivity());
         mGoogleLogin = (Button) getActivity().findViewById(R.id.login_google_button);
+        mForgotPassword =(TextView)getActivity().findViewById(R.id.forgot_password);
     }
 
     @Override
@@ -240,6 +241,13 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 signInGoogle();
+            }
+        });
+
+        mForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(),"Feature not yet added",Toast.LENGTH_SHORT).show();
             }
         });
     }

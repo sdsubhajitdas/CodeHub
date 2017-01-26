@@ -34,7 +34,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         mBookmarkButton=(ImageButton)itemView.findViewById(R.id.bookmark_button);
         mLikeText=(TextView)itemView.findViewById(R.id.post_like) ;
 
-        mLikeRef=FirebaseDatabase.getInstance().getReference().child("Like");
+        mLikeRef=FirebaseDatabase.getInstance().getReference().child("like");
         mBookmarkRef =FirebaseDatabase.getInstance().getReference().child("bookmark");
         mProgRef =FirebaseDatabase.getInstance().getReference().child("program");
         mLikeRef.keepSynced(true);
