@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -54,6 +55,7 @@ public class AddFileFragment extends Fragment {
     private Button mSubmitEditorButton;
     private CheckBox mFileUploadCheck;
     private ProgressDialog mProgress;
+    private DrawerLayout mDrawerLayout;
 
     private StorageReference mStorageRef;
 
@@ -104,14 +106,17 @@ public class AddFileFragment extends Fragment {
         mSubmitEditorButton = (Button) getActivity().findViewById(R.id.submitTextButton);
         mFileUploadCheck = (CheckBox) getActivity().findViewById(R.id.fileUploadCheck);
         mProgTitle = (EditText) getActivity().findViewById(R.id.programTitle);
+        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
         mProgress = new ProgressDialog(getActivity());
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
+            actionBar.setIcon(null);
             actionBar.setTitle("Add Post");
         } else {
             Toast.makeText(getActivity(), "Error", Toast.LENGTH_SHORT).show();
         }
+
         setHasOptionsMenu(true);
     }
 
@@ -154,21 +159,20 @@ public class AddFileFragment extends Fragment {
                         mProgress.show();
                         mProgress.setCancelable(false);
                         //-----MAKING FILE-----
-                        FileOutputStream fos=null;
+                        FileOutputStream fos = null;
                         try {
                             fos = getActivity().openFileOutput(FILENAME, Context.MODE_PRIVATE);
                             fos.write(mEditorText.getBytes());
 
                         } catch (IOException e) {
-                            Toast.makeText(getActivity(),"File Creation Error",Toast.LENGTH_SHORT).show();
-                        }
-                        finally {
+                            Toast.makeText(getActivity(), "File Creation Error", Toast.LENGTH_SHORT).show();
+                        } finally {
                             try {
                                 if (fos != null) {
                                     fos.close();
                                 }
                             } catch (IOException e) {
-                                Toast.makeText(getActivity(),"File Creation Error",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "File Creation Error", Toast.LENGTH_SHORT).show();
                             }
                         }
 

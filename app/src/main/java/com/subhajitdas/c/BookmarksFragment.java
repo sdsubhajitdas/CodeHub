@@ -78,7 +78,7 @@ public class BookmarksFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        setHasOptionsMenu(true);
+        //setHasOptionsMenu(true);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         mBookmarksRef = mBookRef.orderByChild(mCurrentUser.getUid()).equalTo("yes");
@@ -134,6 +134,7 @@ public class BookmarksFragment extends Fragment {
                                     if (mProcessBookmark) {
                                         if (dataSnapshot.hasChild(mCurrentUser.getUid())) {
                                             mBookRef.child(getRef(position).getKey()).child(mCurrentUser.getUid()).removeValue();
+                                            mBookmarksRef = mBookRef.orderByChild(mCurrentUser.getUid()).equalTo("yes");
                                             mProcessBookmark = false;
                                         } else {
                                             mBookRef.child(getRef(position).getKey()).child(mCurrentUser.getUid()).setValue("yes");
@@ -171,6 +172,7 @@ public class BookmarksFragment extends Fragment {
         super.onStop();
     }
 
+    /*
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -187,5 +189,5 @@ public class BookmarksFragment extends Fragment {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 }

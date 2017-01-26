@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,6 +41,7 @@ public class ListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ProgressDialog mProgress;
     private TextView mEmptyView;
+    private DrawerLayout mDrawerLayout;
 
     AddFileFragment addFile;
 
@@ -63,7 +65,7 @@ public class ListFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         mProgramRef = FirebaseDatabase.getInstance().getReference().child("program");
-        mLikeRef = FirebaseDatabase.getInstance().getReference().child("Like");
+        mLikeRef = FirebaseDatabase.getInstance().getReference().child("like");
         mBookmarkRef = FirebaseDatabase.getInstance().getReference().child("bookmark");
 
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -73,15 +75,7 @@ public class ListFragment extends Fragment {
                 if (mCurrentUser != null) {
                     // User is signed in
                 } else {
-                    SharedPreferences loginState = getActivity().getSharedPreferences("LOGIN_STATE", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = loginState.edit();
-                    editor.putInt("LOGIN_STATE", 0);
-                    editor.apply();
-                    mProgress.hide();
-                    Intent intent = new Intent(getActivity(), com.subhajitdas.c.LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
+
                 }
 
             }
@@ -100,7 +94,7 @@ public class ListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         mProgress = new ProgressDialog(getActivity());
-
+        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
 
         mEmptyView = (TextView) getActivity().findViewById(R.id.empty_view);
 
@@ -131,6 +125,7 @@ public class ListFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        mDrawerLayout.closeDrawers();
         mProgress.setMessage("Loading content");
         mProgress.setCancelable(false);
         mProgress.show();
@@ -290,26 +285,12 @@ public class ListFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_log_out:
-                mProgress.setMessage("Logging Out");
-                mProgress.show();
-                mProgress.setCancelable(false);
-                mAuth.signOut();
-                return true;
-
             case R.id.action_add_program:
                 addFile = new AddFileFragment();
                 FragmentTransaction tempTransaction = getActivity().getFragmentManager().beginTransaction();
                 tempTransaction.replace(R.id.main_activity_frag_container, addFile);
                 tempTransaction.addToBackStack(null);
                 tempTransaction.commit();
-                return true;
-            case R.id.action_bookmarks_page:
-                BookmarksFragment bookmarksFragment =new BookmarksFragment();
-                FragmentTransaction tempTransaction2=getActivity().getFragmentManager().beginTransaction();
-                tempTransaction2.replace(R.id.main_activity_frag_container,bookmarksFragment);
-                tempTransaction2.addToBackStack(null);
-                tempTransaction2.commit();
                 return true;
 
             default:

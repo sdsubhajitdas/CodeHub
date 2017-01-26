@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +39,11 @@ public class RegisterFragment extends Fragment {
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
 
 
-    private String EMAIL="email";
-    private String PASSWORD="password";
+    private String EMAIL = "email";
+    private String PASSWORD = "password";
     private String USERNAME = "username";
     private String TAG = "Jeetu";
+
     public RegisterFragment() {
         // Required empty public constructor
     }
@@ -112,8 +114,8 @@ public class RegisterFragment extends Fragment {
         mEmail = (EditText) getActivity().findViewById(R.id.register_email);
         mPassword = (EditText) getActivity().findViewById(R.id.register_password);
         mGo = (FloatingActionButton) getActivity().findViewById(R.id.register_fab);
-        mBack=(ImageView)getActivity().findViewById(R.id.back_image);
-        mProgress=new ProgressDialog(getActivity());
+        mBack = (ImageView) getActivity().findViewById(R.id.back_image);
+        mProgress = new ProgressDialog(getActivity());
     }
 
     @Override
@@ -126,7 +128,7 @@ public class RegisterFragment extends Fragment {
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
 
-        if(savedInstanceState!=null) {
+        if (savedInstanceState != null) {
             mUsername.setText(savedInstanceState.getString(USERNAME));
             mEmail.setText(savedInstanceState.getString(EMAIL));
             mPassword.setText(savedInstanceState.getString(PASSWORD));
@@ -141,22 +143,30 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                mProgress.setMessage("Creating Account");
-                mProgress.show();
-                mProgress.setCancelable(false);
-                mAuth.createUserWithEmailAndPassword(mEmail.getText().toString(), mPassword.getText().toString())
-                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                //Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+                if (!(TextUtils.isEmpty(mEmail.getText().toString())) &&
+                        !(TextUtils.isEmpty(mPassword.getText().toString())) &&
+                        !(TextUtils.isEmpty(mUsername.getText().toString()))) {
 
-                                if (!task.isSuccessful()) {
-                                    Toast.makeText(getActivity(), "Cant create account.",Toast.LENGTH_SHORT).show();
-                                    mProgress.hide();
+                    mProgress.setMessage("Creating Account");
+                    mProgress.show();
+                    mProgress.setCancelable(false);
+                    mAuth.createUserWithEmailAndPassword(mEmail.getText().toString(), mPassword.getText().toString())
+                            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    //Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
+
+                                    if (!task.isSuccessful()) {
+                                        Toast.makeText(getActivity(), "Cant create account.", Toast.LENGTH_SHORT).show();
+                                        mProgress.hide();
+                                    }
+
                                 }
-
-                            }
-                        });
+                            });
+                }
+                else {
+                    Toast.makeText(getActivity(),"Please fill in details",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -184,9 +194,9 @@ public class RegisterFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(USERNAME,mUsername.getText().toString());
-        outState.putString(EMAIL,mEmail.getText().toString());
-        outState.putString(PASSWORD,mPassword.getText().toString());
+        outState.putString(USERNAME, mUsername.getText().toString());
+        outState.putString(EMAIL, mEmail.getText().toString());
+        outState.putString(PASSWORD, mPassword.getText().toString());
 
         super.onSaveInstanceState(outState);
     }
