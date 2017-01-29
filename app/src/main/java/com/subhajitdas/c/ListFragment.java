@@ -111,7 +111,7 @@ public class ListFragment extends Fragment {
                 activeNetwork.isConnectedOrConnecting();
 
         if (!isConnected) {
-            mProgress.hide();
+            mProgress.dismiss();
             Toast.makeText(getActivity(), "Sorry no network connection", Toast.LENGTH_LONG).show();
         }
 
@@ -134,7 +134,7 @@ public class ListFragment extends Fragment {
         mProgramRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                mProgress.hide();
+                mProgress.dismiss();
             }
 
             @Override
@@ -264,7 +264,7 @@ public class ListFragment extends Fragment {
                 super.onItemRangeInserted(positionStart, itemCount);
                 mRecyclerView.setVisibility(View.VISIBLE);
                 mEmptyView.setVisibility(View.INVISIBLE);
-                mProgress.hide();
+                mProgress.dismiss();
                 adapter.unregisterAdapterDataObserver(this);
             }
 

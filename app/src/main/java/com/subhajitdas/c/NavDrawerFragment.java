@@ -2,6 +2,7 @@ package com.subhajitdas.c;
 
 
 import android.app.DownloadManager;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -97,13 +98,12 @@ public class NavDrawerFragment extends Fragment {
 
         int navIcon[] = {R.drawable.ic_home_black_24px,
                 R.drawable.ic_bookmark_gray_24px,
-                R.drawable.ic_question_answer_black_24px,
                 R.drawable.ic_feedback_black_24px,
                 R.drawable.ic_update_black_24px,
                 R.drawable.ic_sign_out_black_24px};
-        String navText[] = {"Posts", "Bookmarks", "Ask a question", "Feedback", "Update", "Log Out"};
+        String navText[] = {"Posts", "Bookmarks", "Feedback", "Update", "Log Out"};
 
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i<=4; i++) {
             Options item = new Options(navIcon[i], navText[i]);
             adapter.add(item);
         }
@@ -120,6 +120,7 @@ public class NavDrawerFragment extends Fragment {
                 switch (position) {
                     case 0:
                         mDrawerLayout.closeDrawers();
+                        getActivity().getFragmentManager().popBackStack(null,FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         ListFragment list = new ListFragment();
                         getActivity().getFragmentManager().beginTransaction().replace(R.id.main_activity_frag_container, list).commit();
                         break;
@@ -131,7 +132,7 @@ public class NavDrawerFragment extends Fragment {
                         transaction.addToBackStack(null);
                         transaction.commit();
                         break;
-                    case 3:
+                    case 2:
                         mDrawerLayout.closeDrawers();
                         FeedbackFragment feedbackFragment = new FeedbackFragment();
                         FragmentTransaction transaction2 = getActivity().getFragmentManager().beginTransaction();
@@ -139,7 +140,7 @@ public class NavDrawerFragment extends Fragment {
                         transaction2.addToBackStack(null);
                         transaction2.commit();
                         break;
-                    case 4:
+                    case 3:
                         mProgress.setMessage("Checking for update");
                         mDrawerLayout.closeDrawers();
                         mProgress.setCancelable(false);
@@ -169,7 +170,7 @@ public class NavDrawerFragment extends Fragment {
                                                             Uri fileUri = Uri.parse(dataSnapshot.getValue().toString());
                                                             DownloadManager.Request request = new DownloadManager.Request(fileUri);
                                                             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                                                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "update");
+                                                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "update.jpg");
                                                             request.setTitle("Downloading update");
                                                             downloadManager.enqueue(request);
 
@@ -177,6 +178,15 @@ public class NavDrawerFragment extends Fragment {
                                                             ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                                                         }
                                                     }
+                                                    else {
+                                                        Uri fileUri = Uri.parse(dataSnapshot.getValue().toString());
+                                                        DownloadManager.Request request = new DownloadManager.Request(fileUri);
+                                                        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                                                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "update");
+                                                        request.setTitle("Downloading update");
+                                                        downloadManager.enqueue(request);
+                                                    }
+
 
                                                 }
 
@@ -215,7 +225,7 @@ public class NavDrawerFragment extends Fragment {
                             }
                         });
                         break;
-                    case 5:
+                    case 4:
                         FirebaseAuth.getInstance().signOut();
                         SharedPreferences loginState = getActivity().getSharedPreferences("LOGIN_STATE", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = loginState.edit();

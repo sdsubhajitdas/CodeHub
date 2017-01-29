@@ -224,7 +224,7 @@ public class LoginFragment extends Fragment {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (!task.isSuccessful()) {
                                         Toast.makeText(getActivity(), "Cant Log in.", Toast.LENGTH_SHORT).show();
-                                        mProgress.hide();
+                                        mProgress.dismiss();
                                     }
 
 
@@ -302,7 +302,7 @@ public class LoginFragment extends Fragment {
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
                             Toast.makeText(getActivity(), "Cant Log in.", Toast.LENGTH_SHORT).show();
-                            mProgress.hide();
+                            mProgress.dismiss();
                         }
                     }
                 });
@@ -319,7 +319,7 @@ public class LoginFragment extends Fragment {
         SharedPreferences.Editor editor =loginState.edit();
         editor.putInt("LOGIN_STATE",1);
         editor.apply();
-        mProgress.hide();
+        mProgress.dismiss();
         Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

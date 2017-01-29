@@ -83,7 +83,7 @@ public class RegisterFragment extends Fragment {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
 
-                                mProgress.hide();
+                                mProgress.dismiss();
 
                                 Intent intent = new Intent(getActivity(), MainActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -158,7 +158,7 @@ public class RegisterFragment extends Fragment {
 
                                     if (!task.isSuccessful()) {
                                         Toast.makeText(getActivity(), "Cant create account.", Toast.LENGTH_SHORT).show();
-                                        mProgress.hide();
+                                        mProgress.dismiss();
                                     }
 
                                 }

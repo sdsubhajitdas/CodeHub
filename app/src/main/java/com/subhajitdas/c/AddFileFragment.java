@@ -304,7 +304,7 @@ public class AddFileFragment extends Fragment {
                         progDatabaseRef[0].child("title").setValue(mProgTitle.getText().toString());
 
                         Toast.makeText(getActivity(), "Upload Successful", Toast.LENGTH_LONG).show();
-                        mProgress.hide();
+                        mProgress.dismiss();
                         getActivity().getFragmentManager().popBackStack();
 
                     }
@@ -314,7 +314,7 @@ public class AddFileFragment extends Fragment {
                     public void onFailure(@NonNull Exception exception) {
                         // Handle unsuccessful uploads
                         Toast.makeText(getActivity(), "Upload Unsuccessful", Toast.LENGTH_SHORT).show();
-                        mProgress.hide();
+                        mProgress.dismiss();
                     }
                 });
     }

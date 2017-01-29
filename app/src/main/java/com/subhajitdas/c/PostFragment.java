@@ -128,17 +128,17 @@ public class PostFragment extends Fragment {
                                 stringBuffer.append((char) read);
                             }
                             mPostContent.setText(stringBuffer.toString());
-                            mProgress.hide();
+                            mProgress.dismiss();
                         } catch (IOException e) {
                             Toast.makeText(getActivity(), "File Reading Error", Toast.LENGTH_SHORT).show();
                         } finally {
                             if (fis != null) {
                                 try {
                                     fis.close();
-                                    mProgress.hide();
+                                    mProgress.dismiss();
                                 } catch (IOException e) {
                                     Toast.makeText(getActivity(), "File Reading Error", Toast.LENGTH_SHORT).show();
-                                    mProgress.hide();
+                                    mProgress.dismiss();
                                 }
                             }
                         }
@@ -147,7 +147,7 @@ public class PostFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         Toast.makeText(getActivity(), "File not downloaded ", Toast.LENGTH_SHORT).show();
-                        mProgress.hide();
+                        mProgress.dismiss();
                     }
                 });
 
