@@ -4,5 +4,5 @@
     <color name="colorPrimaryDark">#1976d2</color>
     <color name="colorAccent">#f9a825</color>
     <color name="darkGrey">#424242</color>
-    <color name="fbBlue">#295396</color>
+    <color name="lightGrey">#BDBDBD</color>
 </resources>

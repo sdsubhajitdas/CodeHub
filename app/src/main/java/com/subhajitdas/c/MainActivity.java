@@ -11,23 +11,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+
 
 public class MainActivity extends AppCompatActivity {
 
-    private Toolbar toolbar;
     private ActionBarDrawerToggle mDrawerToggle;
-    private DrawerLayout mDrawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        toolbar = (Toolbar) findViewById(R.id.app_bar);
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_48px);
         setSupportActionBar(toolbar);
-
 
         if (findViewById(R.id.main_activity_frag_container) != null) {
             ListFragment list = new ListFragment();
@@ -37,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
             NavDrawerFragment navDrawer = new NavDrawerFragment();
             getFragmentManager().beginTransaction().add(R.id.nav_drawer_frag_container, navDrawer).commit();
 
-        mDrawerToggle = new ActionBarDrawerToggle(this,mDrawerLayout,R.string.drawer_open,R.string.drawer_close) {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,R.string.drawer_open,R.string.drawer_close) {
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);

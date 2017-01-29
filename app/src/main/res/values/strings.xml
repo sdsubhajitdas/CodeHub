@@ -36,4 +36,6 @@
     <string name="no_bookmarks">No Bookmarks</string>
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
+    <string name="feedback_please">Feedback please.</string>
+    <string name="screenshot_of_the_problem">Screenshot of the problem</string>
 </resources>

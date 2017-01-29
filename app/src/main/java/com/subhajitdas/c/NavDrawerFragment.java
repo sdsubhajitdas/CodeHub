@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
 import android.support.v4.app.ActivityCompat;
@@ -133,6 +134,12 @@ public class NavDrawerFragment extends Fragment {
                     case 2:
                         break;
                     case 3:
+                        mDrawerLayout.closeDrawers();
+                        FeedbackFragment feedbackFragment = new FeedbackFragment();
+                        FragmentTransaction transaction2 = getActivity().getFragmentManager().beginTransaction();
+                        transaction2.replace(R.id.main_activity_frag_container, feedbackFragment);
+                        transaction2.addToBackStack(null);
+                        transaction2.commit();
                         break;
                     case 4:
                         mProgress.setMessage("Checking for update");
@@ -236,7 +243,7 @@ public class NavDrawerFragment extends Fragment {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
             //resume tasks needing this permission
