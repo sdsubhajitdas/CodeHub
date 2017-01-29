@@ -131,8 +131,6 @@ public class NavDrawerFragment extends Fragment {
                         transaction.addToBackStack(null);
                         transaction.commit();
                         break;
-                    case 2:
-                        break;
                     case 3:
                         mDrawerLayout.closeDrawers();
                         FeedbackFragment feedbackFragment = new FeedbackFragment();

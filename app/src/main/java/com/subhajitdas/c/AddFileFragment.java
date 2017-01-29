@@ -1,13 +1,20 @@
 package com.subhajitdas.c;
 
+import android.*;
+import android.Manifest;
+import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -122,6 +129,14 @@ public class AddFileFragment extends Fragment {
     public void onStart() {
         super.onStart();
         FirebaseAuth.getInstance().addAuthStateListener(mAuthListener);
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            }
+        }
     }
 
     @Override
@@ -309,6 +324,14 @@ public class AddFileFragment extends Fragment {
         UUID uid = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
         // checking the value of random UUID
         return uid.randomUUID().toString();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            //resume tasks needing this permission
+        }
     }
 
 }
