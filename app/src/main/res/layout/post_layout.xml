@@ -60,7 +60,9 @@
                 android:id="@+id/like_button"
                 android:paddingBottom="10dp"
                 android:paddingEnd="8dp"
-                android:paddingStart="10dp" />
+                android:paddingStart="10dp"
+                android:paddingRight="8dp"
+                android:paddingLeft="10dp" />
 
             <TextView
                 android:text="@string/likes"
@@ -68,7 +70,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/post_like"
                 android:paddingBottom="10dp"
-                android:paddingEnd="10dp" />
+                android:paddingEnd="10dp"
+                android:paddingRight="10dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -83,7 +86,9 @@
                 android:id="@+id/bookmark_button"
                 android:paddingBottom="10dp"
                 android:paddingEnd="8dp"
-                android:paddingStart="10dp" />
+                android:paddingStart="10dp"
+                android:paddingRight="8dp"
+                android:paddingLeft="10dp" />
 
         </LinearLayout>
     </LinearLayout>

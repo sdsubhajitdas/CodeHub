@@ -38,4 +38,5 @@
     <string name="drawer_close">close</string>
     <string name="feedback_please">Feedback please.</string>
     <string name="screenshot_of_the_problem">Screenshot of the problem</string>
+    <string name="options">Options</string>
 </resources>

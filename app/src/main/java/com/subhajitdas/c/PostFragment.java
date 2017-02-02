@@ -40,6 +40,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import static android.webkit.ConsoleMessage.MessageLevel.LOG;
+
 /**
  * Created by Subhajit Das on 12-01-2017.
  */
@@ -50,6 +52,7 @@ public class PostFragment extends Fragment {
     ProgressDialog mProgress;
 
     DatabaseReference mProgRef;
+    DatabaseReference mRootRef;
     StorageReference mProgramFile;
 
     String mKey = "blank";
@@ -79,6 +82,7 @@ public class PostFragment extends Fragment {
         try {
             mKey = getArguments().get("key").toString();
             mProgRef = FirebaseDatabase.getInstance().getReference().child("program").child(mKey);
+            mRootRef = FirebaseDatabase.getInstance().getReference();
             mProgramFile = FirebaseStorage.getInstance().getReference().child("programs");
         } catch (Exception e) {
 
@@ -192,32 +196,42 @@ public class PostFragment extends Fragment {
     public void delPost() {
 
         final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        Log.e("jeetu",currentUser.getUid());
         mProgress.setMessage("Deleting post");
         mProgress.setCancelable(false);
         mProgress.show();
         mProgRef.child("userId").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (currentUser.getUid().equals(dataSnapshot.getValue().toString())) {
+                if (currentUser.getUid().equals(dataSnapshot.getValue().toString())) {                   // CHECKING IF USER IS OWNER OR NOT
 
-                    mProgRef.child("fileUid").addListenerForSingleValueEvent(new ValueEventListener() {
+                    mProgRef.child("fileUid").addListenerForSingleValueEvent(new ValueEventListener() {  // GETTING THE FILE NAME TO DELETE IT
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            StorageReference delPath = FirebaseStorage.getInstance().getReferenceFromUrl("gs://codehub-7e17a.appspot.com/programs/")
+                            StorageReference delPath = FirebaseStorage.getInstance().getReference().child("programs")
                                     .child(dataSnapshot.getValue().toString() + ".txt");
                             delPath.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
-                                public void onSuccess(Void aVoid) {
-                                    mProgRef.removeValue();
-                                    mProgress.dismiss();
-                                    getFragmentManager().popBackStack();
+                                public void onSuccess(Void aVoid) {       // DELETING THE TXT FILE
+                                    delPostData();
+
+                                }
+                            }).addOnFailureListener(getActivity(), new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getActivity(),"Sorry file not deleted",Toast.LENGTH_SHORT).show();
+                                    delPostData();
+
                                 }
                             });
+
+
                         }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
                             mProgress.dismiss();
+                            delPostData();
                         }
                     });
                 }
@@ -234,6 +248,46 @@ public class PostFragment extends Fragment {
         });
 
 
+    }
+
+    private void delPostData() {
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        mRootRef.child("like").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override                                                        // REMOVING THE LIKE DATA
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.hasChild(mKey)) {
+                    mRootRef.child("like").child(mKey).removeValue();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mProgress.dismiss();
+            }
+        });
+
+        mRootRef.child("bookmark").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override                                               // REMOVING BOOKMARK DATA
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(mKey)) {
+                    mRootRef.child("bookmark").child(mKey).removeValue();
+
+                }
+
+                mProgRef.removeValue();                         // REMOVING DATA FROM PROGRAM BRANCH
+
+                mProgress.dismiss();
+                Toast.makeText(getActivity(),"Post deleted",Toast.LENGTH_SHORT).show();
+                getFragmentManager().popBackStack();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mProgress.dismiss();
+            }
+        });
     }
 
 }

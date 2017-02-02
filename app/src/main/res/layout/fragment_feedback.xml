@@ -56,6 +56,7 @@
         android:tint="@android:color/white"
         app:backgroundTint="@color/colorPrimary"
         app:fabSize="auto"
-        app:srcCompat="@drawable/ic_done_white_48px" />
+        app:srcCompat="@drawable/ic_done_white_48px"
+        android:layout_alignParentRight="true" />
 
 </RelativeLayout>

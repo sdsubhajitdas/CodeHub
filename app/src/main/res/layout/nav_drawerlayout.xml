@@ -13,10 +13,11 @@
         app:srcCompat="@mipmap/ic_launcher"
         android:id="@+id/icon"
         android:gravity="center_vertical"
-        android:paddingEnd="16dp" />
+        android:paddingEnd="16dp"
+        android:paddingRight="16dp" />
 
     <TextView
-        android:text="Options"
+        android:text="@string/options"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toEndOf="@id/icon"
@@ -25,7 +26,8 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:gravity="center_vertical"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_toRightOf="@id/icon" />
 
 
 </RelativeLayout>

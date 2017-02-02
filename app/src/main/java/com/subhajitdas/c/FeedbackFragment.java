@@ -12,6 +12,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -86,6 +88,11 @@ public class FeedbackFragment extends Fragment {
         super.onStart();
         setHasOptionsMenu(true);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle("Feedback");
+        }
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (getActivity().checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)

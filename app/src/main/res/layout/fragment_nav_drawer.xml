@@ -22,7 +22,8 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark"
         android:gravity="bottom"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true">
 
         <ImageView
             android:id="@+id/acct_image"

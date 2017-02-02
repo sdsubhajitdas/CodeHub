@@ -81,8 +81,6 @@ public class BookmarksFragment extends Fragment {
         //setHasOptionsMenu(true);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        mBookmarksRef = mBookRef.orderByChild(mCurrentUser.getUid()).equalTo("yes");
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -93,6 +91,8 @@ public class BookmarksFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        mBookmarksRef = mBookRef.orderByChild(mCurrentUser.getUid()).equalTo("yes");
 
         adapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(
                 Post.class,

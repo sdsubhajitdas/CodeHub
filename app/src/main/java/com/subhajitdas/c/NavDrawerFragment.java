@@ -170,7 +170,7 @@ public class NavDrawerFragment extends Fragment {
                                                             Uri fileUri = Uri.parse(dataSnapshot.getValue().toString());
                                                             DownloadManager.Request request = new DownloadManager.Request(fileUri);
                                                             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                                                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "update.jpg");
+                                                            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "CodeHub_Update.apk");
                                                             request.setTitle("Downloading update");
                                                             downloadManager.enqueue(request);
 
@@ -182,7 +182,7 @@ public class NavDrawerFragment extends Fragment {
                                                         Uri fileUri = Uri.parse(dataSnapshot.getValue().toString());
                                                         DownloadManager.Request request = new DownloadManager.Request(fileUri);
                                                         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                                                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "update");
+                                                        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "CodeHub_Update.apk");
                                                         request.setTitle("Downloading update");
                                                         downloadManager.enqueue(request);
                                                     }

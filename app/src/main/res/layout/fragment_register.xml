@@ -14,7 +14,8 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="75dp"
         android:layout_marginBottom="20dp"
-        android:weightSum="7">
+        android:weightSum="7"
+        android:layout_alignParentLeft="true">
 
         <ImageView
             android:layout_width="0dp"
@@ -64,7 +65,8 @@
             app:hintAnimationEnabled="true"
             android:textColorHint="@android:color/white"
             android:layout_weight="4"
-            android:layout_marginEnd="5dp">
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp">
 
             <EditText
                 android:id="@+id/register_username"
@@ -104,7 +106,8 @@
             app:hintAnimationEnabled="true"
             android:textColorHint="@android:color/white"
             android:layout_weight="4"
-            android:layout_marginEnd="5dp">
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp">
 
             <EditText
                 android:id="@+id/register_email"
@@ -144,7 +147,8 @@
             app:hintAnimationEnabled="true"
             android:textColorHint="@android:color/white"
             android:layout_weight="4"
-            android:layout_marginEnd="5dp">
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp">
 
             <EditText
                 android:id="@+id/register_password"
@@ -171,7 +175,8 @@
         android:id="@+id/register_fab"
         app:backgroundTint="@android:color/white"
         android:tint="@color/colorPrimary"
-        android:layout_margin="10dp" />
+        android:layout_margin="10dp"
+        android:layout_alignParentRight="true" />
 
 
 </RelativeLayout>

@@ -37,8 +37,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         mLikeRef=FirebaseDatabase.getInstance().getReference().child("like");
         mBookmarkRef =FirebaseDatabase.getInstance().getReference().child("bookmark");
         mProgRef =FirebaseDatabase.getInstance().getReference().child("program");
-        mLikeRef.keepSynced(true);
-        mBookmarkRef.keepSynced(true);
+        //mLikeRef.keepSynced(true);
+        //mBookmarkRef.keepSynced(true);
     }
 
     public void setPostTitle(String title)
@@ -67,7 +67,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
 
     public void setLikeButton(String postKey, final String userId)
     {
-        mLikeRef.child(postKey).addValueEventListener(new ValueEventListener() {
+        mLikeRef.child(postKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild(userId))
@@ -99,12 +99,14 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
             });
     }
 
-    public void setBookmarkTitle(String postKey) {
-        mProgRef.child(postKey).child("title").addValueEventListener(new ValueEventListener() {
+    public void setBookmarkTitle(final String postKey) {
+        mProgRef.child(postKey).child("title").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                TextView postTitle = (TextView)mView.findViewById(R.id.post_title);
-                postTitle.setText(dataSnapshot.getValue().toString());
+                //if(dataSnapshot.hasChild("title")) {
+                    TextView postTitle = (TextView) mView.findViewById(R.id.post_title);
+                    postTitle.setText(dataSnapshot.getValue().toString());
+                //}
             }
 
             @Override
@@ -116,11 +118,13 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setBookmarkPoster(String postKey) {
-        mProgRef.child(postKey).child("userName").addValueEventListener(new ValueEventListener() {
+        mProgRef.child(postKey).child("userName").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                TextView postPoster = (TextView)mView.findViewById(R.id.poster_name);
-                postPoster.setText(dataSnapshot.getValue().toString());
+               // if(dataSnapshot.hasChild("userName")) {
+                    TextView postPoster = (TextView) mView.findViewById(R.id.poster_name);
+                    postPoster.setText(dataSnapshot.getValue().toString());
+              //  }
             }
 
             @Override
@@ -131,11 +135,13 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setBookmarkDate(String postKey) {
-        mProgRef.child(postKey).child("date").addValueEventListener(new ValueEventListener() {
+        mProgRef.child(postKey).child("date").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                TextView postDate = (TextView)mView.findViewById(R.id.post_date);
-                postDate.setText(dataSnapshot.getValue().toString());
+               // if(dataSnapshot.hasChild("date")) {
+                    TextView postDate = (TextView) mView.findViewById(R.id.post_date);
+                    postDate.setText(dataSnapshot.getValue().toString());
+              //  }
             }
 
             @Override
