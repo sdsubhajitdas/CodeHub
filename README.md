@@ -36,6 +36,6 @@ This app, designed for individuals, designed for you, where you can learn and po
 
 Version Log -Release dates.
 
-Ver 1.0 	 2.2.2017
+Ver 1.0.0 -------   2.2.2017
 
-Ver 1.0.1	 3.2.2017
+Ver 1.0.1 -------   3.2.2017
