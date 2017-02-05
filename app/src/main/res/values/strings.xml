@@ -39,4 +39,8 @@
     <string name="feedback_please">Feedback please.</string>
     <string name="screenshot_of_the_problem">Screenshot of the problem</string>
     <string name="options">Options</string>
+
+
+    <!-- Strings related to AdMob -->
+    <string name="banner_ad_unit_id">ca-app-pub-8238050563187834/4375349707</string>
 </resources>

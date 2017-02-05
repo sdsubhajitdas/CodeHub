@@ -5,6 +5,7 @@ import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -50,6 +51,7 @@ public class PostFragment extends Fragment {
 
     TextView mPostTitle, mPostContent;
     ProgressDialog mProgress;
+    Typeface custom_font;
 
     DatabaseReference mProgRef;
     DatabaseReference mRootRef;
@@ -79,9 +81,11 @@ public class PostFragment extends Fragment {
         mPostTitle = (TextView) getActivity().findViewById(R.id.post_title);
         mPostContent = (TextView) getActivity().findViewById(R.id.post_content);
         mProgress = new ProgressDialog(getActivity());
+        custom_font= Typeface.createFromAsset(getActivity().getAssets(), "fonts/SourceCodePro-Regular.ttf");
+        mPostContent.setTypeface(custom_font);
         try {
             mKey = getArguments().get("key").toString();
-            mProgRef = FirebaseDatabase.getInstance().getReference().child("program").child(mKey);
+            mProgRef = FirebaseDatabase.getInstance().getReference().child("test").child("program").child(mKey);                //TODO Remove .child(test)
             mRootRef = FirebaseDatabase.getInstance().getReference();
             mProgramFile = FirebaseStorage.getInstance().getReference().child("programs");
         } catch (Exception e) {

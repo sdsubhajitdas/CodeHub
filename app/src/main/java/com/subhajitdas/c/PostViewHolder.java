@@ -37,8 +37,8 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         mLikeRef=FirebaseDatabase.getInstance().getReference().child("like");
         mBookmarkRef =FirebaseDatabase.getInstance().getReference().child("bookmark");
         mProgRef =FirebaseDatabase.getInstance().getReference().child("program");
-        //mLikeRef.keepSynced(true);
-        //mBookmarkRef.keepSynced(true);
+        mLikeRef.keepSynced(true);
+        mBookmarkRef.keepSynced(true);
     }
 
     public void setPostTitle(String title)
