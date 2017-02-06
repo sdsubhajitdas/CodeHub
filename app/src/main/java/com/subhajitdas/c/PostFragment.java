@@ -1,14 +1,10 @@
 package com.subhajitdas.c;
 
-import android.app.Activity;
-import android.app.DownloadManager;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -34,14 +30,9 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-
-import static android.webkit.ConsoleMessage.MessageLevel.LOG;
 
 /**
  * Created by Subhajit Das on 12-01-2017.
@@ -56,6 +47,8 @@ public class PostFragment extends Fragment {
     DatabaseReference mProgRef;
     DatabaseReference mRootRef;
     StorageReference mProgramFile;
+
+    Bundle bundle;
 
     String mKey = "blank";
 
@@ -91,6 +84,8 @@ public class PostFragment extends Fragment {
         } catch (Exception e) {
 
         }
+
+        bundle = new Bundle();
     }
 
     @Override
@@ -109,6 +104,7 @@ public class PostFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mPostTitle.setText(dataSnapshot.getValue().toString());
+                bundle.putString("title",dataSnapshot.getValue().toString());
                 mProgress.setMessage("Loading Post Contents");
             }
 
@@ -136,6 +132,7 @@ public class PostFragment extends Fragment {
                                 stringBuffer.append((char) read);
                             }
                             mPostContent.setText(stringBuffer.toString());
+                            bundle.putString("postContent",stringBuffer.toString());
                             mProgress.dismiss();
                         } catch (IOException e) {
                             Toast.makeText(getActivity(), "File Reading Error", Toast.LENGTH_SHORT).show();
@@ -179,7 +176,7 @@ public class PostFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu3, menu);
+        inflater.inflate(R.menu.menu_post, menu);
     }
 
     @Override
@@ -187,6 +184,16 @@ public class PostFragment extends Fragment {
 
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
+            case R.id.action_edit:
+
+                bundle.putString("key",mKey);
+                EditFragment editFragment = new EditFragment();
+                editFragment.setArguments(bundle);
+                FragmentTransaction tempTransaction = getActivity().getFragmentManager().beginTransaction();
+                tempTransaction.replace(R.id.main_activity_frag_container, editFragment);
+                tempTransaction.addToBackStack(null);
+                tempTransaction.commit();
+                return  true;
             case R.id.action_back:
                 getFragmentManager().popBackStack();
                 return true;
@@ -200,7 +207,7 @@ public class PostFragment extends Fragment {
     public void delPost() {
 
         final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        Log.e("jeetu",currentUser.getUid());
+        //Log.e("jeetu",currentUser.getUid());
         mProgress.setMessage("Deleting post");
         mProgress.setCancelable(false);
         mProgress.show();
