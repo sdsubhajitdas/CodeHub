@@ -43,6 +43,7 @@
 
     <!-- Strings related to AdMob -->
     <string name="banner_ad_unit_id">ca-app-pub-8238050563187834/4375349707</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-8238050563187834/5268170101</string>
     <string name="edit_post">Edit Post</string>
     <string name="delete_post">Delete Post</string>
     <string name="save_post">Save Post</string>

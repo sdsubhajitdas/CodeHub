@@ -5,6 +5,8 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -17,6 +19,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,17 +45,19 @@ import java.io.IOException;
 
 public class PostFragment extends Fragment {
 
-    TextView mPostTitle, mPostContent;
-    ProgressDialog mProgress;
-    Typeface custom_font;
+    private TextView mPostTitle, mPostContent;
+    private ProgressDialog mProgress;
+    private Typeface custom_font;
+    private Bundle bundle;
+    private Handler handler;
+    private InterstitialAd interstitialAd;
 
-    DatabaseReference mProgRef;
-    DatabaseReference mRootRef;
-    StorageReference mProgramFile;
+    private DatabaseReference mProgRef;
+    private DatabaseReference mRootRef;
+    private StorageReference mProgramFile;
 
-    Bundle bundle;
-
-    String mKey = "blank";
+    private int adCount;
+    private String mKey = "blank";
 
     public PostFragment() {
 
@@ -74,7 +81,7 @@ public class PostFragment extends Fragment {
         mPostTitle = (TextView) getActivity().findViewById(R.id.post_title);
         mPostContent = (TextView) getActivity().findViewById(R.id.post_content);
         mProgress = new ProgressDialog(getActivity());
-        custom_font= Typeface.createFromAsset(getActivity().getAssets(), "fonts/SourceCodePro-Regular.ttf");
+        custom_font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/SourceCodePro-Regular.ttf");
         mPostContent.setTypeface(custom_font);
         try {
             mKey = getArguments().get("key").toString();
@@ -84,8 +91,10 @@ public class PostFragment extends Fragment {
         } catch (Exception e) {
 
         }
-
+        adCount = 5;
         bundle = new Bundle();
+        handler = new Handler();
+
     }
 
     @Override
@@ -94,17 +103,58 @@ public class PostFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    private void requestNewInterstitial() {
+
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        interstitialAd.loadAd(adRequest);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         mProgress.setMessage("Loading content");
         mProgress.setCancelable(false);
         mProgress.show();
+
+        interstitialAd = new InterstitialAd(getActivity());
+        interstitialAd.setAdUnitId("ca-app-pub-8238050563187834/5268170101");
+        requestNewInterstitial();
+
+        interstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+            }
+
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                requestNewInterstitial();
+            }
+        });
+
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+
+                if (adCount > 0){
+                    if(interstitialAd.isLoaded()){
+                        interstitialAd.show();
+                        adCount--;
+                    }
+                    handler.postDelayed(this,120000);
+                }
+            }
+        };
+        handler.postDelayed(runnable, 60000);
+
+
         mProgRef.child("title").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mPostTitle.setText(dataSnapshot.getValue().toString());
-                bundle.putString("title",dataSnapshot.getValue().toString());
+                bundle.putString("title", dataSnapshot.getValue().toString());
                 mProgress.setMessage("Loading Post Contents");
             }
 
@@ -132,7 +182,7 @@ public class PostFragment extends Fragment {
                                 stringBuffer.append((char) read);
                             }
                             mPostContent.setText(stringBuffer.toString());
-                            bundle.putString("postContent",stringBuffer.toString());
+                            bundle.putString("postContent", stringBuffer.toString());
                             mProgress.dismiss();
                         } catch (IOException e) {
                             Toast.makeText(getActivity(), "File Reading Error", Toast.LENGTH_SHORT).show();
@@ -170,7 +220,7 @@ public class PostFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-
+        adCount = 0;
     }
 
     @Override
@@ -186,14 +236,14 @@ public class PostFragment extends Fragment {
             // Respond to the action bar's Up/Home button
             case R.id.action_edit:
 
-                bundle.putString("key",mKey);
+                bundle.putString("key", mKey);
                 EditFragment editFragment = new EditFragment();
                 editFragment.setArguments(bundle);
                 FragmentTransaction tempTransaction = getActivity().getFragmentManager().beginTransaction();
                 tempTransaction.replace(R.id.main_activity_frag_container, editFragment);
                 tempTransaction.addToBackStack(null);
                 tempTransaction.commit();
-                return  true;
+                return true;
             case R.id.action_back:
                 getFragmentManager().popBackStack();
                 return true;
@@ -230,7 +280,7 @@ public class PostFragment extends Fragment {
                             }).addOnFailureListener(getActivity(), new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getActivity(),"Sorry file not deleted",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "Sorry file not deleted", Toast.LENGTH_SHORT).show();
                                     delPostData();
 
                                 }
@@ -245,10 +295,9 @@ public class PostFragment extends Fragment {
                             delPostData();
                         }
                     });
-                }
-                else {
+                } else {
                     mProgress.dismiss();
-                    Toast.makeText(getActivity(),"You cannot delete this post.\nYou are not the owner",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "You cannot delete this post.\nYou are not the owner", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -265,10 +314,11 @@ public class PostFragment extends Fragment {
         final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         mRootRef.child("like").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override                                                        // REMOVING THE LIKE DATA
+            @Override
+            // REMOVING THE LIKE DATA
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if(dataSnapshot.hasChild(mKey)) {
+                if (dataSnapshot.hasChild(mKey)) {
                     mRootRef.child("like").child(mKey).removeValue();
                 }
             }
@@ -282,7 +332,7 @@ public class PostFragment extends Fragment {
         mRootRef.child("bookmark").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override                                               // REMOVING BOOKMARK DATA
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(mKey)) {
+                if (dataSnapshot.hasChild(mKey)) {
                     mRootRef.child("bookmark").child(mKey).removeValue();
 
                 }
@@ -290,7 +340,7 @@ public class PostFragment extends Fragment {
                 mProgRef.removeValue();                         // REMOVING DATA FROM PROGRAM BRANCH
 
                 mProgress.dismiss();
-                Toast.makeText(getActivity(),"Post deleted",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Post deleted", Toast.LENGTH_SHORT).show();
                 getFragmentManager().popBackStack();
             }
 
