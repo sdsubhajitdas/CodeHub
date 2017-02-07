@@ -101,6 +101,35 @@ public class PostFragment extends Fragment {
     public void onStart() {
         super.onStart();
         setHasOptionsMenu(true);
+        interstitialAd = new InterstitialAd(getActivity());
+        interstitialAd.setAdUnitId("ca-app-pub-8238050563187834/5268170101");
+        requestNewInterstitial();
+
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                if (adCount > 0 && interstitialAd.isLoaded()) {
+                    interstitialAd.show();
+                    adCount--;
+                }
+            }
+        };
+
+        interstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+            }
+
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                requestNewInterstitial();
+                handler.postDelayed(runnable,120000);
+            }
+        });
+
+        handler.postDelayed(runnable,60000);
     }
 
     private void requestNewInterstitial() {
@@ -116,40 +145,6 @@ public class PostFragment extends Fragment {
         mProgress.setMessage("Loading content");
         mProgress.setCancelable(false);
         mProgress.show();
-
-        interstitialAd = new InterstitialAd(getActivity());
-        interstitialAd.setAdUnitId("ca-app-pub-8238050563187834/5268170101");
-        requestNewInterstitial();
-
-        interstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-            }
-
-            @Override
-            public void onAdClosed() {
-                super.onAdClosed();
-                requestNewInterstitial();
-            }
-        });
-
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-
-                if (adCount > 0){
-                    if(interstitialAd.isLoaded()){
-                        interstitialAd.show();
-                        adCount--;
-                    }
-                    handler.postDelayed(this,120000);
-                }
-            }
-        };
-        handler.postDelayed(runnable, 60000);
-
-
         mProgRef.child("title").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
