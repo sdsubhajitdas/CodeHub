@@ -47,6 +47,7 @@ public class PostFragment extends Fragment {
     private ProgressDialog mProgress;
     private Bundle bundle;
     private Handler handler;
+    private Runnable runnable;
 
 
     private DatabaseReference mProgRef;
@@ -105,7 +106,7 @@ public class PostFragment extends Fragment {
                 .build();
         interstitialAd.loadAd(adRequest);
 
-        final Runnable runnable = new Runnable() {
+         runnable = new Runnable() {
             @Override
             public void run() {
                 if (interstitialAd.isLoaded()) {
@@ -208,6 +209,7 @@ public class PostFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+        handler.removeCallbacks(runnable);
     }
 
     @Override
