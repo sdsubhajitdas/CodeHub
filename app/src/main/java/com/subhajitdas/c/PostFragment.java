@@ -6,10 +6,8 @@ import android.app.ProgressDialog;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,16 +45,14 @@ public class PostFragment extends Fragment {
 
     private TextView mPostTitle, mPostContent;
     private ProgressDialog mProgress;
-    private Typeface custom_font;
     private Bundle bundle;
     private Handler handler;
-    private InterstitialAd interstitialAd;
+
 
     private DatabaseReference mProgRef;
     private DatabaseReference mRootRef;
     private StorageReference mProgramFile;
 
-    private int adCount;
     private String mKey = "blank";
 
     public PostFragment() {
@@ -81,7 +77,7 @@ public class PostFragment extends Fragment {
         mPostTitle = (TextView) getActivity().findViewById(R.id.post_title);
         mPostContent = (TextView) getActivity().findViewById(R.id.post_content);
         mProgress = new ProgressDialog(getActivity());
-        custom_font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/SourceCodePro-Regular.ttf");
+        Typeface custom_font = Typeface.createFromAsset(getActivity().getAssets(), "fonts/SourceCodePro-Regular.ttf");
         mPostContent.setTypeface(custom_font);
         try {
             mKey = getArguments().get("key").toString();
@@ -91,7 +87,6 @@ public class PostFragment extends Fragment {
         } catch (Exception e) {
 
         }
-        adCount = 5;
         bundle = new Bundle();
         handler = new Handler();
 
@@ -101,16 +96,22 @@ public class PostFragment extends Fragment {
     public void onStart() {
         super.onStart();
         setHasOptionsMenu(true);
+
+        //  IMPLEMENTING INTERSTITIAL ADS
+        final InterstitialAd interstitialAd;
         interstitialAd = new InterstitialAd(getActivity());
         interstitialAd.setAdUnitId("ca-app-pub-8238050563187834/5268170101");
-        requestNewInterstitial();
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+        interstitialAd.loadAd(adRequest);
 
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if (adCount > 0 && interstitialAd.isLoaded()) {
+                if (interstitialAd.isLoaded()) {
                     interstitialAd.show();
-                    adCount--;
+                } else {
+                    handler.postDelayed(this, 10000);
                 }
             }
         };
@@ -124,19 +125,11 @@ public class PostFragment extends Fragment {
             @Override
             public void onAdClosed() {
                 super.onAdClosed();
-                requestNewInterstitial();
-                handler.postDelayed(runnable,120000);
             }
         });
+        handler.postDelayed(runnable, 75000);
 
-        handler.postDelayed(runnable,60000);
-    }
-
-    private void requestNewInterstitial() {
-
-        AdRequest adRequest = new AdRequest.Builder()
-                .build();
-        interstitialAd.loadAd(adRequest);
+        // ADS ENDS
     }
 
     @Override
@@ -215,7 +208,6 @@ public class PostFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        adCount = 0;
     }
 
     @Override
