@@ -81,7 +81,7 @@ public class PostFragment extends Fragment {
         mPostContent.setTypeface(custom_font);
         try {
             mKey = getArguments().get("key").toString();
-            mProgRef = FirebaseDatabase.getInstance().getReference().child("test").child("program").child(mKey);                //TODO Remove .child(test)
+            mProgRef = FirebaseDatabase.getInstance().getReference().child("program").child(mKey);                //TODO use for update||Remove .child(test)
             mRootRef = FirebaseDatabase.getInstance().getReference();
             mProgramFile = FirebaseStorage.getInstance().getReference().child("programs");
         } catch (Exception e) {

@@ -310,7 +310,7 @@ public class AddFileFragment extends Fragment {
                         } catch (NullPointerException e) {
                             Toast.makeText(getActivity(), "Problem\n" + e.toString(), Toast.LENGTH_LONG).show();
                         }
-                        progDatabaseRef[0] = FirebaseDatabase.getInstance().getReference().child("test").child("program").push();       //TODO remove .child(test)
+                        progDatabaseRef[0] = FirebaseDatabase.getInstance().getReference().child("program").push();       //TODO  use for update||remove .child(test)
                         progDatabaseRef[0].child("fileUri").setValue(mFileUriText);
                         progDatabaseRef[0].child("fileUid").setValue(FILEUID);
                         progDatabaseRef[0].child("date").setValue(date);

@@ -63,7 +63,7 @@ public class ListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
-        mProgramRef = FirebaseDatabase.getInstance().getReference().child("test").child("program");     //TODO Revmoce .child("Test")
+        mProgramRef = FirebaseDatabase.getInstance().getReference().child("program");     //TODO use for update||Revmoce .child("Test")
         mLikeRef = FirebaseDatabase.getInstance().getReference().child("like");
         mBookmarkRef = FirebaseDatabase.getInstance().getReference().child("bookmark");
 

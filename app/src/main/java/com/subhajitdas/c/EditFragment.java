@@ -147,7 +147,7 @@ public class EditFragment extends Fragment {
     }
 
     public void docChange() {
-        final DatabaseReference mProgRef = FirebaseDatabase.getInstance().getReference().child("test").child("program").child(mKey);  //TODO  remove .child(test)
+        final DatabaseReference mProgRef = FirebaseDatabase.getInstance().getReference().child("program").child(mKey);  //TODO  use for update||remove .child(test)
         FILEUID = randomID();
         final StorageReference programsRef = FirebaseStorage.getInstance().getReference().child("programs/" + FILEUID + ".txt");
         mProgRef.child("userId").addListenerForSingleValueEvent(new ValueEventListener() {
