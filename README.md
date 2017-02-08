@@ -31,7 +31,7 @@ This app, designed for individuals, designed for you, where you can learn and po
 --Thank You 
 
 
-*Download url - https://firebasestorage.googleapis.com/v0/b/codehub-7e17a.appspot.com/o/CodeHub-1.0.1.apk?alt=media&token=4ac95dc7-26f7-4c9b-86a6-416955835a0f*
+*Download url - https://firebasestorage.googleapis.com/v0/b/codehub-7e17a.appspot.com/o/CodeHub-1.1.apk?alt=media&token=d8f1aa6c-81d1-4cc0-9bdb-c291791cf8d2*
 
 
 Version Log -Release dates.
@@ -39,3 +39,5 @@ Version Log -Release dates.
 Ver 1.0.0 -------   2.2.2017
 
 Ver 1.0.1 -------   3.2.2017
+
+Ver 1.1.0 -------   9.2.2017
