@@ -174,9 +174,9 @@ public class BookmarksFragment extends Fragment {
 
     /*
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu2, menu);
+    public void onCreateOptionsMenu(Menu menu_add, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu_add, inflater);
+        inflater.inflate(R.menu_add.menu_back, menu_add);
     }
 
     @Override

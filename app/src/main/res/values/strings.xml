@@ -39,4 +39,15 @@
     <string name="feedback_please">Feedback please.</string>
     <string name="screenshot_of_the_problem">Screenshot of the problem</string>
     <string name="options">Options</string>
+
+
+    <!-- Strings related to AdMob -->
+    <string name="banner_ad_unit_id">ca-app-pub-8238050563187834/4375349707</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-8238050563187834/5268170101</string>
+    <string name="edit_post">Edit Post</string>
+    <string name="delete_post">Delete Post</string>
+    <string name="save_post">Save Post</string>
+    <string name="good_practices_for_uploading_code">Good practices for uploading code</string>
+    <string name="first_point">1.We suggest you use indentation in your code.\n\nDivide the code into different blocks with spaces and tabs for ease of readability.</string>
+    <string name="second_point">2.We suggest you use code comments. \n\nComments help other people understand your code easily.</string>
 </resources>

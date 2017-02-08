@@ -13,8 +13,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/post_title"
+            <EditText
+                android:id="@+id/edit_post_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -27,12 +27,12 @@
                 android:padding="5dp"
                 android:gravity="center" />
 
-            <TextView
+            <EditText
                 android:text="@string/post_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/post_title"
-                android:id="@+id/post_content"
+                android:layout_below="@id/edit_post_title"
+                android:id="@+id/edit_post_content"
                 android:background="@color/postBackground"
                 android:layout_marginTop="10dp"
                 android:padding="10dp"

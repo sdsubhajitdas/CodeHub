@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="4dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <TextView
+                android:text="@string/good_practices_for_uploading_code"
+                android:textColor="@android:color/black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/title"
+                android:gravity="center"
+                android:textSize="30sp"
+                android:layout_marginBottom="5dp" />
+
+            <TextView
+                android:text="@string/first_point"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/first"
+                android:padding="3dp"
+                android:layout_marginBottom="5dp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/indented_text"
+                android:id="@+id/imageView"
+                android:layout_marginBottom="5dp" />
+
+            <TextView
+                android:text="@string/second_point"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/second"
+                android:layout_marginBottom="5dp"
+                android:padding="3dp" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/commented_text"
+                android:id="@+id/imageView4" />
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>

@@ -5,7 +5,6 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -64,7 +63,7 @@ public class ListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
-        mProgramRef = FirebaseDatabase.getInstance().getReference().child("program");
+        mProgramRef = FirebaseDatabase.getInstance().getReference().child("program");     //TODO use for update||Revmoce .child("Test")
         mLikeRef = FirebaseDatabase.getInstance().getReference().child("like");
         mBookmarkRef = FirebaseDatabase.getInstance().getReference().child("bookmark");
 
@@ -304,7 +303,7 @@ public class ListFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu, menu);
+        inflater.inflate(R.menu.menu_add, menu);
     }
 
     @Override

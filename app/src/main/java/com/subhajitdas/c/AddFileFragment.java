@@ -1,22 +1,21 @@
 package com.subhajitdas.c;
 
-import android.*;
 import android.Manifest;
-import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -34,8 +33,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -129,6 +130,21 @@ public class AddFileFragment extends Fragment {
     public void onStart() {
         super.onStart();
         FirebaseAuth.getInstance().addAuthStateListener(mAuthListener);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.upload_style,null));
+        builder.setCancelable(true);
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
 
         if (Build.VERSION.SDK_INT >= 23) {
             if (getActivity().checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -262,7 +278,7 @@ public class AddFileFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu2, menu);
+        inflater.inflate(R.menu.menu_back, menu);
     }
 
     @Override
@@ -294,7 +310,7 @@ public class AddFileFragment extends Fragment {
                         } catch (NullPointerException e) {
                             Toast.makeText(getActivity(), "Problem\n" + e.toString(), Toast.LENGTH_LONG).show();
                         }
-                        progDatabaseRef[0] = FirebaseDatabase.getInstance().getReference("program").push();
+                        progDatabaseRef[0] = FirebaseDatabase.getInstance().getReference().child("program").push();       //TODO  use for update||remove .child(test)
                         progDatabaseRef[0].child("fileUri").setValue(mFileUriText);
                         progDatabaseRef[0].child("fileUid").setValue(FILEUID);
                         progDatabaseRef[0].child("date").setValue(date);
@@ -329,7 +345,7 @@ public class AddFileFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             //resume tasks needing this permission
         }
     }

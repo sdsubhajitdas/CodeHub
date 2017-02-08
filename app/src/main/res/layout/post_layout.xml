@@ -4,16 +4,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="20dp"
-    android:layout_marginStart="20dp"
-    android:layout_marginEnd="20dp">
+    android:layout_marginTop="15dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp">
 
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp">
+        android:padding="5dp">
 
         <TextView
             android:text="@string/post_tile_goes_here"
@@ -24,7 +24,7 @@
             android:textColor="@android:color/black"
             android:maxLines="4"
             android:textStyle="normal|bold"
-            android:padding="10dp" />
+            android:padding="7dp" />
 
         <TextView
             android:text="@string/poster_s_name"
@@ -32,25 +32,32 @@
             android:layout_height="wrap_content"
             android:id="@+id/poster_name"
             android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:paddingLeft="7dp"
+            android:paddingRight="7dp"
             android:textSize="17sp"
             android:textStyle="normal|bold" />
-
-        <TextView
-            android:text="@string/post_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/post_date"
-            android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textStyle="normal|italic" />
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <TextView
+                android:text="@string/post_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/post_date"
+                android:paddingBottom="7dp"
+                android:paddingLeft="7dp"
+                android:paddingRight="7dp"
+                android:textStyle="normal|italic"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView"
+                android:layout_weight="1" />
 
             <ImageButton
                 android:layout_width="wrap_content"
@@ -68,15 +75,8 @@
                 android:text="@string/likes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/post_like"
-                android:paddingBottom="10dp"
-                android:paddingEnd="10dp"
-                android:paddingRight="10dp" />
+                android:id="@+id/post_like" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1" />
 
             <ImageButton
                 android:layout_width="wrap_content"

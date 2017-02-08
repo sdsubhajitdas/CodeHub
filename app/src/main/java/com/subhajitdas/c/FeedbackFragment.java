@@ -1,7 +1,6 @@
 package com.subhajitdas.c;
 
 
-import android.*;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -210,7 +209,7 @@ public class FeedbackFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu2, menu);
+        inflater.inflate(R.menu.menu_back, menu);
     }
 
     @Override

@@ -20,7 +20,7 @@ Key Features:
 
       2) You can hit like, for the codes you like.
 
-      3) Most importanty, you can bookmark the specific code you feel important for you.
+      3) Most importantly, you can bookmark the specific code you feel important for you.
 
 
 
