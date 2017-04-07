@@ -1,4 +1,5 @@
-#CodeHub
+
+# CodeHub
 
 
 A simple application for classmates to share and request programs inside our class.
@@ -48,4 +49,5 @@ Ver 1.1.0 -------   9.2.2017
 
       - Post editing funtion added.
       - Post page UI changed and made better with custom fonts.
+      - Admob implemented to display ads.
       
