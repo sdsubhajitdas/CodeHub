@@ -227,9 +227,9 @@ public class NavDrawerFragment extends Fragment {
                         break;
                     case 4:
                         FirebaseAuth.getInstance().signOut();
-                        SharedPreferences loginState = getActivity().getSharedPreferences("LOGIN_STATE", Context.MODE_PRIVATE);
+                        SharedPreferences loginState = getActivity().getSharedPreferences(Constants.LOGIN_STATE, Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = loginState.edit();
-                        editor.putInt("LOGIN_STATE", 0);
+                        editor.putInt(Constants.LOGIN_STATE, 0);
                         editor.apply();
                         mDrawerLayout.closeDrawers();
                         Intent intent = new Intent(getActivity(), com.subhajitdas.c.LoginActivity.class);

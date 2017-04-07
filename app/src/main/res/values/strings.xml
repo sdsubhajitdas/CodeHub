@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">CodeHub</string>
-    <string name="login">Login.</string>
+    <string name="signin">Sign In</string>
     <string name="email_id">Email Id</string>
     <string name="password">Password</string>
     <string name="login_with">Login With</string>
     <string name="go">Go</string>
     <string name="forgot_password">Forgot Password</string>
 
-    <string name="register">REGISTER</string>
+    <string name="register">Register</string>
     <string name="username">Username</string>
     <string name="submit">Submit</string>
 
@@ -50,4 +50,5 @@
     <string name="good_practices_for_uploading_code">Good practices for uploading code</string>
     <string name="first_point">1.We suggest you use indentation in your code.\n\nDivide the code into different blocks with spaces and tabs for ease of readability.</string>
     <string name="second_point">2.We suggest you use code comments. \n\nComments help other people understand your code easily.</string>
+    <string name="continue_with_google">Continue With Google</string>
 </resources>

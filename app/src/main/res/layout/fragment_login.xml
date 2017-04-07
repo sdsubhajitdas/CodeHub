@@ -6,7 +6,7 @@
     android:gravity="center">
 
     <TextView
-        android:text="@string/login"
+        android:text="@string/signin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="75dp"

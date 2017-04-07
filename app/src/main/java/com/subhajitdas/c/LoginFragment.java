@@ -1,25 +1,24 @@
 package com.subhajitdas.c;
 
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -46,20 +45,16 @@ import com.google.firebase.database.ValueEventListener;
 public class LoginFragment extends Fragment {
 
     private EditText mEmail, mPassword;
-    private FloatingActionButton mGo;
     private ProgressDialog mProgress;
-    private TextView mRegister,mForgotPassword;
-    private Button mGoogleLogin;
+    private Button mGoogleSignin, mSignin;
+    private Snackbar snackbar;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private GoogleApiClient mGoogleApiClient;
     private DatabaseReference mUserRef;
-    GoogleSignInAccount account;
+    private GoogleSignInAccount account;
 
-    private String TAG = "Jeetu";
-    private String EMAIL = "email";
-    private String PASSWORD = "password";
     private int RC_SIGN_IN = 2;
 
     public LoginFragment() {
@@ -75,8 +70,9 @@ public class LoginFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mUserRef = FirebaseDatabase.getInstance().getReference().child("user");
-        //----NETWORK STATE CHECKING----
+        mUserRef = FirebaseDatabase.getInstance().getReference().child(Constants.USER);
+
+        // Network state is checked
         if (savedInstanceState == null) {
             ConnectivityManager cm =
                     (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -86,10 +82,21 @@ public class LoginFragment extends Fragment {
                     activeNetwork.isConnectedOrConnecting();
 
             if (!isConnected)
-                Toast.makeText(getActivity(), "Sorry no network connection\nPlease turn on network connection", Toast.LENGTH_LONG).show();
+                if (Build.VERSION.SDK_INT >= 21) {
+                    snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content),
+                            "Sorry no network connection\nPlease turn on network connection",
+                            Snackbar.LENGTH_INDEFINITE).setAction("Dismiss", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            snackbar.dismiss();
+                        }
+                    });
+                    snackbar.show();
+                } else
+                    Toast.makeText(getActivity(), "Sorry no network connection\nPlease turn on network connection", Toast.LENGTH_LONG).show();
         }
 
-        //----USER LOGIN LISTENER-----
+        // User login listener
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -103,7 +110,7 @@ public class LoginFragment extends Fragment {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild(user.getUid())) {
                                 chageIntent();
-                            } else {//CHECKING IF NEW USER VIA GOOGLE LOGIN
+                            } else {// Checking if new user via google login
                                 UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
                                         .setDisplayName(account.getDisplayName())
                                         .build();
@@ -113,25 +120,20 @@ public class LoginFragment extends Fragment {
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
 
-                                            mUserRef.child(user.getUid()).child("username").setValue(account.getDisplayName());
-                                            mUserRef.child(user.getUid()).child("email").setValue(account.getEmail());
+                                            mUserRef.child(user.getUid()).child(Constants.USERNAME).setValue(account.getDisplayName());
+                                            mUserRef.child(user.getUid()).child(Constants.EMAIL).setValue(account.getEmail());
                                             chageIntent();
                                         }
                                     }
                                 });
                             }
-
                         }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-
                         }
                     });
-
-
                 }
-
             }
         };
 
@@ -143,10 +145,13 @@ public class LoginFragment extends Fragment {
 
 
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
-                .enableAutoManage((AppCompatActivity) getActivity() /* FragmentActivity */, new GoogleApiClient.OnConnectionFailedListener() {
+                .enableAutoManage(getActivity() /* FragmentActivity */, new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Toast.makeText(getActivity(), "Login Failed", Toast.LENGTH_SHORT).show();
+                        if (Build.VERSION.SDK_INT >= 21)
+                            Snackbar.make(getActivity().findViewById(android.R.id.content), "Login Failed", Snackbar.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(getActivity(), "Login Failed", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -155,7 +160,7 @@ public class LoginFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_login, container, false);
+        return inflater.inflate(R.layout.fragment_login2, container, false);
     }
 
     @Override
@@ -163,11 +168,9 @@ public class LoginFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mEmail = (EditText) getActivity().findViewById(R.id.login_email);
         mPassword = (EditText) getActivity().findViewById(R.id.login_password);
-        mGo = (FloatingActionButton) getActivity().findViewById(R.id.login_fab);
-        mRegister = (TextView) getActivity().findViewById(R.id.register);
+        mSignin = (Button) getActivity().findViewById(R.id.signin_button);
         mProgress = new ProgressDialog(getActivity());
-        mGoogleLogin = (Button) getActivity().findViewById(R.id.login_google_button);
-        mForgotPassword =(TextView)getActivity().findViewById(R.id.forgot_password);
+        mGoogleSignin = (Button) getActivity().findViewById(R.id.google_signin_button);
     }
 
     @Override
@@ -179,9 +182,10 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
+        // Stored data in EditText fields are recovered.
         if (savedInstanceState != null) {
-            mEmail.setText(savedInstanceState.getString(EMAIL));
-            mPassword.setText(savedInstanceState.getString(PASSWORD));
+            mEmail.setText(savedInstanceState.getString(Constants.EMAIL));
+            mPassword.setText(savedInstanceState.getString(Constants.PASSWORD));
         }
     }
 
@@ -189,30 +193,18 @@ public class LoginFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        SharedPreferences loginState =getActivity().getSharedPreferences("LOGIN_STATE",Context.MODE_PRIVATE);
-
-        if(loginState.getInt("LOGIN_STATE",0)==1)
-        {
+        // Checking if the user previously in signed in state or not.
+        SharedPreferences loginState = getActivity().getSharedPreferences(Constants.LOGIN_STATE, Context.MODE_PRIVATE);
+        if (loginState.getInt(Constants.LOGIN_STATE, 0) == 1) {
             mProgress.setMessage("Logging in your last session");
             mProgress.setCancelable(false);
             mProgress.show();
         }
 
-        mRegister.setOnClickListener(new View.OnClickListener() {
+        mSignin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RegisterFragment register = new RegisterFragment();
-                FragmentTransaction tempTransaction = getActivity().getFragmentManager().beginTransaction();
-                tempTransaction.replace(R.id.frag_container, register);
-                tempTransaction.addToBackStack(null);
-                tempTransaction.commit();
-            }
-        });
-
-        mGo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
+                // No empty data.
                 if (!TextUtils.isEmpty(mEmail.getText().toString()) && !TextUtils.isEmpty(mPassword.getText().toString())) {
                     mProgress.setMessage("Logging in");
                     mProgress.show();
@@ -223,38 +215,37 @@ public class LoginFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (!task.isSuccessful()) {
-                                        Toast.makeText(getActivity(), "Cant Log in.", Toast.LENGTH_SHORT).show();
+                                        if (Build.VERSION.SDK_INT >= 21)
+                                            Snackbar.make(getActivity().findViewById(android.R.id.content), "Cant Log in.", Snackbar.LENGTH_SHORT).show();
+                                        else
+                                            Toast.makeText(getActivity(), "Cant Log in.", Toast.LENGTH_SHORT).show();
                                         mProgress.dismiss();
                                     }
-
-
                                 }
                             });
                 } else {
-                    Toast.makeText(getActivity(), "Please fill email and password", Toast.LENGTH_SHORT).show();
+                    if (Build.VERSION.SDK_INT >= 21)
+                        Snackbar.make(getActivity().findViewById(android.R.id.content), "Please fill email and password", Snackbar.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(getActivity(), "Please fill email and password", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
 
-        mGoogleLogin.setOnClickListener(new View.OnClickListener() {
+        mGoogleSignin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signInGoogle();
             }
         });
 
-        mForgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(),"Feature not yet added",Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        // Authentication listener is unregistered.
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
@@ -262,12 +253,20 @@ public class LoginFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-
+        // Connectivity was checked for once.
         String CHECK_INTERNET = "InternetStatusCheck";
         outState.putBoolean(CHECK_INTERNET, false);
-        outState.putString(EMAIL, mEmail.getText().toString());
-        outState.putString(PASSWORD, mPassword.getText().toString());
+
+        // Data in EditText fields is stored.
+        outState.putString(Constants.EMAIL, mEmail.getText().toString());
+        outState.putString(Constants.PASSWORD, mPassword.getText().toString());
         super.onSaveInstanceState(outState);
+    }
+
+    private void signInGoogle() {
+        // Google accounts intent pops up.
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
@@ -275,17 +274,22 @@ public class LoginFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
-            mProgress.setMessage("Logging in");
-            mProgress.show();
-            mProgress.setCancelable(false);
+
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
-                // Google Sign In was successful, authenticate with Firebase
-                account=result.getSignInAccount();
+                // Google signin was successful, authenticate with Firebase
+                mProgress.setMessage("Logging in");
+                mProgress.show();
+                mProgress.setCancelable(false);
+
+                account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
+            } else {
+                if (Build.VERSION.SDK_INT >= 21)
+                    Snackbar.make(getActivity().findViewById(android.R.id.content), "Sorry we couldn't select your account", Snackbar.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(getActivity(), "Sorry we couldn't select your account", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Toast.makeText(getActivity(), "Sorry we couldn't select your account", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -301,23 +305,20 @@ public class LoginFragment extends Fragment {
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Toast.makeText(getActivity(), "Cant Log in.", Toast.LENGTH_SHORT).show();
+                            if (Build.VERSION.SDK_INT >= 21)
+                                Snackbar.make(getActivity().findViewById(android.R.id.content), "Cant Log in.", Snackbar.LENGTH_SHORT).show();
+                            else
+                                Toast.makeText(getActivity(), "Cant Log in.", Toast.LENGTH_SHORT).show();
                             mProgress.dismiss();
                         }
                     }
                 });
     }
 
-    private void signInGoogle() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    private void chageIntent()
-    {
-        SharedPreferences loginState = getActivity().getSharedPreferences("LOGIN_STATE",Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor =loginState.edit();
-        editor.putInt("LOGIN_STATE",1);
+    private void chageIntent() {
+        SharedPreferences loginState = getActivity().getSharedPreferences(Constants.LOGIN_STATE, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = loginState.edit();
+        editor.putInt(Constants.LOGIN_STATE, 1);
         editor.apply();
         mProgress.dismiss();
         Intent intent = new Intent(getActivity(), MainActivity.class);
@@ -325,4 +326,5 @@ public class LoginFragment extends Fragment {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
+
 }
