@@ -37,7 +37,12 @@ This app, designed for individuals, designed for you, where you can learn and po
 Version Log -Release dates.
 
 Ver 1.0.0 -------   2.2.2017
+      1st release of the application
 
 Ver 1.0.1 -------   3.2.2017
+      -Post text size alteration.
 
 Ver 1.1.0 -------   9.2.2017
+      - Post editing funtion added.
+      - Post page UI changed and made better with custom fonts.
+      
