@@ -32,7 +32,7 @@ This app, designed for individuals, designed for you, where you can learn and po
 --Thank You 
 
 
-*Download url - http://bit.ly/2pvc55N *
+*Download url - http://bit.ly/2pvc55N*
 
 
 Version Log -Release dates.
