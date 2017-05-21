@@ -32,7 +32,7 @@ This app, designed for individuals, designed for you, where you can learn and po
 --Thank You 
 
 
-*Download url - https://firebasestorage.googleapis.com/v0/b/codehub-7e17a.appspot.com/o/CodeHub-1.1.apk?alt=media&token=d8f1aa6c-81d1-4cc0-9bdb-c291791cf8d2*
+*Download url - http://bit.ly/2pvc55N *
 
 
 Version Log -Release dates.
