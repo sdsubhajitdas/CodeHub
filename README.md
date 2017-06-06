@@ -51,6 +51,3 @@ Ver 1.1.0 -------   9.2.2017
       - Post page UI changed and made better with custom fonts.
       - Admob implemented to display ads.
       
-
-
-just some text
