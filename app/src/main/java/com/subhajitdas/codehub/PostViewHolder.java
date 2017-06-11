@@ -1,4 +1,4 @@
-package com.subhajitdas.c;
+package com.subhajitdas.codehub;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

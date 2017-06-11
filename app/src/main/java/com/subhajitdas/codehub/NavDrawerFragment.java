@@ -1,4 +1,4 @@
-package com.subhajitdas.c;
+package com.subhajitdas.codehub;
 
 
 import android.app.DownloadManager;
@@ -36,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.subhajitdas.codehub.login.LoginActivity;
 
 import java.util.ArrayList;
 
@@ -232,7 +233,7 @@ public class NavDrawerFragment extends Fragment {
                         editor.putInt(Constants.LOGIN_STATE, 0);
                         editor.apply();
                         mDrawerLayout.closeDrawers();
-                        Intent intent = new Intent(getActivity(), com.subhajitdas.c.LoginActivity.class);
+                        Intent intent = new Intent(getActivity(), LoginActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);

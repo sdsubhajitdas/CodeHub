@@ -33,15 +33,15 @@
 
         </FrameLayout>
 
-</RelativeLayout>
+    </RelativeLayout>
 
-<FrameLayout
-android:id="@+id/nav_drawer_frag_container"
-android:layout_width="280dp"
-android:layout_height="match_parent"
-android:layout_gravity="start">
-</FrameLayout>
+    <FrameLayout
+        android:id="@+id/nav_drawer_frag_container"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:layout_marginTop="56dp"></FrameLayout>
 
-    </android.support.v4.widget.DrawerLayout>
+</android.support.v4.widget.DrawerLayout>
 
 

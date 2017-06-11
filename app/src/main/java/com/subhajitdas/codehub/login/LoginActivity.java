@@ -1,8 +1,10 @@
-package com.subhajitdas.c;
+package com.subhajitdas.codehub.login;
 
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,34 +17,42 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.subhajitdas.codehub.Constants;
+import com.subhajitdas.codehub.MainActivity;
+import com.subhajitdas.codehub.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements Communicator {
 
-    LoginFragment login;
+    private LoginFragment mLoginFragment;
+    private SharedPreferences mLoginState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        login = new LoginFragment();
-
+        mLoginFragment = new LoginFragment();
+        // Layout viewpager work.
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(login, "Sign In");
+        adapter.addFragment(mLoginFragment, "Sign In");
         adapter.addFragment(new RegisterFragment(), "Register");
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        mLoginState= getSharedPreferences(Constants.LOGIN_STATE, Context.MODE_PRIVATE);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
+        //Asking for permissions.
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.INTERNET)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -50,7 +60,6 @@ public class LoginActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, 1);
             }
         }
-
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.ACCESS_NETWORK_STATE)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -58,7 +67,6 @@ public class LoginActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, 1);
             }
         }
-
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.CHANGE_NETWORK_STATE)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -66,7 +74,6 @@ public class LoginActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CHANGE_NETWORK_STATE}, 1);
             }
         }
-
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -91,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        login.onActivityResult(requestCode, resultCode, data);
+        mLoginFragment.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -102,9 +109,21 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    // Interface method.
+    @Override
+    public void changeIntent() {
+        SharedPreferences.Editor editor = mLoginState.edit();
+        editor.putInt(Constants.LOGIN_STATE, 1);
+        editor.apply();
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
 
     // View Pager class for page swiping.
-    class ViewPagerAdapter extends FragmentPagerAdapter {
+    private class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
@@ -122,7 +141,7 @@ public class LoginActivity extends AppCompatActivity {
             return mFragmentList.size();
         }
 
-        public void addFragment(Fragment fragment, String title) {
+        void addFragment(Fragment fragment, String title) {
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }

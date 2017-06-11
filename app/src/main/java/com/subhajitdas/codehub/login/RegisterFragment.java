@@ -1,4 +1,4 @@
-package com.subhajitdas.c;
+package com.subhajitdas.codehub.login;
 
 
 import android.app.ProgressDialog;
@@ -25,6 +25,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.subhajitdas.codehub.Constants;
+import com.subhajitdas.codehub.MainActivity;
+import com.subhajitdas.codehub.R;
 
 
 public class RegisterFragment extends Fragment {
@@ -32,11 +35,11 @@ public class RegisterFragment extends Fragment {
     private EditText mEmail, mPassword, mUsername;
     private Button mRegister;
     private ProgressDialog mProgress;
+    private Boolean mRegisterButtonClicked =false;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
-    private String TAG = "Jeetu";
+    private Communicator mCommunicator;
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -59,32 +62,32 @@ public class RegisterFragment extends Fragment {
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    //Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-                    mProgress.setMessage("Setting up your account ");
-                    userRef.child(user.getUid()).child(Constants.USERNAME).setValue(mUsername.getText().toString());
-                    userRef.child(user.getUid()).child(Constants.EMAIL).setValue(mEmail.getText().toString());
-                    userRef.child(user.getUid()).child(Constants.PASSWORD).setValue(mPassword.getText().toString());
+                if (mRegisterButtonClicked) {
+                    FirebaseUser user = firebaseAuth.getCurrentUser();
+                    if (user != null) {
+                        // User is signed in
 
-                    UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
-                            .setDisplayName(mUsername.getText().toString())
-                            .build();
+                        mProgress.setMessage("Setting up your account ");
+                        userRef.child(user.getUid()).child(Constants.USERNAME).setValue(mUsername.getText().toString());
+                        userRef.child(user.getUid()).child(Constants.EMAIL).setValue(mEmail.getText().toString());
+                        userRef.child(user.getUid()).child(Constants.PASSWORD).setValue(mPassword.getText().toString());
 
-                    user.updateProfile(userProfileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                mProgress.dismiss();
-                                // Changing activity.
-                                Intent intent = new Intent(getActivity(), MainActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
+                        UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(mUsername.getText().toString())
+                                .build();
+
+                        user.updateProfile(userProfileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    mProgress.dismiss();
+                                    // Changing activity.
+                                    mCommunicator.changeIntent();
+                                }
+
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         };
@@ -99,11 +102,13 @@ public class RegisterFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        // UI elements initialized.
         mUsername = (EditText) getActivity().findViewById(R.id.register_username);
         mEmail = (EditText) getActivity().findViewById(R.id.register_email);
         mPassword = (EditText) getActivity().findViewById(R.id.register_password);
         mRegister = (Button) getActivity().findViewById(R.id.register_button);
         mProgress = new ProgressDialog(getActivity());
+        mCommunicator= (Communicator) getActivity();
     }
 
     @Override
@@ -130,11 +135,11 @@ public class RegisterFragment extends Fragment {
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Data not empty
+                // Checking for no empty data
                 if (!(TextUtils.isEmpty(mEmail.getText().toString())) &&
                         !(TextUtils.isEmpty(mPassword.getText().toString())) &&
                         !(TextUtils.isEmpty(mUsername.getText().toString()))) {
-
+                    mRegisterButtonClicked = true;
                     mProgress.setMessage("Creating Account");
                     mProgress.show();
                     mProgress.setCancelable(false);
@@ -142,9 +147,10 @@ public class RegisterFragment extends Fragment {
                             .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-                                    //Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
-                                    if (!task.isSuccessful()) {
+                                    // Signin process done
+                                    if (!task.isSuccessful()) { // If Signin fails .
+                                        mRegisterButtonClicked=false;
                                         if (Build.VERSION.SDK_INT >= 21)
                                             Snackbar.make(getActivity().findViewById(android.R.id.content), "Cant create account", Snackbar.LENGTH_SHORT).show();
                                         else
@@ -153,6 +159,7 @@ public class RegisterFragment extends Fragment {
                                     }
                                 }
                             });
+
                 } else {
                     if (Build.VERSION.SDK_INT >= 21)
                         Snackbar.make(getActivity().findViewById(android.R.id.content), "Please fill in details", Snackbar.LENGTH_SHORT).show();
@@ -164,24 +171,10 @@ public class RegisterFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
         if (mAuthListener != null) {
             mAuth.removeAuthStateListener(mAuthListener);
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        // Storing the data before pausing.
-        outState.putString(Constants.USERNAME, mUsername.getText().toString());
-        outState.putString(Constants.EMAIL, mEmail.getText().toString());
-        outState.putString(Constants.PASSWORD, mPassword.getText().toString());
-        super.onSaveInstanceState(outState);
     }
 }

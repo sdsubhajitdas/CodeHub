@@ -1,4 +1,4 @@
-package com.subhajitdas.c;
+package com.subhajitdas.codehub.login;
 
 
 import android.app.ProgressDialog;
@@ -39,6 +39,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.subhajitdas.codehub.Constants;
+import com.subhajitdas.codehub.R;
 
 
 public class LoginFragment extends Fragment {
@@ -53,6 +55,8 @@ public class LoginFragment extends Fragment {
     private GoogleApiClient mGoogleApiClient;
     private DatabaseReference mUserRef;
     private GoogleSignInAccount account;
+    private SharedPreferences mLoginState;
+    private Communicator mCommunicator;
 
     private int RC_SIGN_IN = 2;
 
@@ -104,14 +108,15 @@ public class LoginFragment extends Fragment {
                 if (user != null) {
                     // User is signed in
 
-                    mUserRef.addValueEventListener(new ValueEventListener() {
+                    mUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild(user.getUid())) {
-                                chageIntent();
+                                mProgress.dismiss();
+                                mCommunicator.changeIntent();
                             } else {// Checking if new user via google login
                                 UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()
-                                        .setDisplayName(account.getDisplayName())
+                                         .setDisplayName(account.getDisplayName())
                                         .build();
 
                                 user.updateProfile(userProfileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -121,13 +126,13 @@ public class LoginFragment extends Fragment {
 
                                             mUserRef.child(user.getUid()).child(Constants.USERNAME).setValue(account.getDisplayName());
                                             mUserRef.child(user.getUid()).child(Constants.EMAIL).setValue(account.getEmail());
-                                            chageIntent();
+                                            mProgress.dismiss();
+                                            mCommunicator.changeIntent();
                                         }
                                     }
                                 });
                             }
                         }
-
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
                         }
@@ -141,16 +146,14 @@ public class LoginFragment extends Fragment {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
-
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .enableAutoManage(getActivity() /* FragmentActivity */, new GoogleApiClient.OnConnectionFailedListener() {
                     @Override
                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
                         if (Build.VERSION.SDK_INT >= 21)
-                            Snackbar.make(getActivity().findViewById(android.R.id.content), "Login Failed", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(getActivity().findViewById(android.R.id.content), "Signin Failed", Snackbar.LENGTH_SHORT).show();
                         else
-                            Toast.makeText(getActivity(), "Login Failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Signin Failed", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -165,22 +168,34 @@ public class LoginFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        // UI elements initialized.
         mEmail = (EditText) getActivity().findViewById(R.id.login_email);
         mPassword = (EditText) getActivity().findViewById(R.id.login_password);
         mSignin = (Button) getActivity().findViewById(R.id.signin_button);
         mProgress = new ProgressDialog(getActivity());
         mGoogleSignin = (Button) getActivity().findViewById(R.id.google_signin_button);
+        mLoginState= getActivity().getSharedPreferences(Constants.LOGIN_STATE, Context.MODE_PRIVATE);
+        mCommunicator = (Communicator) getActivity();
     }
 
     @Override
     public void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthListener);
+
+        // Checking if the user previously in signed in state or not.
+        if (mLoginState.getInt(Constants.LOGIN_STATE, 0) == 1) {
+            mProgress.setMessage("Logging in your last session");
+            mProgress.setCancelable(false);
+            mProgress.show();
+        }
     }
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
+
         // Stored data in EditText fields are recovered.
         if (savedInstanceState != null) {
             mEmail.setText(savedInstanceState.getString(Constants.EMAIL));
@@ -192,20 +207,13 @@ public class LoginFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        // Checking if the user previously in signed in state or not.
-        SharedPreferences loginState = getActivity().getSharedPreferences(Constants.LOGIN_STATE, Context.MODE_PRIVATE);
-        if (loginState.getInt(Constants.LOGIN_STATE, 0) == 1) {
-            mProgress.setMessage("Logging in your last session");
-            mProgress.setCancelable(false);
-            mProgress.show();
-        }
-
+        // Sign in button onclick listener.
         mSignin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // No empty data.
                 if (!TextUtils.isEmpty(mEmail.getText().toString()) && !TextUtils.isEmpty(mPassword.getText().toString())) {
-                    mProgress.setMessage("Logging in");
+                    mProgress.setMessage("Signing in");
                     mProgress.show();
                     mProgress.setCancelable(false);
 
@@ -215,9 +223,9 @@ public class LoginFragment extends Fragment {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (!task.isSuccessful()) {
                                         if (Build.VERSION.SDK_INT >= 21)
-                                            Snackbar.make(getActivity().findViewById(android.R.id.content), "Cant Log in.", Snackbar.LENGTH_SHORT).show();
+                                            Snackbar.make(getActivity().findViewById(android.R.id.content), "Email id or password invalid.", Snackbar.LENGTH_SHORT).show();
                                         else
-                                            Toast.makeText(getActivity(), "Cant Log in.", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(), "Email id or password invalid.", Toast.LENGTH_SHORT).show();
                                         mProgress.dismiss();
                                     }
                                 }
@@ -232,6 +240,7 @@ public class LoginFragment extends Fragment {
             }
         });
 
+        // Google button onclick listener.
         mGoogleSignin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -239,27 +248,6 @@ public class LoginFragment extends Fragment {
             }
         });
 
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        // Authentication listener is unregistered.
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        // Connectivity was checked for once.
-        String CHECK_INTERNET = "InternetStatusCheck";
-        outState.putBoolean(CHECK_INTERNET, false);
-
-        // Data in EditText fields is stored.
-        outState.putString(Constants.EMAIL, mEmail.getText().toString());
-        outState.putString(Constants.PASSWORD, mPassword.getText().toString());
-        super.onSaveInstanceState(outState);
     }
 
     private void signInGoogle() {
@@ -314,16 +302,30 @@ public class LoginFragment extends Fragment {
                 });
     }
 
-    private void chageIntent() {
-        SharedPreferences loginState = getActivity().getSharedPreferences(Constants.LOGIN_STATE, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = loginState.edit();
-        editor.putInt(Constants.LOGIN_STATE, 1);
-        editor.apply();
-        mProgress.dismiss();
-        Intent intent = new Intent(getActivity(), MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // Connectivity was checked for once.
+        String CHECK_INTERNET = "InternetStatusCheck";
+        outState.putBoolean(CHECK_INTERNET, false);
+
+        // Data in EditText fields is stored.
+        outState.putString(Constants.EMAIL, mEmail.getText().toString());
+        outState.putString(Constants.PASSWORD, mPassword.getText().toString());
+        super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Authentication listener is unregistered.
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mProgress.dismiss();
+    }
 }

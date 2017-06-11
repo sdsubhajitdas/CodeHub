@@ -1,4 +1,4 @@
-package com.subhajitdas.c;
+package com.subhajitdas.codehub;
 
 
 import android.content.DialogInterface;
@@ -33,14 +33,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.app_bar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_menu_white_48px);
         setSupportActionBar(toolbar);
 
+        /*
         mAdView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-
+        */
         if (findViewById(R.id.main_activity_frag_container) != null) {
             ListFragment list = new ListFragment();
             getFragmentManager().beginTransaction().add(R.id.main_activity_frag_container, list).commit();

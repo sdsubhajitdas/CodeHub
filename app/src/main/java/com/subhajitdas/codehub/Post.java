@@ -1,4 +1,4 @@
-package com.subhajitdas.c;
+package com.subhajitdas.codehub;
 
 /**
  * Created by Subhajit Das on 10-01-2017.

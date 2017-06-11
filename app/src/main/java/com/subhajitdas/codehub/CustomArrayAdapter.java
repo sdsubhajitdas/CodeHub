@@ -1,4 +1,4 @@
-package com.subhajitdas.c;
+package com.subhajitdas.codehub;
 
 import android.content.Context;
 import android.view.LayoutInflater;
