@@ -33,7 +33,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/edit_post_title"
                 android:id="@+id/edit_post_content"
-                android:background="@color/postBackground"
                 android:layout_marginTop="10dp"
                 android:padding="10dp"
                 android:textColor="@color/postText"

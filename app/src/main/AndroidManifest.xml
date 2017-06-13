@@ -34,7 +34,10 @@
 
         <!-- android:windowSoftInputMode="adjustResize" -->
 
-        <activity android:name=".post.PostActivity"></activity>
+        <activity android:name=".post.PostActivity" />
+        <activity
+            android:name=".readPost.ReadPost"
+            android:parentActivityName=".post.PostActivity" />
     </application>
 
 </manifest>

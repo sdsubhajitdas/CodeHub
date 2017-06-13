@@ -20,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.subhajitdas.codehub.Constants;
 import com.subhajitdas.codehub.MainActivity;
 import com.subhajitdas.codehub.R;
+import com.subhajitdas.codehub.post.PostActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +116,7 @@ public class LoginActivity extends AppCompatActivity implements Communicator {
         SharedPreferences.Editor editor = mLoginState.edit();
         editor.putInt(Constants.LOGIN_STATE, 1);
         editor.apply();
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        Intent intent = new Intent(LoginActivity.this, PostActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
