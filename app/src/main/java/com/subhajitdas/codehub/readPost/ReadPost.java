@@ -14,8 +14,9 @@ public class ReadPost extends AppCompatActivity {
         setContentView(R.layout.activity_read_post);
 
         mToolbar = (Toolbar) findViewById(R.id.read_toolbar);
-        mToolbar.setTitle("Some random title which ");
-        mToolbar.setSubtitle("Some random description which is very big in size so i ");
+        mToolbar.setTitle("Read Post");
+        //mToolbar.setTitle("Some random title which ");
+       // mToolbar.setSubtitle("Some random description which is very big in size so i ");
         setSupportActionBar(mToolbar);
         if(getSupportActionBar()!=null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
