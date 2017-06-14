@@ -20,7 +20,7 @@
                 android:textColor="@android:color/black"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/title"
+                android:id="@+id/read_title"
                 android:gravity="center"
                 android:textSize="30sp"
                 android:layout_marginBottom="5dp" />

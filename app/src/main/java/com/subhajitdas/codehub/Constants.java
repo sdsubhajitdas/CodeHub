@@ -12,9 +12,10 @@ public class Constants {
     public static final String PASSWORD = "password";
     public static final String LIKE = "like";
     public static final String BOOKMARK = "bookmark";
+    public static final String PROGRAM = "program";
+    public static final String PROGRAMS = "programs";
 
     //Program data branch elements
-    public static final String PROGRAM = "program";
     public static final String DATE = "date";
     public static final String FILEUID = "fileUid";
     public static final String FILEURI = "fileUri";
@@ -22,6 +23,8 @@ public class Constants {
     public static final String TITLE = "title";
     public static final String USERID = "userId";
     public static final String USERNAME = "userName";
+
+    public static final String KEY="key";
 
 
 }

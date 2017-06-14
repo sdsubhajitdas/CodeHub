@@ -3,7 +3,7 @@ package com.subhajitdas.codehub.post;
 /**
  * Created by Subhajit Das on 12-06-2017.
  */ // Class for the data retrieved
-class Post {
+public class Post {
     public String getDate() {
         return date;
     }

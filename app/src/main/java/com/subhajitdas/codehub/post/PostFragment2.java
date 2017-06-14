@@ -39,16 +39,6 @@ public class PostFragment2 extends Fragment {
         // Required empty public constructor
     }
 
-    // Class for data with key for array list.
-    class PostData {
-        public Post data = new Post();
-        public String key = "";
-
-        public PostData() {
-
-        }
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

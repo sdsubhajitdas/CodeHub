@@ -2,6 +2,7 @@ package com.subhajitdas.codehub.post;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 
 public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHolder> {
 
-    private ArrayList<PostFragment2.PostData> mDataSet;
+    private ArrayList<PostData> mDataSet;
     private DataSnapshot mLikeDataSnapshot,mBookmarkDataSnapshot;
     private DatabaseReference mRootRef;
 
@@ -67,7 +68,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
     }
 
     // Constructor to get the data-set.
-    public PostDataAdapter(ArrayList<PostFragment2.PostData> data) {
+    public PostDataAdapter(ArrayList<PostData> data) {
         mDataSet = data;
         mRootRef = FirebaseDatabase.getInstance().getReference();
         //Offline for Like branch and storing data.
@@ -181,6 +182,14 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(holder.context, ReadPost.class);
+                intent.putExtra(Constants.KEY,mDataSet.get(position).key);
+                intent.putExtra(Constants.DATE,mDataSet.get(position).data.date);
+                intent.putExtra(Constants.FILEUID,mDataSet.get(position).data.fileUid);
+                intent.putExtra(Constants.FILEURI,mDataSet.get(position).data.fileUri);
+                intent.putExtra(Constants.LIKES,mDataSet.get(position).data.likes);
+                intent.putExtra(Constants.TITLE,mDataSet.get(position).data.title);
+                intent.putExtra(Constants.USERID,mDataSet.get(position).data.userId);
+                intent.putExtra(Constants.USERNAME,mDataSet.get(position).data.userName);
                 holder.context.startActivity(intent);
             }
         });
