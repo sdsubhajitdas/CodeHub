@@ -53,4 +53,9 @@
     <string name="continue_with_google">Continue With Google</string>
     <string name="program_description">Program Description</string>
     <string name="from">From :</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="language_used">Language Used</string>
+    <string name="upload_files">Upload Files</string>
+    <string name="editor">Editor</string>
 </resources>

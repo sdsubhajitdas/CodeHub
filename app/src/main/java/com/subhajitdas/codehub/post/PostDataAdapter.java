@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +54,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         TextView postTitle, posterName, postDate, postLike;
         LikeButton likeButton, bookmarkButton;
         CardView cardView;
+        ImageView language;
         private Context context;
 
         public ViewHolder(View v) {
@@ -62,6 +65,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             postLike = (TextView) v.findViewById(R.id.post_like);
             likeButton = (LikeButton) v.findViewById(R.id.like_button);
             bookmarkButton = (LikeButton) v.findViewById(R.id.bookmark_button);
+            language = (ImageView) v.findViewById(R.id.post_lang);
             cardView = (CardView) v.findViewById(R.id.card_view);
             context=v.getContext();
         }
@@ -123,7 +127,10 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         //Setting up the two buttons.
         setLikeButton(holder, mDataSet.get(position).key);
         setBookmarkButton(holder,mDataSet.get(position).key);
-
+        //Setting up the language ImageView.
+        holder.language.setImageDrawable(null);
+        setLang(holder,mDataSet.get(position).data.language);
+        Log.e("Jeetu",mDataSet.get(position).data.title);
         //Handling the like click
         holder.likeButton.setOnLikeListener(new OnLikeListener() {
             @Override
@@ -190,9 +197,31 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
                 intent.putExtra(Constants.TITLE,mDataSet.get(position).data.title);
                 intent.putExtra(Constants.USERID,mDataSet.get(position).data.userId);
                 intent.putExtra(Constants.USERNAME,mDataSet.get(position).data.userName);
+                intent.putExtra(Constants.DESCRIPTION,mDataSet.get(position).data.description);
+                intent.putExtra(Constants.LANGUAGE,mDataSet.get(position).data.language);
                 holder.context.startActivity(intent);
             }
         });
+    }
+    //For setting the language icon in the post card.
+    private void setLang(ViewHolder holder, String language) {
+
+        Log.e("Jeetu",language + "  enter");
+        if(language.equals(Constants.C)){
+            holder.language.setImageResource(R.drawable.c);
+        }
+        else if(language.equals(Constants.CPP)){
+            holder.language.setImageResource(R.drawable.cpp);
+        }
+        else if(language.equals(Constants.JAVA)){
+            holder.language.setImageResource(R.drawable.java);
+        }
+        else if(language.equals(Constants.PYTHON)){
+            holder.language.setImageResource(R.drawable.python);
+        }
+        else {
+            holder.language.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override

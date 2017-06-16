@@ -15,6 +15,8 @@ public class Constants {
     public static final String PROGRAM = "program";
     public static final String PROGRAMS = "programs";
 
+    public static final String EDITOR = "editor";
+
     //Program data branch elements
     public static final String DATE = "date";
     public static final String FILEUID = "fileUid";
@@ -23,8 +25,16 @@ public class Constants {
     public static final String TITLE = "title";
     public static final String USERID = "userId";
     public static final String USERNAME = "userName";
+    public static final String DESCRIPTION = "description";
+    public static final String LANGUAGE = "language";
 
-    public static final String KEY="key";
+    public static final String KEY = "key";
+
+
+    public static final String C ="C";
+    public static final String CPP ="C++";
+    public static final String JAVA ="Java";
+    public static final String PYTHON ="Python";
 
 
 }

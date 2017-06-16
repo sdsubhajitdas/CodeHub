@@ -49,6 +49,8 @@ public class ReadPost extends AppCompatActivity {
             mPostData.data.likes = intent.getStringExtra(Constants.LIKES);
             mPostData.data.fileUid = intent.getStringExtra(Constants.FILEUID);
             mPostData.data.fileUri = intent.getStringExtra(Constants.FILEURI);
+            mPostData.data.description= intent.getStringExtra(Constants.DESCRIPTION);
+            mPostData.data.language=intent.getStringExtra(Constants.LANGUAGE);
         }
         //Database is initialized.
         mProgramFile = FirebaseStorage.getInstance().getReference().child(Constants.PROGRAMS);
@@ -74,6 +76,7 @@ public class ReadPost extends AppCompatActivity {
         mDate = (TextView) findViewById(R.id.read_date);
         mDate.setText(mPostData.data.date);
         mPosterName.setText(mPostData.data.userName);
+        mDescription.setText(mPostData.data.description);
     }
 
     @Override

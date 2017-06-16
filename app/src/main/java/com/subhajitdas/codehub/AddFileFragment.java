@@ -227,7 +227,7 @@ public class AddFileFragment extends Fragment {
                 if (mFileUploadCheck.isChecked()) {
                     //----CHOOSE TXT FILE TO UPLOAD----
                     Intent textIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                    textIntent.setType("text/*");
+                    textIntent.setType("text/plain");
                     startActivityForResult(textIntent, TEXT_REQUEST);
                 } else {
                     fileReady = false;

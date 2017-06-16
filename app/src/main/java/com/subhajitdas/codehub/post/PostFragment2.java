@@ -2,9 +2,11 @@ package com.subhajitdas.codehub.post;
 
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.subhajitdas.codehub.Constants;
 import com.subhajitdas.codehub.R;
+import com.subhajitdas.codehub.upload.UploadPost;
 
 import java.util.ArrayList;
 import java.util.TimerTask;
@@ -27,6 +30,7 @@ import java.util.TimerTask;
 
 public class PostFragment2 extends Fragment {
 
+    private FloatingActionButton mAddPostButton;
     private RecyclerView mPostRecyclerView;
     private PostDataAdapter mAdapter;
     private ArrayList<PostData> mDataSet;
@@ -152,6 +156,14 @@ public class PostFragment2 extends Fragment {
         if (dataSnapshot.hasChild(Constants.USERNAME)) {
             returnData.data.userName = dataSnapshot.child(Constants.USERNAME).getValue().toString();
         }
+
+        if(dataSnapshot.hasChild(Constants.LANGUAGE)){
+            returnData.data.language = dataSnapshot.child(Constants.LANGUAGE).getValue().toString();
+        }
+
+        if(dataSnapshot.hasChild(Constants.DESCRIPTION)){
+            returnData.data.description = dataSnapshot.child(Constants.DESCRIPTION).getValue().toString();
+        }
         return returnData;
     }
 
@@ -166,6 +178,7 @@ public class PostFragment2 extends Fragment {
         super.onActivityCreated(savedInstanceState);
         //Initializing UI components and setting refreshing on.
         mPostRecyclerView = (RecyclerView) getActivity().findViewById(R.id.post_recycler_view);
+        mAddPostButton = (FloatingActionButton) getActivity().findViewById(R.id.floatingActionButton);
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swiperefresh);
         mSwipeRefreshLayout.setRefreshing(true);
 
@@ -184,7 +197,7 @@ public class PostFragment2 extends Fragment {
     public void onResume() {
         super.onResume();
 
-        //To handle the refresh behaviour of the layout.
+        //To handle the pull down to refresh behaviour of the layout.
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -201,6 +214,14 @@ public class PostFragment2 extends Fragment {
                 mPostRecyclerView.removeAllViews();
                 mDatasetRecord.clear();
                 mProgramRef.addChildEventListener(mProgramDataListener);
+            }
+        });
+
+        mAddPostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent uploadPost = new Intent(getActivity(), UploadPost.class);
+                getActivity().startActivity(uploadPost);
             }
         });
     }

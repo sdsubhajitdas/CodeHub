@@ -67,6 +67,8 @@ public class Post {
     public String title = "";
     public String userId = "";
     public String userName = "";
+    public String description = "";
+    public String language = "";
 
     public Post() {
 
