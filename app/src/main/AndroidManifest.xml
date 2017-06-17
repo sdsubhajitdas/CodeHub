@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.subhajitdas.codehub">
+    package="com.subhajitdas.c">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -18,7 +18,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".login.LoginActivity"
+            android:name="com.subhajitdas.c.login.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppTheme">
             <intent-filter>
@@ -30,22 +30,22 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.subhajitdas.c.MainActivity"
             android:label="@string/posts"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
 
         <!-- android:windowSoftInputMode="adjustResize" -->
 
-        <activity android:name=".post.PostActivity" />
+        <activity android:name="com.subhajitdas.c.post.PostActivity" />
 
         <activity
-            android:name=".readPost.ReadPost"
-            android:parentActivityName=".post.PostActivity" />
+            android:name="com.subhajitdas.c.readPost.ReadPost"
+            android:parentActivityName="com.subhajitdas.c.post.PostActivity" />
 
         <activity
-            android:name=".upload.UploadPost"
-            android:parentActivityName=".post.PostActivity">
+            android:name="com.subhajitdas.c.upload.UploadPost"
+            android:parentActivityName="com.subhajitdas.c.post.PostActivity">
         </activity>
 
     </application>
