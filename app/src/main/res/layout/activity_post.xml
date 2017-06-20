@@ -2,7 +2,8 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -38,12 +39,15 @@
 
         </RelativeLayout>
 
-        <FrameLayout
-            android:id="@+id/nav_drawer_container"
-            android:layout_width="280dp"
+        <android.support.design.widget.NavigationView
+            android:id="@+id/nav_view"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:background="@color/colorPrimaryDark" />
+            app:headerLayout="@layout/nav_header_layout"
+            app:menu="@menu/navigation_menu" />
+
+
 
     </android.support.v4.widget.DrawerLayout>
 

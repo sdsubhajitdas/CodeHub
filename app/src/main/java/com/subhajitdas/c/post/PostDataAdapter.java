@@ -261,4 +261,10 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         }
     }
 
+    public void setFilter(ArrayList<PostData> newList){
+        mDataSet.clear();
+        mDataSet.addAll(newList);
+        notifyDataSetChanged();
+    }
+
 }

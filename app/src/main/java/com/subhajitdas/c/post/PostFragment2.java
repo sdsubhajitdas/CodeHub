@@ -7,13 +7,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +46,7 @@ public class PostFragment2 extends Fragment {
     private DatabaseReference mProgramRef;
     private ChildEventListener mProgramDataListener;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private SearchView mSearchView;
 
     public PostFragment2() {
         // Required empty public constructor
@@ -52,6 +61,8 @@ public class PostFragment2 extends Fragment {
         //Turning on the offline capabilities of the database.
         mProgramRef = FirebaseDatabase.getInstance().getReference().child(Constants.PROGRAM);
         mProgramRef.keepSynced(true);
+
+        setHasOptionsMenu(true);
 
         //Storing of data is done in this portion using an array list.
         /**
@@ -202,6 +213,9 @@ public class PostFragment2 extends Fragment {
     public void onResume() {
         super.onResume();
 
+        NavigationView navView = (NavigationView) getActivity().findViewById(R.id.nav_view);
+        navView.setCheckedItem(R.id.nav_posts);
+
         //To handle the pull down to refresh behaviour of the layout.
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -230,4 +244,63 @@ public class PostFragment2 extends Fragment {
             }
         });
     }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        getActivity().getMenuInflater().inflate(R.menu.post_activity_menu, menu);
+        mSearchView = (SearchView) MenuItemCompat.getActionView((menu.findItem(R.id.post_action_search)));
+
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+
+                Log.i("SearchView:", "onClose");
+                mSearchView.onActionViewCollapsed();
+                return false;
+            }
+        });
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Log.e("Jeetu",newText);
+
+                newText = newText.toLowerCase();
+                ArrayList<PostData> newDataset = new ArrayList<PostData>();
+                newDataset.clear();
+                for(int i=0;i<mDataSet.size();i++){
+                    String dataName = mDataSet.get(i).data.title.toLowerCase();
+                    //Log.e("Jeetu","Searched     "+dataName);
+                    if(dataName.contains(newText)){
+                        newDataset.add(mDataSet.get(i));
+                        //Log.e("Jeetu","Added    "+dataName);
+                    }
+                }
+                mAdapter.setFilter(newDataset);
+                newDataset.clear();
+                //Log.e("Jeetu","DONE SEARCH");
+                return false;
+            }
+        });
+
+        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                mProgramRef.removeEventListener(mProgramDataListener);
+                mDataSet.clear();
+                mAdapter.notifyDataSetChanged();
+                mPostRecyclerView.removeAllViews();
+                mDatasetRecord.clear();
+                mProgramRef.addChildEventListener(mProgramDataListener);
+                return false;
+            }
+        });
+    }
+
 }
