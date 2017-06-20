@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
-    android:layout_height="200dp">
+    android:layout_height="180dp">
 
     <ImageView
         android:id="@+id/nav_cover_image"
@@ -23,7 +23,7 @@
         android:layout_alignParentEnd="false"
         android:layout_alignParentRight="false"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="75dp"
+        android:layout_marginTop="60dp"
         app:srcCompat="@drawable/ic_avatar" />
 
     <TextView
@@ -35,7 +35,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="120dp"
         android:text="@string/email_id"
         android:textColor="@android:color/white"
         android:textSize="18sp" />

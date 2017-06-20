@@ -32,7 +32,7 @@ import java.util.TimerTask;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class BookmarkFragment2 extends Fragment {
+public class BookmarkFragment extends Fragment {
 
     private TextView mNoBookmark;
     private RecyclerView mBookmarkRecyclerView;
@@ -47,7 +47,7 @@ public class BookmarkFragment2 extends Fragment {
     private ArrayList<PostData> mDataSet;       //Actual data of the post.
     private PostDataAdapter mAdapter;
 
-    public BookmarkFragment2() {
+    public BookmarkFragment() {
         // Required empty public constructor
     }
 
@@ -192,7 +192,7 @@ public class BookmarkFragment2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_bookmark_fragment2, container, false);
+        return inflater.inflate(R.layout.fragment_bookmark, container, false);
     }
 
     @Override

@@ -29,12 +29,6 @@
 
         </activity>
 
-        <activity
-            android:name="com.subhajitdas.c.MainActivity"
-            android:label="@string/posts"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-
         <!-- android:windowSoftInputMode="adjustResize" -->
 
         <activity android:name="com.subhajitdas.c.post.PostActivity" />

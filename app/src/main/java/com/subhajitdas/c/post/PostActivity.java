@@ -67,7 +67,7 @@ public class PostActivity extends AppCompatActivity {
         //Attaching the fragments.
         //      Main list of posts fragment attached.
         if (findViewById(R.id.main_container) != null) {
-            PostFragment2 postFragment = new PostFragment2();
+            PostFragment postFragment = new PostFragment();
             getFragmentManager().beginTransaction().add(R.id.main_container, postFragment).commit();
         }
         /*
@@ -96,7 +96,7 @@ public class PostActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_posts) {
 
                     getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    PostFragment2 postFragment = new PostFragment2();
+                    PostFragment postFragment = new PostFragment();
                     getFragmentManager()
                             .beginTransaction()
                             .replace(R.id.main_container, postFragment)
@@ -105,7 +105,7 @@ public class PostActivity extends AppCompatActivity {
 
                 } else if (id == R.id.nav_bookmarks) {
                     getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    BookmarkFragment2 bookmarksFragment = new BookmarkFragment2();
+                    BookmarkFragment bookmarksFragment = new BookmarkFragment();
                     getFragmentManager()
                             .beginTransaction()
                             .replace(R.id.main_container, bookmarksFragment)

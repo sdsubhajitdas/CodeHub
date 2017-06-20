@@ -18,10 +18,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +34,7 @@ import java.util.ArrayList;
 import java.util.TimerTask;
 
 
-public class PostFragment2 extends Fragment {
+public class PostFragment extends Fragment {
 
     private FloatingActionButton mAddPostButton;
     private RecyclerView mPostRecyclerView;
@@ -48,7 +46,7 @@ public class PostFragment2 extends Fragment {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private SearchView mSearchView;
 
-    public PostFragment2() {
+    public PostFragment() {
         // Required empty public constructor
     }
 
@@ -181,7 +179,7 @@ public class PostFragment2 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_post_2, container, false);
+        return inflater.inflate(R.layout.fragment_post, container, false);
     }
 
     @Override
