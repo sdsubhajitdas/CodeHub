@@ -5,8 +5,9 @@ package com.subhajitdas.c;
  */
 
 public class Constants {
-    public static final String USER = "user";
 
+    public static final String DATA = "data";
+    public static final String USER = "user";
     public static final String EMAIL = "email";
     public static final String LOGIN_STATE = "login_state";
     public static final String PASSWORD = "password";

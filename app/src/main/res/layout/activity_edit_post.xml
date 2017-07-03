@@ -2,7 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/upload_coordinator"
+    android:id="@+id/edit_coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.subhajitdas.c.upload.UploadPost">
@@ -34,7 +34,7 @@
             <android.support.v7.widget.CardView
                 android:id="@+id/cardView2"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 app:cardBackgroundColor="@color/colorPrimary"
                 app:cardCornerRadius="0dp"
                 app:cardElevation="2dp"
@@ -63,7 +63,7 @@
                         app:layout_constraintTop_toTopOf="parent">
 
                         <EditText
-                            android:id="@+id/upload_title"
+                            android:id="@+id/edit_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="top"
@@ -87,7 +87,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/textInputLayout1">
 
                         <EditText
-                            android:id="@+id/upload_description"
+                            android:id="@+id/edit_description"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="top"
@@ -116,7 +116,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
                 <EditText
-                    android:id="@+id/upload_lang"
+                    android:id="@+id/edit_lang"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
@@ -150,7 +150,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayout2">
 
                 <EditText
-                    android:id="@+id/upload_file"
+                    android:id="@+id/edit_file"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
@@ -187,7 +187,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textInputLayout3">
 
                 <EditText
-                    android:id="@+id/upload_editor"
+                    android:id="@+id/edit_editor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"

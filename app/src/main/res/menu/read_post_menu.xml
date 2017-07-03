@@ -5,13 +5,13 @@
     <!-- "Mark Favorite", should appear as action button if possible -->
 
     <item
-        android:id="@+id/action_edit"
+        android:id="@+id/read_action_edit"
         android:icon="@drawable/ic_mode_edit_white_48px"
         android:title="@string/edit_post"
         app:showAsAction="ifRoom"/>
 
     <item
-        android:id="@+id/action_del"
+        android:id="@+id/read_action_del"
         android:icon="@drawable/ic_delete_forever_white_24px"
         android:title="@string/delete_post"
         app:showAsAction="ifRoom"/>

@@ -1,4 +1,4 @@
-package com.subhajitdas.c.upload;
+package com.subhajitdas.c.edit;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,30 +28,26 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.subhajitdas.c.Constants;
 import com.subhajitdas.c.R;
 import com.subhajitdas.c.post.Post;
+import com.subhajitdas.c.post.PostData;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Calendar;
 import java.util.UUID;
 
-
-public class UploadPost extends AppCompatActivity {
-
+public class EditPostActivity extends AppCompatActivity {
     private TextView mTitle, mDescription, mLanguage, mEditor, mFile;
-    private FirebaseUser mCurrentUser;
     private FloatingActionButton mUploadButton;
     private ProgressDialog mProgress;
     private String FILENAME;
     public static final int TEXT_REQUEST = 1234;
+    public PostData mPostData;
 
     private StorageReference mStorageProgramRef;
     private DatabaseReference mDatabaseProgramRef;
@@ -58,10 +55,27 @@ public class UploadPost extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_upload_post);
+        setContentView(R.layout.activity_edit_post);
+        String editorData = "";
+        Intent gotIntent = getIntent();
+        mPostData = new PostData();
+        if (gotIntent != null) {
+            //Whole post block is created here.
+            mPostData.key = gotIntent.getStringExtra(Constants.KEY);
+            mPostData.data.title = gotIntent.getStringExtra(Constants.TITLE);
+            mPostData.data.userName = gotIntent.getStringExtra(Constants.USERNAME);
+            mPostData.data.userId = gotIntent.getStringExtra(Constants.USERID);
+            mPostData.data.date = gotIntent.getStringExtra(Constants.DATE);
+            mPostData.data.likes = gotIntent.getStringExtra(Constants.LIKES);
+            mPostData.data.fileUid = gotIntent.getStringExtra(Constants.FILEUID);
+            mPostData.data.fileUri = gotIntent.getStringExtra(Constants.FILEURI);
+            mPostData.data.description = gotIntent.getStringExtra(Constants.DESCRIPTION);
+            mPostData.data.language = gotIntent.getStringExtra(Constants.LANGUAGE);
+            editorData = gotIntent.getStringExtra(Constants.EDITOR);
+        }
         //Toolbar work.
         Toolbar mToolbar = (Toolbar) findViewById(R.id.edit_toolbar);
-        mToolbar.setTitle("Add Post");
+        mToolbar.setTitle("Edit Post");
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -69,16 +83,19 @@ public class UploadPost extends AppCompatActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(true);
         }
         //UI components initialized.
-        mTitle = (TextView) findViewById(R.id.upload_title);
-        mDescription = (TextView) findViewById(R.id.upload_description);
-        mLanguage = (TextView) findViewById(R.id.upload_lang);
-        mEditor = (TextView) findViewById(R.id.upload_editor);
-        mFile = (TextView) findViewById(R.id.upload_file);
+        mTitle = (TextView) findViewById(R.id.edit_title);
+        mDescription = (TextView) findViewById(R.id.edit_description);
+        mLanguage = (TextView) findViewById(R.id.edit_lang);
+        mEditor = (TextView) findViewById(R.id.edit_editor);
+        mFile = (TextView) findViewById(R.id.edit_file);
         mUploadButton = (FloatingActionButton) findViewById(R.id.fab);
         mProgress = new ProgressDialog(this);
 
-        //Getting current User.
-        mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+        //Filling in UI components.
+        mTitle.setText(mPostData.data.title);
+        mDescription.setText(mPostData.data.description);
+        mLanguage.setText(mPostData.data.language);
+        mEditor.setText(editorData);
 
         //Setting Language and File name for non editable.
         mLanguage.setFocusable(false);
@@ -94,7 +111,6 @@ public class UploadPost extends AppCompatActivity {
         mDatabaseProgramRef = FirebaseDatabase.getInstance().getReference().child(Constants.PROGRAM); // TODO change branch for uploading data (During Update work)
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -108,68 +124,77 @@ public class UploadPost extends AppCompatActivity {
                     if (!TextUtils.isEmpty(mEditor.getText())) {    //Editor is not empty.
                         //Setting up Progress Dialog .
                         mProgress.setTitle("Please wait");
-                        mProgress.setMessage("Uploading your content");
+                        mProgress.setMessage("Changing your content");
                         mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                         mProgress.setIndeterminate(false);
                         mProgress.setMax(100);
                         mProgress.show();
                         mProgress.setCancelable(false);
-                        //Starting the upload work.
-                        mStorageProgramRef.child(FILENAME + ".txt")
-                                .putFile(makeTextFile())                                                           // makeTextFile - Makes a txt file from editor text.
-                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                    @Override
-                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                                        Post uploadData = makePostData(taskSnapshot.getDownloadUrl().toString());  // Making data block for the post.
-                                        mProgress.setProgress(95);
-                                        mDatabaseProgramRef.push().setValue(uploadData).addOnCompleteListener(new OnCompleteListener<Void>() {  //Pusing post data.
+                        // Deleting the old file.
+                        mStorageProgramRef.child(mPostData.data.fileUid + ".txt").delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                mProgress.setProgress(20);
+                                //Starting the upload work.
+                                mStorageProgramRef.child(FILENAME + ".txt")
+                                        .putFile(makeTextFile())                                                           // makeTextFile - Makes a txt file from editor text.
+                                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                             @Override
-                                            public void onComplete(@NonNull Task<Void> task) {
-                                                mProgress.setProgress(100);
-                                                mProgress.dismiss();
-                                                NavUtils.navigateUpFromSameTask(UploadPost.this);           //Returning back.
+                                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                                Post uploadData = makePostData(taskSnapshot.getDownloadUrl().toString());  // Making data block for the post.
+                                                mPostData.data=uploadData;
+                                                mProgress.setProgress(95);
+                                                mDatabaseProgramRef.child(mPostData.key).setValue(uploadData).addOnCompleteListener(new OnCompleteListener<Void>() {  //Pusing post data.
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        mProgress.setProgress(100);
+                                                        mProgress.dismiss();
+                                                        setBackData();
+                                                    }
+                                                });
                                             }
-                                        });
-
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        if (Build.VERSION.SDK_INT >= 21) {
+                                            Snackbar.make(findViewById(R.id.edit_coordinator),
+                                                    "Upload failed.",
+                                                    Snackbar.LENGTH_LONG).show();
+                                        } else
+                                            Toast.makeText(EditPostActivity.this, "Upload failed.", Toast.LENGTH_LONG).show();
                                     }
+                                });
 
-                                }).addOnFailureListener(new OnFailureListener() {
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 if (Build.VERSION.SDK_INT >= 21) {
-                                    Snackbar.make(findViewById(R.id.upload_coordinator),
-                                            "Upload failed.",
+                                    Snackbar.make(findViewById(R.id.edit_coordinator),
+                                            e.getMessage(),
                                             Snackbar.LENGTH_LONG).show();
                                 } else
-                                    Toast.makeText(UploadPost.this, "Upload failed.", Toast.LENGTH_LONG).show();
-                            }
-                        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                                //double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-
-                                //Getting the progress number. only updates once 256KB
-                                double progress = ((100 * (taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount()))) / 1.1;
-                                mProgress.setProgress((int) progress);
+                                    Toast.makeText(EditPostActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         });
+
                     } else {
                         if (Build.VERSION.SDK_INT >= 21) {
-                            Snackbar.make(findViewById(R.id.upload_coordinator),
+                            Snackbar.make(findViewById(R.id.edit_coordinator),
                                     "Nothing to upload.",
                                     Snackbar.LENGTH_SHORT).show();
                         } else
-                            Toast.makeText(UploadPost.this, "Nothing to upload.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(EditPostActivity.this, "Nothing to upload.", Toast.LENGTH_SHORT).show();
                     }
 
                 } else {
                     if (Build.VERSION.SDK_INT >= 21) {
-                        Snackbar.make(findViewById(R.id.upload_coordinator),
+                        Snackbar.make(findViewById(R.id.edit_coordinator),
                                 "Please give some Title.",
                                 Snackbar.LENGTH_SHORT).show();
                     } else
-                        Toast.makeText(UploadPost.this, "Please give some Title.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditPostActivity.this, "Please give some Title.", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -179,7 +204,7 @@ public class UploadPost extends AppCompatActivity {
         mFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openFile("text/plain");             // Method which works on Samsung devices and many more devices.
+                openFileIntent("text/plain");             // Method which works on Samsung devices and many more devices.
             }
         });
 
@@ -188,7 +213,7 @@ public class UploadPost extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final String langList[] = {Constants.C, Constants.CPP, Constants.JAVA, Constants.PYTHON};
-                AlertDialog.Builder builder = new AlertDialog.Builder(UploadPost.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(EditPostActivity.this);
                 builder.setTitle("Pick a language")
                         .setItems(langList, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
@@ -207,19 +232,15 @@ public class UploadPost extends AppCompatActivity {
     //To create the data block which will be uploaded.
     private Post makePostData(String url) {
 
-        //To get system date.
-        final String date;
-        date = DateFormat.getDateInstance().format(Calendar.getInstance().getTime());
-
         //Making the data block.
         Post returnData = new Post();
         returnData.title = mTitle.getText().toString();
-        returnData.likes = "0";
-        returnData.userId = mCurrentUser.getUid();
-        returnData.userName = mCurrentUser.getDisplayName();
+        returnData.likes = mPostData.data.likes;
+        returnData.userId = mPostData.data.userId;
+        returnData.userName = mPostData.data.userName;
         returnData.fileUid = FILENAME;
         returnData.description = mDescription.getText().toString();
-        returnData.date = date;
+        returnData.date = mPostData.data.date;
         returnData.language = mLanguage.getText().toString();
         returnData.fileUri = url;
         return returnData;
@@ -234,11 +255,11 @@ public class UploadPost extends AppCompatActivity {
             fos.write(mEditor.getText().toString().getBytes());  //Writing data.
         } catch (IOException e) {
             if (Build.VERSION.SDK_INT >= 21) {
-                Snackbar.make(findViewById(R.id.upload_coordinator),
+                Snackbar.make(findViewById(R.id.edit_coordinator),
                         "File Creation Error.",
                         Snackbar.LENGTH_LONG).show();
             } else
-                Toast.makeText(UploadPost.this, "File Creation Error.", Toast.LENGTH_LONG).show();
+                Toast.makeText(EditPostActivity.this, "File Creation Error.", Toast.LENGTH_LONG).show();
 
         } finally {
             try {
@@ -247,11 +268,11 @@ public class UploadPost extends AppCompatActivity {
                 }
             } catch (IOException e) {
                 if (Build.VERSION.SDK_INT >= 21) {
-                    Snackbar.make(findViewById(R.id.upload_coordinator),
+                    Snackbar.make(findViewById(R.id.edit_coordinator),
                             "File Creation Error.",
                             Snackbar.LENGTH_LONG).show();
                 } else
-                    Toast.makeText(UploadPost.this, "File Creation Error.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(EditPostActivity.this, "File Creation Error.", Toast.LENGTH_LONG).show();
             }
         }
 
@@ -271,11 +292,11 @@ public class UploadPost extends AppCompatActivity {
             displayFile(uploadFile);                                        // Displaying the contents of the file in editor.
         } else {
             if (Build.VERSION.SDK_INT >= 21) {
-                Snackbar.make(findViewById(R.id.upload_coordinator),
+                Snackbar.make(findViewById(R.id.edit_coordinator),
                         "Sorry file not chosen.",
                         Snackbar.LENGTH_LONG).show();
             } else
-                Toast.makeText(UploadPost.this, "Sorry file not chosen.", Toast.LENGTH_LONG).show();
+                Toast.makeText(EditPostActivity.this, "Sorry file not chosen.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -296,7 +317,7 @@ public class UploadPost extends AppCompatActivity {
         } catch (IOException e) {
             //Error msg shown.
             if (Build.VERSION.SDK_INT >= 21) {
-                Snackbar.make(findViewById(R.id.upload_coordinator),
+                Snackbar.make(findViewById(R.id.edit_coordinator),
                         "File reading error",
                         Snackbar.LENGTH_LONG).show();
             } else
@@ -308,7 +329,7 @@ public class UploadPost extends AppCompatActivity {
                 } catch (IOException e) {
                     //Error msg shown.
                     if (Build.VERSION.SDK_INT >= 21) {
-                        Snackbar.make(findViewById(R.id.upload_coordinator),
+                        Snackbar.make(findViewById(R.id.edit_coordinator),
                                 "File reading error",
                                 Snackbar.LENGTH_LONG).show();
                     } else
@@ -319,7 +340,7 @@ public class UploadPost extends AppCompatActivity {
     }
 
     // To choose a file to upload.
-    public void openFile(String minmeType) {
+    public void openFileIntent(String minmeType) {
 
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType(minmeType);
@@ -376,5 +397,42 @@ public class UploadPost extends AppCompatActivity {
         mLanguage.setText(savedInstanceState.getString(Constants.LANGUAGE));
         mFile.setText(savedInstanceState.getString(Constants.FILEUID));
         mEditor.setText(savedInstanceState.getString(Constants.EDITOR));
+    }
+
+    //If the hardware back button is pressed.
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setBackData();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        int id = item.getItemId();
+        switch (id) {
+            // If the back toolbar back is pressed.
+            case android.R.id.home:
+                setBackData();
+                return true;
+        }
+        return false;
+    }
+
+    // To set the returning back intent.
+    public void setBackData() {
+        Intent backData = new Intent();
+        backData.putExtra(Constants.KEY, mPostData.key);
+        backData.putExtra(Constants.TITLE, mPostData.data.title);
+        backData.putExtra(Constants.DESCRIPTION, mPostData.data.description);
+        backData.putExtra(Constants.LANGUAGE, mPostData.data.language);
+        backData.putExtra(Constants.USERNAME, mPostData.data.userName);
+        backData.putExtra(Constants.USERID, mPostData.data.userId);
+        backData.putExtra(Constants.DATE, mPostData.data.date);
+        backData.putExtra(Constants.LIKES, mPostData.data.likes);
+        backData.putExtra(Constants.FILEUID, mPostData.data.fileUid);
+        backData.putExtra(Constants.FILEURI, mPostData.data.fileUri);
+        setResult(RESULT_OK, backData);
+        finish();                   //Ends the activity and returns to the parent.
     }
 }

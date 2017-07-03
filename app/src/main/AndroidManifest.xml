@@ -16,9 +16,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
-            android:name="com.subhajitdas.c.login.LoginActivity"
+            android:name=".login.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppTheme">
             <intent-filter>
@@ -26,22 +25,20 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <!-- android:windowSoftInputMode="adjustResize" -->
 
-        <activity android:name="com.subhajitdas.c.post.PostActivity" />
-
+        <activity android:name=".post.PostActivity" />
         <activity
-            android:name="com.subhajitdas.c.readPost.ReadPost"
-            android:parentActivityName="com.subhajitdas.c.post.PostActivity" />
-
+            android:name=".read.ReadPostActivity"
+            android:parentActivityName=".post.PostActivity" />
         <activity
-            android:name="com.subhajitdas.c.upload.UploadPost"
-            android:parentActivityName="com.subhajitdas.c.post.PostActivity">
-        </activity>
+            android:name=".upload.UploadPost"
+            android:parentActivityName=".post.PostActivity" />
 
+        <activity android:name=".edit.EditPostActivity"
+            android:parentActivityName=".read.ReadPostActivity"/>
     </application>
 
 </manifest>

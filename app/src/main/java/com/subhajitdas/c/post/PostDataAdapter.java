@@ -21,7 +21,7 @@ import com.like.LikeButton;
 import com.like.OnLikeListener;
 import com.subhajitdas.c.Constants;
 import com.subhajitdas.c.R;
-import com.subhajitdas.c.readPost.ReadPost;
+import com.subhajitdas.c.read.ReadPostActivity;
 
 import java.util.ArrayList;
 
@@ -185,7 +185,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(holder.context, ReadPost.class);
+                Intent intent = new Intent(holder.context, ReadPostActivity.class);
                 intent.putExtra(Constants.KEY, mDataSet.get(position).key);
                 intent.putExtra(Constants.DATE, mDataSet.get(position).data.date);
                 intent.putExtra(Constants.FILEUID, mDataSet.get(position).data.fileUid);
