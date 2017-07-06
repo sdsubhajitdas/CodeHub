@@ -105,7 +105,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //A new view is created.
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.post_layout2, parent, false);
+                .inflate(R.layout.post_layout, parent, false);
 
         //Returning the new created view.
         return new ViewHolder(v);

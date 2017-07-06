@@ -15,10 +15,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.subhajitdas.c.Constants;
 import com.subhajitdas.c.R;
 import com.subhajitdas.c.login.LoginActivity;
@@ -29,6 +37,9 @@ public class PostActivity extends AppCompatActivity {
 
     private NavigationView mNavView;
     private DrawerLayout mDrawerLayout;
+    private ImageView mCoverImg,mProfileImg;
+
+    private DatabaseReference mUserRef;
 
 
     @Override
@@ -43,6 +54,8 @@ public class PostActivity extends AppCompatActivity {
         View layout =mNavView.getHeaderView(0);
         TextView emailField = (TextView) layout.findViewById(R.id.nav_email);
         TextView nameField = (TextView) layout.findViewById(R.id.nav_name);
+        mProfileImg = (ImageView) layout.findViewById(R.id.nav_profile_image);
+        mCoverImg= (ImageView) layout.findViewById(R.id.nav_cover_image);
         emailField.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
         nameField.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
@@ -71,12 +84,41 @@ public class PostActivity extends AppCompatActivity {
             PostFragment postFragment = new PostFragment();
             getFragmentManager().beginTransaction().add(R.id.main_container, postFragment).commit();
         }
-        /*
-        //      Navigation drawer fragment to be attached.
-        if(findViewById(R.id.nav_drawer_container)!=null){
-            NavigationDrawerFragment navigationDrawerFragment = new NavigationDrawerFragment();
-            getFragmentManager().beginTransaction().add(R.id.nav_drawer_container,navigationDrawerFragment).commit();
-        }*/
+
+
+        mUserRef = FirebaseDatabase.getInstance().getReference()
+                .child(Constants.USER)
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        mUserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(Constants.DP_THUMB_URL)){
+                    String dpUrl = dataSnapshot.child(Constants.DP_THUMB_URL).getValue().toString();
+                    RequestOptions profileOptions = new RequestOptions();
+                    profileOptions.circleCrop();
+                    profileOptions.placeholder(R.drawable.ic_avatar_black);
+                    Glide.with(getApplicationContext())
+                            .load(dpUrl)
+                            .apply(profileOptions)
+                            .into(mProfileImg);
+                }
+
+                if(dataSnapshot.hasChild(Constants.COVER_THUMB_URL)){
+                    String coverUrl = dataSnapshot.child(Constants.COVER_THUMB_URL).getValue().toString();
+                    RequestOptions coverOptions = new RequestOptions();
+                    coverOptions.fitCenter();
+                    Glide.with(getApplicationContext())
+                            .load(coverUrl)
+                            .into(mCoverImg);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
@@ -118,14 +160,14 @@ public class PostActivity extends AppCompatActivity {
 
                 } else if (id == R.id.nav_updates) {
 
-                    String url = "http://www.google.com";
+                    String url = "https://karmakarivan.github.io/codehub.io/";
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW);
                     browserIntent.setData(Uri.parse(url));
                     startActivity(browserIntent);
                     mDrawerLayout.closeDrawers();
 
                 } else if (id == R.id.nav_share) {
-                    String textToShare = "Testing for android share intent.\nLink:- www.google.com \nPlease be successfull";
+                    String textToShare = "Download CodeHub from the website.Test our app today!!\nLink:- https://karmakarivan.github.io/codehub.io/";
                     Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                     intent.setType("text/plain");
                     intent.putExtra(Intent.EXTRA_SUBJECT, "A Sample share intent");

@@ -4,13 +4,23 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.subhajitdas.c.Constants;
 import com.subhajitdas.c.R;
 
@@ -18,8 +28,12 @@ import com.subhajitdas.c.editProfile.ProfileEdit;
 import com.subhajitdas.c.post.PostActivity;
 
 public class ProfileActivity extends AppCompatActivity {
-    private ImageView mCoverImage, mProfileImage;
+    private ImageView mCoverImage, mDpImage;
     private FloatingActionButton mMultiFab;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private TextView mName, mBio, mLocation, mWork, mEducation, mSkills;
+
+    private DatabaseReference mUserDataRef;
 
     private String mLastActivity, mProfileId, mFabState;
     private int REUEST_CODE = 4321;
@@ -40,8 +54,15 @@ public class ProfileActivity extends AppCompatActivity {
             getSupportActionBar().setHomeButtonEnabled(true);
         }
         mCoverImage = (ImageView) findViewById(R.id.edit_profile_cover);
-        mProfileImage = (ImageView) findViewById(R.id.edit_profile_dp);
+        mDpImage = (ImageView) findViewById(R.id.edit_profile_dp);
         mMultiFab = (FloatingActionButton) findViewById(R.id.profile_fab);
+        mSwipeRefreshLayout= (SwipeRefreshLayout) findViewById(R.id.profile_swiperefresh);
+        mName= (TextView) findViewById(R.id.edit_profile_name);
+        mBio = (TextView) findViewById(R.id.edit_profile_bio);
+        mLocation = (TextView) findViewById(R.id.edit_profile_location);
+        mWork= (TextView) findViewById(R.id.edit_profile_work);
+        mEducation= (TextView) findViewById(R.id.edit_profile_education);
+        mSkills = (TextView) findViewById(R.id.profile_skills);
 
         if (mProfileId.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
             mFabState = Constants.FAB_EDIT;
@@ -51,25 +72,59 @@ public class ProfileActivity extends AppCompatActivity {
                 mMultiFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_mode_edit_black_24dp));
             }
         }
-        /*
-        RequestOptions profileOptions = new RequestOptions();
-        profileOptions.circleCrop();
-        profileOptions.placeholder(R.drawable.ic_avatar_black);
 
-        Glide.with(this)
-                .load("https://firebasestorage.googleapis.com/v0/b/codehub-7e17a.appspot.com/o/%252Ftestobj%252F%2Fprofile1.jpg?alt=media&token=a3ff591e-1f2f-46d2-b883-0f128a615df6")
-                .apply(profileOptions)
-                .into(mProfileImage);
+        mUserDataRef = FirebaseDatabase.getInstance().getReference().child(Constants.USER).child(mProfileId);
 
-        RequestOptions coverOptions = new RequestOptions();
-        coverOptions.centerCrop();
-        coverOptions.placeholder(R.drawable.navigation_drawer_image);
+        mSwipeRefreshLayout.setRefreshing(true);
+        mUserDataRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(Constants.DP_URL)) {
+                    String dpUrl = dataSnapshot.child(Constants.DP_URL).getValue().toString();
+                    RequestOptions profileOptions = new RequestOptions();
+                    profileOptions.circleCrop();
+                    profileOptions.placeholder(R.drawable.ic_avatar_black);
+                    Glide.with(getApplicationContext())
+                            .load(dpUrl)
+                            .apply(profileOptions)
+                            .into(mDpImage);
+                }
+                if (dataSnapshot.hasChild(Constants.COVER_URL)) {
+                    String coverUrl = dataSnapshot.child(Constants.COVER_URL).getValue().toString();
+                    RequestOptions coverOptions = new RequestOptions();
+                    coverOptions.fitCenter();
+                    Glide.with(getApplicationContext())
+                            .load(coverUrl)
+                            .into(mCoverImage);
+                }
+                if (dataSnapshot.hasChild(Constants.NAME)) {
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    mName.setText(user.getDisplayName());
+                }
+                if (dataSnapshot.hasChild(Constants.BIO)) {
+                    mBio.setText(dataSnapshot.child(Constants.BIO).getValue().toString());
+                }
+                if (dataSnapshot.hasChild(Constants.LOCATION)) {
+                    mLocation.setText(dataSnapshot.child(Constants.LOCATION).getValue().toString());
+                }
+                if (dataSnapshot.hasChild(Constants.WORK)) {
+                    mWork.setText(dataSnapshot.child(Constants.WORK).getValue().toString());
+                }
+                if (dataSnapshot.hasChild(Constants.EDUCATION)) {
+                    mEducation.setText(dataSnapshot.child(Constants.EDUCATION).getValue().toString());
+                }
+                if (dataSnapshot.hasChild(Constants.SKILLS)) {
+                    mSkills.setText(dataSnapshot.child(Constants.SKILLS).getValue().toString());
+                }
+                mSwipeRefreshLayout.setRefreshing(false);
+                mSwipeRefreshLayout.setEnabled(false);
+            }
 
-        Glide.with(this)
-                .load("https://firebasestorage.googleapis.com/v0/b/codehub-7e17a.appspot.com/o/%252Ftestobj%252F%2Fcover.jpg?alt=media&token=2f73d4a0-d0ad-4d21-9070-25bb3eaffcc1")
-                .apply(coverOptions)
-                .into(mCoverImage);
-        */
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
