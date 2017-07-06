@@ -197,7 +197,7 @@ public class UploadPost extends AppCompatActivity {
                             }
                         });
                 AlertDialog dialog = builder.create();
-                dialog.getWindow().setBackgroundDrawableResource(R.color.colorPrimaryDark);
+               // dialog.getWindow().setBackgroundDrawableResource(R.color.colorPrimaryDark);
                 dialog.show();
             }
         });

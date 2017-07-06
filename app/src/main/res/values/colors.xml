@@ -6,7 +6,7 @@
     <color name="darkGrey">#424242</color>
     <color name="normalGrey">#9E9E9E</color>
     <color name="lightGrey">#BDBDBD</color>
-    <color name="post_card_background">#EEEEEE</color>
+    <color name="post_card_background">#eeeeee</color>
     <color name="postBackground">#2B303B</color>
     <color name="postText">#C0C5CE</color>
 </resources>

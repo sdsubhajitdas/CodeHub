@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.subhajitdas.c.Constants;
 import com.subhajitdas.c.R;
 import com.subhajitdas.c.login.LoginActivity;
+import com.subhajitdas.c.profile.ProfileActivity;
 
 
 public class PostActivity extends AppCompatActivity {
@@ -90,7 +91,10 @@ public class PostActivity extends AppCompatActivity {
 
                 if (id == R.id.nav_profile) {
 
-                    Toast.makeText(PostActivity.this, "Function not yet added", Toast.LENGTH_LONG).show();
+                    Intent profileIntent = new Intent(PostActivity.this, ProfileActivity.class);
+                    profileIntent.putExtra(Constants.ACTIVITY,Constants.POST_ACTIVITY);
+                    profileIntent.putExtra(Constants.USERID,FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    startActivity(profileIntent);
                     mDrawerLayout.closeDrawers();
 
                 } else if (id == R.id.nav_posts) {
