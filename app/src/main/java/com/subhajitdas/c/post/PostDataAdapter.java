@@ -192,7 +192,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
                 mRootRef.child(Constants.LIKE)
                         .child(mDataSet.get(position).key)
                         .child(currentUser.getUid())
-                        .setValue(currentUser.getDisplayName());
+                        .setValue("yes");
                 //Updating the like counter.
                 mDataSet.get(position).data.likes = Integer.toString(Integer.parseInt(mDataSet.get(position).data.likes) + 1);
                 //Updating the like value in the post branch.
