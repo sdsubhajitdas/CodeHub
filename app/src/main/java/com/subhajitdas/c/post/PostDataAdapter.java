@@ -2,16 +2,22 @@ package com.subhajitdas.c.post;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,8 +38,14 @@ import java.util.ArrayList;
 public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHolder> {
 
     private ArrayList<PostData> mDataSet;
+    private ArrayList<UserDpLinks> mUserDataSet;
     private DataSnapshot mLikeDataSnapshot, mBookmarkDataSnapshot;
     private DatabaseReference mRootRef;
+
+    public static class UserDpLinks {
+        String userId;
+        String userUrl;
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -51,7 +63,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         TextView postTitle, posterName, postDate, postLike;
         LikeButton likeButton, bookmarkButton;
         CardView cardView;
-        ImageView language;
+        ImageView language, dp;
         private Context context;
 
         public ViewHolder(View v) {
@@ -63,6 +75,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             likeButton = (LikeButton) v.findViewById(R.id.like_button);
             bookmarkButton = (LikeButton) v.findViewById(R.id.bookmark_button);
             language = (ImageView) v.findViewById(R.id.post_lang);
+            dp = (ImageView) v.findViewById(R.id.poster_dp);
             cardView = (CardView) v.findViewById(R.id.card_view);
             context = v.getContext();
         }
@@ -71,6 +84,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
     // Constructor to get the data-set.
     public PostDataAdapter(ArrayList<PostData> data) {
         mDataSet = data;
+        mUserDataSet = new ArrayList<>();
         mRootRef = FirebaseDatabase.getInstance().getReference();
         //Offline for Like branch and storing data.
         mRootRef.child(Constants.LIKE).keepSynced(true);
@@ -99,13 +113,50 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             }
         });
 
+        //Offline for User branch and storing data.
+        mRootRef.child(Constants.USER).keepSynced(true);
+        mRootRef.child(Constants.USER).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                UserDpLinks dataBlock = new UserDpLinks();
+                dataBlock.userId = dataSnapshot.getKey();
+                if (dataSnapshot.hasChild(Constants.DP_THUMB_URL)) {
+                    dataBlock.userUrl = dataSnapshot.child(Constants.DP_THUMB_URL).getValue().toString();
+
+                } else {
+                    dataBlock.userUrl = null;
+                }
+                mUserDataSet.add(dataBlock);
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //A new view is created.
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.post_layout, parent, false);
+                .inflate(R.layout.post_layout_2, parent, false);
 
         //Returning the new created view.
         return new ViewHolder(v);
@@ -128,6 +179,11 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         holder.language.setImageDrawable(null);
         setLang(holder, mDataSet.get(position).data.language);
         // Log.e("Jeetu",mDataSet.get(position).data.title);
+
+        //Setting the display pic.
+        holder.dp.setImageDrawable(ContextCompat.getDrawable(holder.context,R.drawable.ic_avatar_black));
+        setDp(holder, mDataSet.get(position).data.userId);
+
         //Handling the like click
         holder.likeButton.setOnLikeListener(new OnLikeListener() {
             @Override
@@ -201,6 +257,30 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         });
     }
 
+    private void setDp(ViewHolder holder, String userId) {
+        int index=-1;
+        for (int i = 0; i < mUserDataSet.size(); i++) {
+            if (userId.equals(mUserDataSet.get(i).userId)) {
+                index = i;
+                break;
+            }
+        }
+
+        if(index!=-1){
+            if(!(mUserDataSet.get(index).userUrl==null)){
+                Drawable placeholderDrawable = ContextCompat.getDrawable(holder.context,R.drawable.ic_avatar_black);
+                RequestOptions postDpOptions = new RequestOptions();
+                postDpOptions.circleCrop();
+                postDpOptions.placeholder(placeholderDrawable);
+                Glide.with(holder.context)
+                        .load(mUserDataSet.get(index).userUrl)
+                        .apply(postDpOptions)
+                        .into(holder.dp);
+            }
+        }
+
+    }
+
     //For setting the language icon in the post card.
     private void setLang(ViewHolder holder, String language) {
 
@@ -261,7 +341,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         }
     }
 
-    public void setFilter(ArrayList<PostData> newList){
+    public void setFilter(ArrayList<PostData> newList) {
         mDataSet.clear();
         mDataSet.addAll(newList);
         notifyDataSetChanged();
