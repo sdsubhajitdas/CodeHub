@@ -200,6 +200,13 @@ public class ProfileEdit extends AppCompatActivity {
                     mUserDataRef.child(Constants.SKILLS).setValue(mSkills.getText().toString());
 
                 mProgress.dismiss();
+
+                if (Build.VERSION.SDK_INT >= 21) {
+                    Snackbar.make(findViewById(R.id.edit_profile_coo),
+                            "Profile Details Updated.",
+                            Snackbar.LENGTH_SHORT).show();
+                } else
+                    Toast.makeText(ProfileEdit.this, "Profile Details Updated.", Toast.LENGTH_SHORT).show();
             }
         });
 
