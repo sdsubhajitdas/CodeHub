@@ -55,7 +55,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             postTitle,
             posterName,
             postDate,
-            postLike - text fields for data.
+            postLike - text fields for postData.
 
             likeButton,
             bookmarkButton - Like and bookmark buttons on our card layout .
@@ -81,12 +81,12 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         }
     }
 
-    // Constructor to get the data-set.
+    // Constructor to get the postData-set.
     public PostDataAdapter(ArrayList<PostData> data) {
         mDataSet = data;
         mUserDataSet = new ArrayList<>();
         mRootRef = FirebaseDatabase.getInstance().getReference();
-        //Offline for Like branch and storing data.
+        //Offline for Like branch and storing postData.
         mRootRef.child(Constants.LIKE).keepSynced(true);
         mRootRef.child(Constants.LIKE).addValueEventListener(new ValueEventListener() {
             @Override
@@ -99,7 +99,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
 
             }
         });
-        //Offline for Bookmark branch and storing data.
+        //Offline for Bookmark branch and storing postData.
         mRootRef.child(Constants.BOOKMARK).keepSynced(true);
         mRootRef.child(Constants.BOOKMARK).addValueEventListener(new ValueEventListener() {
             @Override
@@ -113,7 +113,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             }
         });
 
-        //Offline for User branch and storing data.
+        //Offline for User branch and storing postData.
         mRootRef.child(Constants.USER).keepSynced(true);
         mRootRef.child(Constants.USER).addChildEventListener(new ChildEventListener() {
             @Override
@@ -167,7 +167,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
 
         final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        // Filling in data in the fields of our card view.
+        // Filling in postData in the fields of our card view.
         holder.postTitle.setText(mDataSet.get(position).data.title);
         holder.posterName.setText(mDataSet.get(position).data.userName);
         holder.postDate.setText(mDataSet.get(position).data.date);
@@ -178,7 +178,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         //Setting up the language ImageView.
         holder.language.setImageDrawable(null);
         setLang(holder, mDataSet.get(position).data.language);
-        // Log.e("Jeetu",mDataSet.get(position).data.title);
+        // Log.e("Jeetu",mDataSet.get(position).postData.title);
 
         //Setting the display pic.
         holder.dp.setImageDrawable(ContextCompat.getDrawable(holder.context,R.drawable.ic_avatar_black));
@@ -188,7 +188,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         holder.likeButton.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
-                //Writing data in Like branch.
+                //Writing postData in Like branch.
                 mRootRef.child(Constants.LIKE)
                         .child(mDataSet.get(position).key)
                         .child(currentUser.getUid())
@@ -203,7 +203,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
 
             @Override
             public void unLiked(LikeButton likeButton) {
-                //Removing data in Like branch.
+                //Removing postData in Like branch.
                 mRootRef.child(Constants.LIKE)
                         .child(mDataSet.get(position).key)
                         .child(currentUser.getUid())
@@ -221,7 +221,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         holder.bookmarkButton.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
-                //Writing data to Bookmark branch.
+                //Writing postData to Bookmark branch.
                 mRootRef.child(Constants.BOOKMARK)
                         .child(mDataSet.get(position).key)
                         .child(currentUser.getUid())
@@ -230,7 +230,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
 
             @Override
             public void unLiked(LikeButton likeButton) {
-                //Removing data to Bookmark branch.
+                //Removing postData to Bookmark branch.
                 mRootRef.child(Constants.BOOKMARK)
                         .child(mDataSet.get(position).key)
                         .child(currentUser.getUid())

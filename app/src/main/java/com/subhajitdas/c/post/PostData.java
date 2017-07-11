@@ -5,7 +5,7 @@ package com.subhajitdas.c.post;
  */
 
 
-// Class for data with key for array list.
+// Class for postData with key for array list.
 public class PostData {
     public Post data = new Post();
     public String key = "";

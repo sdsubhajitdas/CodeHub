@@ -108,7 +108,7 @@ public class EditPostActivity extends AppCompatActivity {
 
         //Setting the upload paths.
         mStorageProgramRef = FirebaseStorage.getInstance().getReference().child(Constants.PROGRAMS);  //TODO change branch for uploading text file (During Update work)
-        mDatabaseProgramRef = FirebaseDatabase.getInstance().getReference().child(Constants.PROGRAM); // TODO change branch for uploading data (During Update work)
+        mDatabaseProgramRef = FirebaseDatabase.getInstance().getReference().child(Constants.PROGRAM); // TODO change branch for uploading postData (During Update work)
     }
 
     @Override
@@ -142,10 +142,10 @@ public class EditPostActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                                                Post uploadData = makePostData(taskSnapshot.getDownloadUrl().toString());  // Making data block for the post.
+                                                Post uploadData = makePostData(taskSnapshot.getDownloadUrl().toString());  // Making postData block for the post.
                                                 mPostData.data=uploadData;
                                                 mProgress.setProgress(95);
-                                                mDatabaseProgramRef.child(mPostData.key).setValue(uploadData).addOnCompleteListener(new OnCompleteListener<Void>() {  //Pusing post data.
+                                                mDatabaseProgramRef.child(mPostData.key).setValue(uploadData).addOnCompleteListener(new OnCompleteListener<Void>() {  //Pusing post postData.
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         mProgress.setProgress(100);
@@ -229,10 +229,10 @@ public class EditPostActivity extends AppCompatActivity {
 
     }
 
-    //To create the data block which will be uploaded.
+    //To create the postData block which will be uploaded.
     private Post makePostData(String url) {
 
-        //Making the data block.
+        //Making the postData block.
         Post returnData = new Post();
         returnData.title = mTitle.getText().toString();
         returnData.likes = mPostData.data.likes;
@@ -252,7 +252,7 @@ public class EditPostActivity extends AppCompatActivity {
         FileOutputStream fos = null;
         try {
             fos = openFileOutput("tempFile", MODE_PRIVATE);      //Making file.
-            fos.write(mEditor.getText().toString().getBytes());  //Writing data.
+            fos.write(mEditor.getText().toString().getBytes());  //Writing postData.
         } catch (IOException e) {
             if (Build.VERSION.SDK_INT >= 21) {
                 Snackbar.make(findViewById(R.id.edit_coordinator),
@@ -376,7 +376,7 @@ public class EditPostActivity extends AppCompatActivity {
         return uid.randomUUID().toString();
     }
 
-    //Recording data on pause.
+    //Recording postData on pause.
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -387,7 +387,7 @@ public class EditPostActivity extends AppCompatActivity {
         outState.putString(Constants.EDITOR, mEditor.getText().toString());
     }
 
-    // Restoring data after resume .
+    // Restoring postData after resume .
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);

@@ -62,17 +62,17 @@ public class PostFragment extends Fragment {
 
         setHasOptionsMenu(true);
 
-        //Storing of data is done in this portion using an array list.
+        //Storing of postData is done in this portion using an array list.
         /**
          * mDataSet - is the actual dataset.
          * mDatasetRecord - is the record for the post keys.
          *                   Needed so that later we can find out
-         *                   the index where data is changed and removed.
+         *                   the index where postData is changed and removed.
          * */
         mProgramDataListener = mProgramRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                /* Single data block is made
+                /* Single postData block is made
                     and added inside the mDataset.
                     mDatasetRecord is kept as a tracking arraylist.
                  */
@@ -89,8 +89,8 @@ public class PostFragment extends Fragment {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                /*The changed data block index is at first found.
-                   Block is made and data is replaced at that index.
+                /*The changed postData block index is at first found.
+                   Block is made and postData is replaced at that index.
                 */
                 final int indexToReplace = mDatasetRecord.indexOf(dataSnapshot.getKey());
                 PostData replaceData = makeDataBlock(dataSnapshot);
@@ -114,7 +114,7 @@ public class PostFragment extends Fragment {
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
                 /*First we find out the index we need to remove.
-                    Then simply remove data from the dataset and record set.
+                    Then simply remove postData from the dataset and record set.
                     At last we just notify the adapter.
                 */
                 int indexToRemove = mDatasetRecord.indexOf(dataSnapshot.getKey());
@@ -136,10 +136,10 @@ public class PostFragment extends Fragment {
 
     }
 
-    // Making of the single block of data for each post which will later get inside the array list.
+    // Making of the single block of postData for each post which will later get inside the array list.
     private PostData makeDataBlock(DataSnapshot dataSnapshot) {
-        /* Data fields are extracted from the JSON data snapshot
-            First checked if they exist or not then they are added in the data block.
+        /* Data fields are extracted from the JSON postData snapshot
+            First checked if they exist or not then they are added in the postData block.
         */
         PostData returnData = new PostData();
         returnData.key = dataSnapshot.getKey();

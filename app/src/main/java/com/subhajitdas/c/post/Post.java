@@ -2,7 +2,7 @@ package com.subhajitdas.c.post;
 
 /**
  * Created by Subhajit Das on 12-06-2017.
- */ // Class for the data retrieved
+ */ // Class for the postData retrieved
 public class Post {
     public String getDate() {
         return date;

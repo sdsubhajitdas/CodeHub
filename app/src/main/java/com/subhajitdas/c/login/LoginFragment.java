@@ -196,7 +196,7 @@ public class LoginFragment extends Fragment {
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
 
-        // Stored data in EditText fields are recovered.
+        // Stored postData in EditText fields are recovered.
         if (savedInstanceState != null) {
             mEmail.setText(savedInstanceState.getString(Constants.EMAIL));
             mPassword.setText(savedInstanceState.getString(Constants.PASSWORD));
@@ -211,7 +211,7 @@ public class LoginFragment extends Fragment {
         mSignin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // No empty data.
+                // No empty postData.
                 if (!TextUtils.isEmpty(mEmail.getText().toString()) && !TextUtils.isEmpty(mPassword.getText().toString())) {
                     mProgress.setMessage("Signing in");
                     mProgress.show();

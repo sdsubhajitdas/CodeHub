@@ -97,7 +97,7 @@ public class ProfileActivity extends AppCompatActivity {
                             .load(coverUrl)
                             .into(mCoverImage);
                 }
-                if (dataSnapshot.hasChild(Constants.NAME)) {
+                if (dataSnapshot.hasChild(Constants.USERNAME_PROFILE)) {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     mName.setText(user.getDisplayName());
                 }

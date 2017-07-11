@@ -66,7 +66,7 @@ public class RegisterFragment extends Fragment {
                         // User is signed in
 
                         mProgress.setMessage("Setting up your account ");
-                        userRef.child(user.getUid()).child(Constants.USERNAME).setValue(mUsername.getText().toString());
+                        userRef.child(user.getUid()).child(Constants.USERNAME_PROFILE).setValue(mUsername.getText().toString());
                         userRef.child(user.getUid()).child(Constants.EMAIL).setValue(mEmail.getText().toString());
                         userRef.child(user.getUid()).child(Constants.PASSWORD).setValue(mPassword.getText().toString());
 
@@ -118,7 +118,7 @@ public class RegisterFragment extends Fragment {
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        // Restored data is recovered.
+        // Restored postData is recovered.
         if (savedInstanceState != null) {
             mUsername.setText(savedInstanceState.getString(Constants.USERNAME));
             mEmail.setText(savedInstanceState.getString(Constants.EMAIL));
@@ -133,7 +133,7 @@ public class RegisterFragment extends Fragment {
         mRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Checking for no empty data
+                // Checking for no empty postData
                 if (!(TextUtils.isEmpty(mEmail.getText().toString())) &&
                         !(TextUtils.isEmpty(mPassword.getText().toString())) &&
                         !(TextUtils.isEmpty(mUsername.getText().toString()))) {

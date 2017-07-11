@@ -56,7 +56,6 @@ public class ProfileEdit extends AppCompatActivity {
     private SharedPreferences mIntentData;
     private ProgressDialog mProgress;
     private FloatingActionButton mDoneFab;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private StorageReference mProfileImagefRef, mProfileThumRef, mCoverImageRef, mCoverThumRef;
     private DatabaseReference mUserDataRef;
@@ -97,7 +96,7 @@ public class ProfileEdit extends AppCompatActivity {
         mEducation = (EditText) findViewById(R.id.edit_profile_education);
         mSkills = (EditText) findViewById(R.id.edit_profile_skills);
         mDoneFab = (FloatingActionButton) findViewById(R.id.done_fab);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.edit_profile_swiperefresh);
+        SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.edit_profile_swiperefresh);
 
         mSwipeRefreshLayout.setEnabled(false);
 
@@ -133,7 +132,7 @@ public class ProfileEdit extends AppCompatActivity {
                             .load(coverUrl)
                             .into(mCoverImage);
                 }
-                if (dataSnapshot.hasChild(Constants.NAME)) {
+                if (dataSnapshot.hasChild(Constants.USERNAME_PROFILE)) {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     mName.setText(user.getDisplayName());
                 }
@@ -184,7 +183,7 @@ public class ProfileEdit extends AppCompatActivity {
                     user.updateProfile(userProfileChangeRequest).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            mUserDataRef.child(Constants.NAME).setValue(mName.getText().toString());
+                            mUserDataRef.child(Constants.USERNAME_PROFILE).setValue(mName.getText().toString());
                         }
                     });
                 }

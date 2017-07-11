@@ -50,7 +50,7 @@ public class PostActivity extends AppCompatActivity {
         // Layout containers for fragments.
         mNavView = (NavigationView) findViewById(R.id.nav_view);
         mNavView.setCheckedItem(R.id.nav_posts);
-        // Nav Header fields data.
+        // Nav Header fields postData.
         View layout =mNavView.getHeaderView(0);
         TextView emailField = (TextView) layout.findViewById(R.id.nav_email);
         TextView nameField = (TextView) layout.findViewById(R.id.nav_name);
