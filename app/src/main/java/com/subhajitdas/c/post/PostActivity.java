@@ -174,8 +174,18 @@ public class PostActivity extends AppCompatActivity {
                     intent.putExtra(Intent.EXTRA_TEXT, textToShare);
                     startActivity(Intent.createChooser(intent, "Share"));
                     mDrawerLayout.closeDrawers();
+                }
+                else if(id == R.id.nav_contact){
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.setType("text/plain");
+                    intent.putExtra(Intent.EXTRA_EMAIL, "info.codehub@gmail.com");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "CodeHub Feedback");
+                    intent.putExtra(Intent.EXTRA_TEXT, "");
 
-                } else if (id == R.id.nav_sign_out) {
+                    startActivity(Intent.createChooser(intent, "Send Email"));
+                    mDrawerLayout.closeDrawers();
+                }
+                else if (id == R.id.nav_sign_out) {
 
                     FirebaseAuth.getInstance().signOut();
                     SharedPreferences.Editor editor = getSharedPreferences(Constants.LOGIN_STATE, Context.MODE_PRIVATE).edit();
