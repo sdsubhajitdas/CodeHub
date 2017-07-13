@@ -60,6 +60,14 @@ public class Post {
         this.userName = userName;
     }
 
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
     public String date = "";
     public String fileUid = "";
     public String fileUri = "";
@@ -69,6 +77,7 @@ public class Post {
     public String userName = "";
     public String description = "";
     public String language = "";
+    public String comments = "";
 
     public Post() {
 

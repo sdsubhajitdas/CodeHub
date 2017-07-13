@@ -81,7 +81,7 @@ public class ReadPostActivity extends AppCompatActivity {
 
 
     private StorageReference mProgramFile, mCmmtImg;
-    private DatabaseReference mUserRef, mCmmtRef;
+    private DatabaseReference mUserRef, mCmmtRef,mPostRef;
     private FirebaseUser mCurrentUser;
 
     @Override
@@ -103,6 +103,7 @@ public class ReadPostActivity extends AppCompatActivity {
                 mPostData.data.fileUri = intent.getStringExtra(Constants.FILEURI);
                 mPostData.data.description = intent.getStringExtra(Constants.DESCRIPTION);
                 mPostData.data.language = intent.getStringExtra(Constants.LANGUAGE);
+                mPostData.data.comments = intent.getStringExtra(Constants.COMMENTS);
             } else {
                 mPostData = new PostData();
             }
@@ -110,6 +111,7 @@ public class ReadPostActivity extends AppCompatActivity {
         //Database is initialized.
         mProgramFile = FirebaseStorage.getInstance().getReference().child(Constants.PROGRAMS);
         mCmmtImg = FirebaseStorage.getInstance().getReference().child(Constants.CMMT_IMAGES).child(mPostData.key);
+        mPostRef = FirebaseDatabase.getInstance().getReference().child(Constants.PROGRAM).child(mPostData.key).child(Constants.COMMENTS);
 
         //UI elements are initialized.
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swiperefresh);
@@ -232,6 +234,20 @@ public class ReadPostActivity extends AppCompatActivity {
 
             }
         });
+
+        mPostRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue()!=null){
+                    mPostData.data.comments =dataSnapshot.getValue().toString();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -329,6 +345,13 @@ public class ReadPostActivity extends AppCompatActivity {
                                                         mCmmtText.setText(null);
                                                         mShowImageChoosen.setImageDrawable(null);
                                                         mShowImageChoosen.setVisibility(View.INVISIBLE);
+                                                        int newCmmt = Integer.parseInt(mPostData.data.comments) +1;
+                                                        mPostData.data.comments = Integer.toString(newCmmt);
+                                                        FirebaseDatabase.getInstance().getReference()
+                                                                .child(Constants.PROGRAM)
+                                                                .child(mPostData.key)
+                                                                .child(Constants.COMMENTS)
+                                                                .setValue(Integer.toString(newCmmt));
                                                         uploadImg = false;
                                                         mProgress.dismiss();
                                                     }
@@ -350,7 +373,6 @@ public class ReadPostActivity extends AppCompatActivity {
                                 .addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
-                                        Log.e("UPLOAD","Upload Fail");
                                         uploadImg=false;
                                         mProgress.dismiss();
                                         if (Build.VERSION.SDK_INT >= 21)
@@ -377,6 +399,13 @@ public class ReadPostActivity extends AppCompatActivity {
                                         mCmmtText.setText(null);
                                         mShowImageChoosen.setImageDrawable(null);
                                         mShowImageChoosen.setVisibility(View.INVISIBLE);
+                                        int newCmmt = Integer.parseInt(mPostData.data.comments) +1;
+                                        mPostData.data.comments = Integer.toString(newCmmt);
+                                        FirebaseDatabase.getInstance().getReference()
+                                                .child(Constants.PROGRAM)
+                                                .child(mPostData.key)
+                                                .child(Constants.COMMENTS)
+                                                .setValue(Integer.toString(newCmmt));
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
@@ -646,6 +675,7 @@ public class ReadPostActivity extends AppCompatActivity {
                     mPostData.data.fileUri = data.getStringExtra(Constants.FILEURI);
                     mPostData.data.description = data.getStringExtra(Constants.DESCRIPTION);
                     mPostData.data.language = data.getStringExtra(Constants.LANGUAGE);
+                    mPostData.data.comments = data.getStringExtra(Constants.COMMENTS);
                 } else {
                     mPostData = new PostData();
                 }

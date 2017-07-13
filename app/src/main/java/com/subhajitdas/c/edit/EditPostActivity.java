@@ -71,6 +71,7 @@ public class EditPostActivity extends AppCompatActivity {
             mPostData.data.fileUri = gotIntent.getStringExtra(Constants.FILEURI);
             mPostData.data.description = gotIntent.getStringExtra(Constants.DESCRIPTION);
             mPostData.data.language = gotIntent.getStringExtra(Constants.LANGUAGE);
+            mPostData.data.comments = gotIntent.getStringExtra(Constants.COMMENTS);
             editorData = gotIntent.getStringExtra(Constants.EDITOR);
         }
         //Toolbar work.
@@ -243,6 +244,7 @@ public class EditPostActivity extends AppCompatActivity {
         returnData.date = mPostData.data.date;
         returnData.language = mLanguage.getText().toString();
         returnData.fileUri = url;
+        returnData.comments = mPostData.data.comments;
         return returnData;
     }
 
@@ -432,6 +434,7 @@ public class EditPostActivity extends AppCompatActivity {
         backData.putExtra(Constants.LIKES, mPostData.data.likes);
         backData.putExtra(Constants.FILEUID, mPostData.data.fileUid);
         backData.putExtra(Constants.FILEURI, mPostData.data.fileUri);
+        backData.putExtra(Constants.COMMENTS,mPostData.data.comments);
         setResult(RESULT_OK, backData);
         finish();                   //Ends the activity and returns to the parent.
     }

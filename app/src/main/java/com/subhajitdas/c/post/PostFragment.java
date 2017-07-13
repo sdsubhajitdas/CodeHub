@@ -156,6 +156,12 @@ public class PostFragment extends Fragment {
         if (dataSnapshot.hasChild(Constants.LIKES)) {
             returnData.data.likes = dataSnapshot.child(Constants.LIKES).getValue().toString();
         }
+
+        if(dataSnapshot.hasChild(Constants.COMMENTS)){
+            returnData.data.comments = dataSnapshot.child(Constants.COMMENTS).getValue().toString();
+        }else {
+            returnData.data.comments = "0";
+        }
         if (dataSnapshot.hasChild(Constants.TITLE)) {
             returnData.data.title = dataSnapshot.child(Constants.TITLE).getValue().toString();
         }

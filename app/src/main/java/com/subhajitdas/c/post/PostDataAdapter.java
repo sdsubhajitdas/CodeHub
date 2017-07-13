@@ -27,6 +27,7 @@ import com.like.LikeButton;
 import com.like.OnLikeListener;
 import com.subhajitdas.c.Constants;
 import com.subhajitdas.c.R;
+import com.subhajitdas.c.profile.ProfileActivity;
 import com.subhajitdas.c.read.ReadPostActivity;
 
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             likeButton,
             bookmarkButton - Like and bookmark buttons on our card layout .
          */
-        TextView postTitle, posterName, postDate, postLike;
+        TextView postTitle, posterName, postDate, postLike,postCmmt;
         LikeButton likeButton, bookmarkButton;
         CardView cardView;
         ImageView language, dp;
@@ -77,6 +78,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             language = (ImageView) v.findViewById(R.id.post_lang);
             dp = (ImageView) v.findViewById(R.id.poster_dp);
             cardView = (CardView) v.findViewById(R.id.card_view);
+            postCmmt = (TextView) v.findViewById(R.id.post_cmmt);
             context = v.getContext();
         }
     }
@@ -172,6 +174,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         holder.posterName.setText(mDataSet.get(position).data.userName);
         holder.postDate.setText(mDataSet.get(position).data.date);
         holder.postLike.setText(mDataSet.get(position).data.likes);
+        holder.postCmmt.setText(mDataSet.get(position).data.comments);
         //Setting up the two buttons.
         setLikeButton(holder, mDataSet.get(position).key);
         setBookmarkButton(holder, mDataSet.get(position).key);
@@ -238,6 +241,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             }
         });
 
+        //Handling going to a post.
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -252,9 +256,22 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
                 intent.putExtra(Constants.USERNAME, mDataSet.get(position).data.userName);
                 intent.putExtra(Constants.DESCRIPTION, mDataSet.get(position).data.description);
                 intent.putExtra(Constants.LANGUAGE, mDataSet.get(position).data.language);
+                intent.putExtra(Constants.COMMENTS,mDataSet.get(position).data.comments);
                 holder.context.startActivity(intent);
             }
         });
+
+        //Handling going to a profile
+        holder.dp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent profileIntent = new Intent(holder.context, ProfileActivity.class);
+                profileIntent.putExtra(Constants.ACTIVITY,Constants.POST_ACTIVITY);
+                profileIntent.putExtra(Constants.USERID,mDataSet.get(position).data.userId);
+                holder.context.startActivity(profileIntent);
+            }
+        });
+
     }
 
     private void setDp(ViewHolder holder, String userId) {

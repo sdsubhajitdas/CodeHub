@@ -15,6 +15,9 @@ public class Constants {
     public static final String TIME = "time";
     public static final String CMMT_IMG_URL = "cmmt_img_url";
 
+    //Follow branch
+    public static final String FOLLOW = "follow";
+
     //Like Branch
     public static final String LIKE = "like";
 
@@ -25,6 +28,7 @@ public class Constants {
     public static final String FILEUID = "fileUid";
     public static final String FILEURI = "fileUri";
     public static final String LIKES = "likes";
+    public static final String COMMENTS = "comments";
     public static final String TITLE = "title";
     public static final String USERID = "userId";
     public static final String USERNAME = "userName";
@@ -62,6 +66,9 @@ public class Constants {
 
     //Profile Activity FAB states
     public static final String FAB_EDIT = "edit";
+    public static final String FAB_NONE = "none";
+    public static final String FAB_FOLLOW = "follow";
+    public static final String FAB_FOLLOWING = "following";
 
     //Shared preferences name
     public static final String LOGIN_STATE = "login_state";

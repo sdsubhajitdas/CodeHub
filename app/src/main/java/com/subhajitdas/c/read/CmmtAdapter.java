@@ -31,6 +31,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -47,13 +48,33 @@ import java.util.ArrayList;
 public class CmmtAdapter extends RecyclerView.Adapter<CmmtAdapter.ViewHolder> {
     private ArrayList<CmmtData> mDataSet;
     private ArrayList<UserImageLinks> mUserImgLink;
-    private DatabaseReference mCmmtRef;
+    private DatabaseReference mCmmtRef,mPostRef;
     private StorageReference mCmmtImgRef, mDownloadImgRef;
 
-    private String mCurrentUserId, mCurrentPostId;
+    private String mCurrentUserId, mCurrentPostId,mTotalComment;
 
     public void setPostId(String postId) {
         mCurrentPostId = postId;
+
+        mPostRef.child(mCurrentPostId)
+                .child(Constants.COMMENTS)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.getValue()!=null){
+                            mTotalComment = dataSnapshot.getValue().toString();
+                        }
+                        else
+                        {
+                            mTotalComment ="0";
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
     }
 
 
@@ -90,10 +111,13 @@ public class CmmtAdapter extends RecyclerView.Adapter<CmmtAdapter.ViewHolder> {
         DatabaseReference mUserRef = FirebaseDatabase.getInstance().getReference().child(Constants.USER);
         mUserRef.keepSynced(true);
 
+        mPostRef = FirebaseDatabase.getInstance().getReference().child(Constants.PROGRAM);
+
         mCmmtImgRef = FirebaseStorage.getInstance().getReference().child(Constants.CMMT_IMAGES);
         mCmmtRef = FirebaseDatabase.getInstance().getReference().child(Constants.COMMENT);
         mCmmtRef.keepSynced(true);
         mCurrentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
 
         mUserRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -303,6 +327,14 @@ public class CmmtAdapter extends RecyclerView.Adapter<CmmtAdapter.ViewHolder> {
                                                     }
                                                 });
                                     }
+
+                                    int newCmmt = Integer.parseInt(mTotalComment) -1;
+                                    mTotalComment = Integer.toString(newCmmt);
+                                    FirebaseDatabase.getInstance().getReference()
+                                            .child(Constants.PROGRAM)
+                                            .child(mCurrentPostId)
+                                            .child(Constants.COMMENTS)
+                                            .setValue(Integer.toString(newCmmt));
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
