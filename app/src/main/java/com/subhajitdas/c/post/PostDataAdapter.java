@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -158,7 +157,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //A new view is created.
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.post_layout_2, parent, false);
+                .inflate(R.layout.post_layout, parent, false);
 
         //Returning the new created view.
         return new ViewHolder(v);

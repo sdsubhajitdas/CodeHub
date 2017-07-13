@@ -65,4 +65,5 @@
     <string name="comment_date_and_time">Comment date and time</string>
     <string name="comment_text">Comment Text</string>
     <string name="name">Name</string>
+    <string name="search">Search</string>
 </resources>

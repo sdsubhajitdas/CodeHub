@@ -8,6 +8,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -34,10 +36,12 @@ public class ProfileActivity extends AppCompatActivity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mName, mBio, mLocation, mWork, mEducation, mSkills;
 
-    private DatabaseReference mFollowDataRef;
+    private DatabaseReference mFollowDataRef,mUserDataRef;
     private FirebaseUser mCurrentUser;
+    private ValueEventListener mRefreshData,mRefreshFollow;
 
-    private boolean isFollowing =false;
+
+    private boolean isFollowing = false;
     private String mLastActivity, mProfileId, mFabState;
     private int REQUEST_CODE = 4321;
 
@@ -72,14 +76,13 @@ public class ProfileActivity extends AppCompatActivity {
 
         setMultiFab();
 
-
         mFollowDataRef = FirebaseDatabase.getInstance().getReference().child(Constants.FOLLOW).child(mCurrentUser.getUid());
         mFollowDataRef.keepSynced(true);
 
-        DatabaseReference mUserDataRef = FirebaseDatabase.getInstance().getReference().child(Constants.USER).child(mProfileId);
+        mUserDataRef = FirebaseDatabase.getInstance().getReference().child(Constants.USER);
 
         mSwipeRefreshLayout.setRefreshing(true);
-        mUserDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        mRefreshData = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(Constants.DP_URL)) {
@@ -92,6 +95,9 @@ public class ProfileActivity extends AppCompatActivity {
                             .apply(profileOptions)
                             .into(mDpImage);
                 }
+                else{
+                    mDpImage.setImageDrawable(getResources().getDrawable(R.drawable.ic_avatar_black));
+                }
                 if (dataSnapshot.hasChild(Constants.COVER_URL)) {
                     String coverUrl = dataSnapshot.child(Constants.COVER_URL).getValue().toString();
                     RequestOptions coverOptions = new RequestOptions();
@@ -99,41 +105,63 @@ public class ProfileActivity extends AppCompatActivity {
                     Glide.with(getApplicationContext())
                             .load(coverUrl)
                             .into(mCoverImage);
+
+                }
+                else{
+                    mCoverImage.setImageDrawable(getResources().getDrawable(R.drawable.navigation_drawer_image));
                 }
                 if (dataSnapshot.hasChild(Constants.USERNAME_PROFILE)) {
 
                     mName.setText(dataSnapshot.child(Constants.USERNAME_PROFILE).getValue().toString());
+                }else {
+                    mName.setText("Nothing to show");
                 }
                 if (dataSnapshot.hasChild(Constants.BIO)) {
                     mBio.setText(dataSnapshot.child(Constants.BIO).getValue().toString());
+                }else{
+                    mBio.setText("Nothing to show");
                 }
                 if (dataSnapshot.hasChild(Constants.LOCATION)) {
                     mLocation.setText(dataSnapshot.child(Constants.LOCATION).getValue().toString());
+                }else{
+                    mLocation.setText("Nothing to show");
                 }
                 if (dataSnapshot.hasChild(Constants.WORK)) {
                     mWork.setText(dataSnapshot.child(Constants.WORK).getValue().toString());
+                }else{
+                    mWork.setText("Nothing to show");
                 }
                 if (dataSnapshot.hasChild(Constants.EDUCATION)) {
                     mEducation.setText(dataSnapshot.child(Constants.EDUCATION).getValue().toString());
+                }else{
+                    mEducation.setText("Nothing to show");
                 }
                 if (dataSnapshot.hasChild(Constants.SKILLS)) {
                     mSkills.setText(dataSnapshot.child(Constants.SKILLS).getValue().toString());
+                }else{
+                    mSkills.setText("Nothing to show");
                 }
                 mSwipeRefreshLayout.setRefreshing(false);
                 mSwipeRefreshLayout.setEnabled(false);
+                setMultiFab();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
+        mUserDataRef.child(mProfileId).addListenerForSingleValueEvent(mRefreshData);
 
-        mFollowDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        mRefreshFollow = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(mProfileId)){
+                if (dataSnapshot.hasChild(mProfileId)) {
                     isFollowing = true;
+                    setMultiFab();
+                }
+                else {
+                    isFollowing=false;
                     setMultiFab();
                 }
             }
@@ -142,7 +170,7 @@ public class ProfileActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        };
 
     }
 
@@ -155,24 +183,21 @@ public class ProfileActivity extends AppCompatActivity {
             } else {
                 mMultiFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_mode_edit_black_24dp));
             }
-        }
-        else if (!isFollowing) {
+        } else if (!isFollowing) {
             mFabState = Constants.FAB_FOLLOW;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 mMultiFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_person_add_black_24dp, this.getTheme()));
             } else {
                 mMultiFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_person_add_black_24dp));
             }
-        }
-        else if(isFollowing){
+        } else if (isFollowing) {
             mFabState = Constants.FAB_FOLLOWING;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 mMultiFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_done_black_24dp, this.getTheme()));
             } else {
                 mMultiFab.setImageDrawable(getResources().getDrawable(R.drawable.ic_done_black_24dp));
             }
-        }
-        else {
+        } else {
             mFabState = Constants.FAB_NONE;
         }
 
@@ -181,6 +206,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mFollowDataRef.addListenerForSingleValueEvent(mRefreshFollow);
 
         mMultiFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,18 +216,15 @@ public class ProfileActivity extends AppCompatActivity {
                     editProfile.putExtra(Constants.ACTIVITY, mLastActivity);
                     editProfile.putExtra(Constants.USERID, mProfileId);
                     startActivityForResult(editProfile, REQUEST_CODE);
-                }
-                else if(mFabState.equals(Constants.FAB_FOLLOW)){
+                } else if (mFabState.equals(Constants.FAB_FOLLOW)) {
                     mFollowDataRef.child(mProfileId).setValue(true);
-                    isFollowing =true;
+                    isFollowing = true;
                     setMultiFab();
-                }
-                else if(mFabState.equals(Constants.FAB_FOLLOWING)){
+                } else if (mFabState.equals(Constants.FAB_FOLLOWING)) {
                     mFollowDataRef.child(mProfileId).removeValue();
-                    isFollowing =false;
+                    isFollowing = false;
                     setMultiFab();
-                }
-                else if (mFabState.equals(Constants.FAB_NONE)) {
+                } else if (mFabState.equals(Constants.FAB_NONE)) {
                     if (Build.VERSION.SDK_INT >= 21) {
                         Snackbar.make(findViewById(R.id.profile_coo),
                                 "Please wait.",
@@ -213,6 +236,13 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -220,6 +250,12 @@ public class ProfileActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
             mLastActivity = data.getStringExtra(Constants.ACTIVITY);
             mProfileId = data.getStringExtra(Constants.USERID);
+            isFollowing = false;
+            mSwipeRefreshLayout.setEnabled(true);
+            mSwipeRefreshLayout.setRefreshing(true);
+            mUserDataRef.child(mProfileId).addListenerForSingleValueEvent(mRefreshData);
+            mFollowDataRef.addListenerForSingleValueEvent(mRefreshFollow);
+            setMultiFab();
         }
     }
 
@@ -235,6 +271,13 @@ public class ProfileActivity extends AppCompatActivity {
                     backIntent.setClass(this, PostActivity.class);
                     startActivity(backIntent);
                 }
+                break;
+            case R.id.profile_search:
+                Intent searchProfile = new Intent(ProfileActivity.this, SearchUserActivity.class);
+                searchProfile.putExtra(Constants.ACTIVITY, mLastActivity);
+                searchProfile.putExtra(Constants.USERID, mProfileId);
+                startActivityForResult(searchProfile, REQUEST_CODE);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
