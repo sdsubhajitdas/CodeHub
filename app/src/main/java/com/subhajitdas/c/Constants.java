@@ -15,6 +15,9 @@ public class Constants {
     public static final String TIME = "time";
     public static final String CMMT_IMG_URL = "cmmt_img_url";
 
+    //dev_dp branch
+    public static final String DEV_DP="dev_dp";
+
     //Follow branch
     public static final String FOLLOW = "follow";
 

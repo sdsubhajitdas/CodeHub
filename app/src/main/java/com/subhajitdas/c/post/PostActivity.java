@@ -5,13 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.subhajitdas.c.Constants;
 import com.subhajitdas.c.R;
+import com.subhajitdas.c.about.AboutActivity;
 import com.subhajitdas.c.login.LoginActivity;
 import com.subhajitdas.c.profile.ProfileActivity;
 
@@ -167,22 +171,35 @@ public class PostActivity extends AppCompatActivity {
                     mDrawerLayout.closeDrawers();
 
                 } else if (id == R.id.nav_share) {
-                    String textToShare = "Download CodeHub from the website.Test our app today!!\nLink:- https://karmakarivan.github.io/codehub.io/";
+                    String textToShare = "Download CodeHub from our website.Join our app today!!\nLink:- https://code-hub.tk";
                     Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                     intent.setType("text/plain");
-                    intent.putExtra(Intent.EXTRA_SUBJECT, "A Sample share intent");
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Share app");
                     intent.putExtra(Intent.EXTRA_TEXT, textToShare);
                     startActivity(Intent.createChooser(intent, "Share"));
                     mDrawerLayout.closeDrawers();
                 }
                 else if(id == R.id.nav_contact){
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setType("text/plain");
-                    intent.putExtra(Intent.EXTRA_EMAIL, "info.codehub@gmail.com");
-                    intent.putExtra(Intent.EXTRA_SUBJECT, "CodeHub Feedback");
-                    intent.putExtra(Intent.EXTRA_TEXT, "");
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    String[] TO = {"info.codehub@gmail.com"};
+                    emailIntent.setData(Uri.parse("mailto:"));
+                    emailIntent.setType("text/plain");
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL,TO);
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, "CodeHub Feedback");
 
-                    startActivity(Intent.createChooser(intent, "Send Email"));
+                    try {
+                        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                        //finish();
+
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(PostActivity.this, "There is no email client installed.", Toast.LENGTH_LONG).show();
+
+                    }
+                    mDrawerLayout.closeDrawers();
+                }
+                else if(id == R.id.nav_about){
+                    Intent aboutIntent = new Intent(PostActivity.this, AboutActivity.class);
+                    startActivity(aboutIntent);
                     mDrawerLayout.closeDrawers();
                 }
                 else if (id == R.id.nav_sign_out) {
