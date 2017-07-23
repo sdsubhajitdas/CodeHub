@@ -16,6 +16,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -222,6 +224,40 @@ public class ProfileEdit extends AppCompatActivity {
                                 switch (which) {
 
                                     case 0:
+                                        final AlertDialog dialog2;
+                                        AlertDialog.Builder builder1 = new AlertDialog.Builder(ProfileEdit.this);
+
+                                        final View view = LayoutInflater.from(ProfileEdit.this)
+                                                .inflate(R.layout.see_profile_img, null);
+
+                                        builder1.setView(view)
+                                                .setTitle("Profile Image");
+                                        dialog2 = builder1.create();
+                                        final ImageView showImage = (ImageView) view.findViewById(R.id.show_dp_img);
+                                        dialog2.show();
+
+                                        mUserDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                Log.e("REPORT",dataSnapshot.toString());
+
+                                                if(dataSnapshot.hasChild(Constants.DP_URL)){
+                                                    RequestOptions requestOptions = new RequestOptions();
+                                                    requestOptions.placeholder(getResources().getDrawable(R.drawable.ic_photo));
+
+                                                    Glide.with(ProfileEdit.this)
+                                                            .load(dataSnapshot.child(Constants.DP_URL).getValue().toString())
+                                                            .apply(requestOptions)
+                                                            .into(showImage);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+
                                         mDPPressed = false;
                                         break;
                                     case 1:
@@ -272,6 +308,40 @@ public class ProfileEdit extends AppCompatActivity {
                                 switch (which) {
 
                                     case 0:
+                                        final AlertDialog dialog2;
+                                        AlertDialog.Builder builder1 = new AlertDialog.Builder(ProfileEdit.this);
+
+                                        final View view = LayoutInflater.from(ProfileEdit.this)
+                                                .inflate(R.layout.see_profile_img, null);
+
+                                        builder1.setView(view)
+                                                .setTitle("Cover Image");
+                                        dialog2 = builder1.create();
+                                        final ImageView showImage = (ImageView) view.findViewById(R.id.show_dp_img);
+                                        dialog2.show();
+
+                                        mUserDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                Log.e("REPORT",dataSnapshot.toString());
+
+                                                if(dataSnapshot.hasChild(Constants.COVER_URL)){
+                                                    RequestOptions requestOptions = new RequestOptions();
+                                                    requestOptions.placeholder(getResources().getDrawable(R.drawable.ic_photo));
+
+                                                    Glide.with(ProfileEdit.this)
+                                                            .load(dataSnapshot.child(Constants.COVER_URL).getValue().toString())
+                                                            .apply(requestOptions)
+                                                            .into(showImage);
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+
                                         mCoverPressed = false;
                                         break;
                                     case 1:
