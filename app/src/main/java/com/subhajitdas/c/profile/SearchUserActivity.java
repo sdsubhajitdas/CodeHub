@@ -76,7 +76,7 @@ public class SearchUserActivity extends AppCompatActivity {
 
         mUserRef = FirebaseDatabase.getInstance().getReference().child(Constants.USER);
 
-        mUserRef.addChildEventListener(new ChildEventListener() {
+        mUserRef.orderByChild(Constants.USERNAME_PROFILE).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 UserData data = new UserData();

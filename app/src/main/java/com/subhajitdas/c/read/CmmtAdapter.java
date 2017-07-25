@@ -306,6 +306,9 @@ public class CmmtAdapter extends RecyclerView.Adapter<CmmtAdapter.ViewHolder> {
                                                 .child(mDataSet.get(position).key)
                                                 .removeValue();
                                     } else {
+                                        mCmmtRef.child(mCurrentPostId)
+                                                .child(mDataSet.get(position).key)
+                                                .removeValue();
                                         Toast.makeText(holder.context, "Please wait deleting the picture", Toast.LENGTH_LONG).show();
                                         mCmmtImgRef.child(mCurrentPostId)
                                                 .child(mDataSet.get(position).key + ".jpg")
@@ -313,9 +316,6 @@ public class CmmtAdapter extends RecyclerView.Adapter<CmmtAdapter.ViewHolder> {
                                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                     @Override
                                                     public void onSuccess(Void aVoid) {
-                                                        mCmmtRef.child(mCurrentPostId)
-                                                                .child(mDataSet.get(position).key)
-                                                                .removeValue();
                                                         dialog.dismiss();
                                                     }
                                                 })
@@ -329,6 +329,9 @@ public class CmmtAdapter extends RecyclerView.Adapter<CmmtAdapter.ViewHolder> {
                                     }
 
                                     int newCmmt = Integer.parseInt(mTotalComment) -1;
+                                    if(newCmmt<0){
+                                        newCmmt = 0;
+                                    }
                                     mTotalComment = Integer.toString(newCmmt);
                                     FirebaseDatabase.getInstance().getReference()
                                             .child(Constants.PROGRAM)

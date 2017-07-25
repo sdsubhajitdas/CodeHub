@@ -215,6 +215,7 @@ public class UploadPost extends AppCompatActivity {
         Post returnData = new Post();
         returnData.title = mTitle.getText().toString();
         returnData.likes = "0";
+        returnData.comments = "0";
         returnData.userId = mCurrentUser.getUid();
         returnData.userName = mCurrentUser.getDisplayName();
         returnData.fileUid = FILENAME;
