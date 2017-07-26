@@ -1,20 +1,21 @@
 package com.subhajitdas.c.post;
 
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,9 +42,9 @@ public class PostActivity extends AppCompatActivity {
 
     private NavigationView mNavView;
     private DrawerLayout mDrawerLayout;
-    private ImageView mCoverImg,mProfileImg;
-
-    private DatabaseReference mUserRef;
+    private ImageView mCoverImg, mProfileImg;
+    private ProgressDialog mProgressDialog;
+    private DatabaseReference mUserRef, mUpdateRef;
 
 
     @Override
@@ -55,11 +56,11 @@ public class PostActivity extends AppCompatActivity {
         mNavView = (NavigationView) findViewById(R.id.nav_view);
         mNavView.setCheckedItem(R.id.nav_posts);
         // Nav Header fields postData.
-        View layout =mNavView.getHeaderView(0);
+        View layout = mNavView.getHeaderView(0);
         TextView emailField = (TextView) layout.findViewById(R.id.nav_email);
         TextView nameField = (TextView) layout.findViewById(R.id.nav_name);
         mProfileImg = (ImageView) layout.findViewById(R.id.nav_profile_image);
-        mCoverImg= (ImageView) layout.findViewById(R.id.nav_cover_image);
+        mCoverImg = (ImageView) layout.findViewById(R.id.nav_cover_image);
         emailField.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
         nameField.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
@@ -68,6 +69,8 @@ public class PostActivity extends AppCompatActivity {
         mToolbar.setNavigationIcon(R.drawable.ic_menu_white_48px);
         mToolbar.setTitle("Posts");
         setSupportActionBar(mToolbar);
+
+        mProgressDialog = new ProgressDialog(this);
 
         /*Navigation drawer work
             Needed for the Toolbar icon to respond on touch and
@@ -94,10 +97,12 @@ public class PostActivity extends AppCompatActivity {
                 .child(Constants.USER)
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
+        mUpdateRef = FirebaseDatabase.getInstance().getReference().child(Constants.UPDATE);
+
         mUserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(Constants.DP_THUMB_URL)){
+                if (dataSnapshot.hasChild(Constants.DP_THUMB_URL)) {
                     String dpUrl = dataSnapshot.child(Constants.DP_THUMB_URL).getValue().toString();
                     RequestOptions profileOptions = new RequestOptions();
                     profileOptions.circleCrop();
@@ -108,7 +113,7 @@ public class PostActivity extends AppCompatActivity {
                             .into(mProfileImg);
                 }
 
-                if(dataSnapshot.hasChild(Constants.COVER_THUMB_URL)){
+                if (dataSnapshot.hasChild(Constants.COVER_THUMB_URL)) {
                     String coverUrl = dataSnapshot.child(Constants.COVER_THUMB_URL).getValue().toString();
                     RequestOptions coverOptions = new RequestOptions();
                     coverOptions.fitCenter();
@@ -138,8 +143,8 @@ public class PostActivity extends AppCompatActivity {
                 if (id == R.id.nav_profile) {
 
                     Intent profileIntent = new Intent(PostActivity.this, ProfileActivity.class);
-                    profileIntent.putExtra(Constants.ACTIVITY,Constants.POST_ACTIVITY);
-                    profileIntent.putExtra(Constants.USERID,FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    profileIntent.putExtra(Constants.ACTIVITY, Constants.POST_ACTIVITY);
+                    profileIntent.putExtra(Constants.USERID, FirebaseAuth.getInstance().getCurrentUser().getUid());
                     startActivity(profileIntent);
                     mDrawerLayout.closeDrawers();
 
@@ -163,11 +168,54 @@ public class PostActivity extends AppCompatActivity {
                     mDrawerLayout.closeDrawers();
 
                 } else if (id == R.id.nav_updates) {
+                    PackageManager manager = getApplicationContext().getPackageManager();
+                    PackageInfo info = null;
+                    try {
+                        info = manager.getPackageInfo(
+                                getApplicationContext().getPackageName(), 0);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    final int versionCode = info.versionCode;
 
-                    String url = "https://karmakarivan.github.io/codehub.io/";
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW);
-                    browserIntent.setData(Uri.parse(url));
-                    startActivity(browserIntent);
+                    mProgressDialog.setTitle("Checking for updates");
+                    mProgressDialog.setMessage("Please wait while we check for updates");
+                    mProgressDialog.setCancelable(false);
+                    mProgressDialog.show();
+                    mUpdateRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            int gotVersionCode = Integer.parseInt(dataSnapshot.child(Constants.VERSION_CODE).getValue().toString());
+                            String url19 = dataSnapshot.child(Constants.API19).getValue().toString();
+                            String url21 = dataSnapshot.child(Constants.API21).getValue().toString();
+                            if (gotVersionCode > versionCode) {
+                                mProgressDialog.setMessage("Downloading your update");
+                                if (Build.VERSION.SDK_INT >= 21) {
+                                    mProgressDialog.dismiss();
+                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                                    browserIntent.setData(Uri.parse(url21));
+                                    startActivity(browserIntent);
+
+                                }
+                                else if(Build.VERSION.SDK_INT<=19){
+                                    mProgressDialog.dismiss();
+                                    Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                                    browserIntent.setData(Uri.parse(url19));
+                                    startActivity(browserIntent);
+                                }
+                            }else{
+                                Toast.makeText(PostActivity.this,"No updates available",Toast.LENGTH_LONG).show();
+                                mProgressDialog.dismiss();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
                     mDrawerLayout.closeDrawers();
 
                 } else if (id == R.id.nav_share) {
@@ -178,13 +226,12 @@ public class PostActivity extends AppCompatActivity {
                     intent.putExtra(Intent.EXTRA_TEXT, textToShare);
                     startActivity(Intent.createChooser(intent, "Share"));
                     mDrawerLayout.closeDrawers();
-                }
-                else if(id == R.id.nav_contact){
+                } else if (id == R.id.nav_contact) {
                     Intent emailIntent = new Intent(Intent.ACTION_SEND);
                     String[] TO = {"info.codehub@gmail.com"};
                     emailIntent.setData(Uri.parse("mailto:"));
                     emailIntent.setType("text/plain");
-                    emailIntent.putExtra(Intent.EXTRA_EMAIL,TO);
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "CodeHub Feedback");
 
                     try {
@@ -196,13 +243,11 @@ public class PostActivity extends AppCompatActivity {
 
                     }
                     mDrawerLayout.closeDrawers();
-                }
-                else if(id == R.id.nav_about){
+                } else if (id == R.id.nav_about) {
                     Intent aboutIntent = new Intent(PostActivity.this, AboutActivity.class);
                     startActivity(aboutIntent);
                     mDrawerLayout.closeDrawers();
-                }
-                else if (id == R.id.nav_sign_out) {
+                } else if (id == R.id.nav_sign_out) {
 
                     FirebaseAuth.getInstance().signOut();
                     SharedPreferences.Editor editor = getSharedPreferences(Constants.LOGIN_STATE, Context.MODE_PRIVATE).edit();

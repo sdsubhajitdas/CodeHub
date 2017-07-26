@@ -7,7 +7,7 @@ android {
         applicationId "com.subhajitdas.c"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 4
+        versionCode 3
         versionName "1.1"
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

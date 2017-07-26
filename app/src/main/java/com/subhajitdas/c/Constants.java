@@ -39,6 +39,13 @@ public class Constants {
     public static final String LANGUAGE = "language";
     public static final String KEY = "key";
 
+    //Update Branch
+    public static final String UPDATE = "update";
+    public static final String VERSION_CODE = "versionCode";
+    public static final String API19 = "api19";
+    public static final String API21 = "api21";
+
+
     //User Branch.
     public static final String USER = "user";
     //User Branch Data
