@@ -2,14 +2,15 @@ package com.subhajitdas.c.post;
 
 
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -18,8 +19,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -44,7 +49,7 @@ public class PostFragment extends Fragment {
     private DatabaseReference mProgramRef;
     private ChildEventListener mProgramDataListener;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private SearchView mSearchView;
+    private Boolean wasSearched = false;
 
     public PostFragment() {
         // Required empty public constructor
@@ -136,6 +141,7 @@ public class PostFragment extends Fragment {
 
     }
 
+
     // Making of the single block of postData for each post which will later get inside the array list.
     private PostData makeDataBlock(DataSnapshot dataSnapshot) {
         /* Data fields are extracted from the JSON postData snapshot
@@ -157,9 +163,9 @@ public class PostFragment extends Fragment {
             returnData.data.likes = dataSnapshot.child(Constants.LIKES).getValue().toString();
         }
 
-        if(dataSnapshot.hasChild(Constants.COMMENTS)){
+        if (dataSnapshot.hasChild(Constants.COMMENTS)) {
             returnData.data.comments = dataSnapshot.child(Constants.COMMENTS).getValue().toString();
-        }else {
+        } else {
             returnData.data.comments = "0";
         }
         if (dataSnapshot.hasChild(Constants.TITLE)) {
@@ -225,18 +231,31 @@ public class PostFragment extends Fragment {
             @Override
             public void onRefresh() {
                 /*
+                if part is executed if a search was performed.
+
                  * 1st the child event listener is removed.
                  * 2nd Datasets are cleared.
                  * 3rd Adapter is notified of the dataset change.
                  * 4th All views from the recycler view are removed.
                  * 5th Again the child event listener is added.
                  */
-                mProgramRef.removeEventListener(mProgramDataListener);
-                mDataSet.clear();
-                mAdapter.notifyDataSetChanged();
-                mPostRecyclerView.removeAllViews();
-                mDatasetRecord.clear();
-                mProgramRef.addChildEventListener(mProgramDataListener);
+                if(wasSearched){
+                    mAdapter.setFilter(mDataSet);
+                    //wasSearched =false;
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    mPostRecyclerView.scrollToPosition(mDataSet.size()-1);
+                }else{
+                    mProgramRef.removeEventListener(mProgramDataListener);
+                    mDataSet.clear();
+                    mAdapter.notifyDataSetChanged();
+                    mPostRecyclerView.removeAllViews();
+                    //mPostRecyclerView.getRecycledViewPool().clear();
+                    mDatasetRecord.clear();
+                    mProgramRef.addChildEventListener(mProgramDataListener);
+                }
+
+
+
             }
         });
 
@@ -254,41 +273,39 @@ public class PostFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         getActivity().getMenuInflater().inflate(R.menu.post_activity_menu, menu);
+
+        /*
         mSearchView = (SearchView) MenuItemCompat.getActionView((menu.findItem(R.id.post_action_search)));
+
 
         mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
 
-                Log.i("SearchView:", "onClose");
+                Log.e("SearchView:", "onClose");
                 mSearchView.onActionViewCollapsed();
                 return false;
             }
         });
+
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                query = query.toLowerCase();
+                ArrayList<PostData> newDataset = new ArrayList<PostData>();
+                for (int i = 0; i < mDataSet.size(); i++) {
+                    String dataName = mDataSet.get(i).data.title.toLowerCase();
+                    if (dataName.contains(query)) {
+                        newDataset.add(mDataSet.get(i));
+                    }
+                }
+                mAdapter.setFilter(newDataset);
+                newDataset.clear();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //Log.e("Jeetu",newText);
-
-                newText = newText.toLowerCase();
-                ArrayList<PostData> newDataset = new ArrayList<PostData>();
-                newDataset.clear();
-                for(int i=0;i<mDataSet.size();i++){
-                    String dataName = mDataSet.get(i).data.title.toLowerCase();
-                    //Log.e("Jeetu","Searched     "+dataName);
-                    if(dataName.contains(newText)){
-                        newDataset.add(mDataSet.get(i));
-                        //Log.e("Jeetu","Added    "+dataName);
-                    }
-                }
-                mAdapter.setFilter(newDataset);
-                newDataset.clear();
-                //Log.e("Jeetu","DONE SEARCH");
                 return false;
             }
         });
@@ -305,6 +322,67 @@ public class PostFragment extends Fragment {
                 return false;
             }
         });
+        */
+
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.post_action_search:
+
+                final EditText searchField = new EditText(getActivity());
+                searchField.setHint("What do you want to search for ?");
+
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                lp.setMargins(16,8,16,8);
+                searchField.setLayoutParams(lp);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Search for");
+                builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        wasSearched = true;
+
+                        String searchText = searchField.getText().toString();
+                        searchText = searchText.toLowerCase();
+                        ArrayList<PostData> newDataSet = new ArrayList<PostData>();
+                        ArrayList<PostData> oldDataSet = new ArrayList<PostData>(mDataSet);
+                        for(int i =0;i<mDataSet.size();i++){
+                            String newText = mDataSet.get(i).data.title.toLowerCase();
+                            if(newText.contains(searchText)){
+                                newDataSet.add(mDataSet.get(i));
+                            }
+                        }
+
+                        if(!newDataSet.isEmpty()) {
+                            mAdapter.setFilter(newDataSet);
+                        }else {
+                            mAdapter.setFilter(newDataSet);
+                            Toast.makeText(getActivity(),"Sorry no results found",Toast.LENGTH_LONG).show();
+                        }
+                        mDataSet = new ArrayList<PostData>(oldDataSet);
+                        dialog.dismiss();
+                    }
+                }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setView(searchField);
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+
+    }
 }
