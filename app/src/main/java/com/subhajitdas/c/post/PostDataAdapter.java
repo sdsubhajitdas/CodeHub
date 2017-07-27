@@ -3,7 +3,9 @@ package com.subhajitdas.c.post;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -60,7 +62,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             likeButton,
             bookmarkButton - Like and bookmark buttons on our card layout .
          */
-        TextView postTitle, posterName, postDate, postLike,postCmmt;
+        TextView postTitle, posterName, postDate, postLike, postCmmt;
         LikeButton likeButton, bookmarkButton;
         CardView cardView;
         ImageView language, dp;
@@ -84,6 +86,9 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
 
     // Constructor to get the postData-set.
     public PostDataAdapter(ArrayList<PostData> data) {
+        if (Build.VERSION.SDK_INT <= 19) {
+            AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        }
         mDataSet = data;
         mUserDataSet = new ArrayList<>();
         mRootRef = FirebaseDatabase.getInstance().getReference();
@@ -93,6 +98,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mLikeDataSnapshot = dataSnapshot;
+                notifyDataSetChanged();
             }
 
             @Override
@@ -106,6 +112,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mBookmarkDataSnapshot = dataSnapshot;
+                notifyDataSetChanged();
             }
 
             @Override
@@ -123,11 +130,11 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
                 dataBlock.userId = dataSnapshot.getKey();
                 if (dataSnapshot.hasChild(Constants.DP_THUMB_URL)) {
                     dataBlock.userUrl = dataSnapshot.child(Constants.DP_THUMB_URL).getValue().toString();
-
                 } else {
                     dataBlock.userUrl = null;
                 }
                 mUserDataSet.add(dataBlock);
+                notifyDataSetChanged();
             }
 
             @Override
@@ -183,7 +190,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         // Log.e("Jeetu",mDataSet.get(position).postData.title);
 
         //Setting the display pic.
-        holder.dp.setImageDrawable(ContextCompat.getDrawable(holder.context,R.drawable.ic_avatar_black));
+        holder.dp.setImageDrawable(ContextCompat.getDrawable(holder.context, R.drawable.ic_avatar_black));
         setDp(holder, mDataSet.get(position).data.userId);
 
         //Handling the like click
@@ -255,7 +262,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
                 intent.putExtra(Constants.USERNAME, mDataSet.get(position).data.userName);
                 intent.putExtra(Constants.DESCRIPTION, mDataSet.get(position).data.description);
                 intent.putExtra(Constants.LANGUAGE, mDataSet.get(position).data.language);
-                intent.putExtra(Constants.COMMENTS,mDataSet.get(position).data.comments);
+                intent.putExtra(Constants.COMMENTS, mDataSet.get(position).data.comments);
                 holder.context.startActivity(intent);
             }
         });
@@ -265,8 +272,8 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             @Override
             public void onClick(View v) {
                 Intent profileIntent = new Intent(holder.context, ProfileActivity.class);
-                profileIntent.putExtra(Constants.ACTIVITY,Constants.POST_ACTIVITY);
-                profileIntent.putExtra(Constants.USERID,mDataSet.get(position).data.userId);
+                profileIntent.putExtra(Constants.ACTIVITY, Constants.POST_ACTIVITY);
+                profileIntent.putExtra(Constants.USERID, mDataSet.get(position).data.userId);
                 holder.context.startActivity(profileIntent);
             }
         });
@@ -274,7 +281,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
     }
 
     private void setDp(ViewHolder holder, String userId) {
-        int index=-1;
+        int index = -1;
         for (int i = 0; i < mUserDataSet.size(); i++) {
             if (userId.equals(mUserDataSet.get(i).userId)) {
                 index = i;
@@ -282,9 +289,9 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             }
         }
 
-        if(index!=-1){
-            if(!(mUserDataSet.get(index).userUrl==null)){
-                Drawable placeholderDrawable = ContextCompat.getDrawable(holder.context,R.drawable.ic_avatar_black);
+        if (index != -1) {
+            if (!(mUserDataSet.get(index).userUrl == null)) {
+                Drawable placeholderDrawable = ContextCompat.getDrawable(holder.context, R.drawable.ic_avatar_black);
                 RequestOptions postDpOptions = new RequestOptions();
                 postDpOptions.circleCrop();
                 postDpOptions.placeholder(placeholderDrawable);

@@ -114,7 +114,7 @@ public class AboutActivity extends AppCompatActivity {
         github1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openBrowser("https://github1.com/Jeetu95");
+                openBrowser("https://github.com/Jeetu95");
             }
         });
 
@@ -128,7 +128,7 @@ public class AboutActivity extends AppCompatActivity {
         linkedin1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openBrowser("https://www.linkedin1.com/in/subhajit-das-764742142/");
+                openBrowser("https://www.linkedin.com/in/subhajit-das-764742142/");
             }
         });
 
@@ -163,35 +163,35 @@ public class AboutActivity extends AppCompatActivity {
         go1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openBrowser("https://github1.com/jd-alexander/LikeButton");
+                openBrowser("https://github.com/jd-alexander/LikeButton");
             }
         });
 
         go2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openBrowser("https://github1.com/bumptech/glide");
+                openBrowser("https://github.com/bumptech/glide");
             }
         });
 
         go3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openBrowser("https://github1.com/ArthurHub/Android-Image-Cropper");
+                openBrowser("https://github.com/ArthurHub/Android-Image-Cropper");
             }
         });
 
         go4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openBrowser("https://github1.com/zetbaitsu/Compressor");
+                openBrowser("https://github.com/zetbaitsu/Compressor");
             }
         });
 
         go5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openBrowser("https://github1.com/lgvalle/Material-Animations");
+                openBrowser("https://github.com/lgvalle/Material-Animations");
             }
         });
 

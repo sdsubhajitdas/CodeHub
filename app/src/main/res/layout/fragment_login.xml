@@ -114,22 +114,20 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:backgroundTint="@color/colorPrimary"
                     android:text="@string/signin"
                     android:textAllCaps="false"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/black" />
 
                 <Button
                     android:id="@+id/google_signin_button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:backgroundTint="@android:color/white"
                     android:drawableLeft="@mipmap/ic_google_logo"
                     android:drawableStart="@mipmap/ic_google_logo"
                     android:text="@string/signin"
                     android:textAllCaps="false"
-                    android:textColor="@color/common_google_signin_btn_text_light_default" />
+                    android:textColor="@android:color/black" />
             </LinearLayout>
 
         </RelativeLayout>

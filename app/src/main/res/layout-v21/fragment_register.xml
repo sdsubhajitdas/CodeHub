@@ -156,10 +156,11 @@
                     android:layout_marginEnd="32dp"
                     android:layout_marginStart="32dp"
                     android:layout_weight="1"
+                    android:backgroundTint="@color/colorPrimary"
                     android:padding="24dp"
                     android:text="@string/register"
                     android:textAllCaps="false"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/white" />
 
             </LinearLayout>
 

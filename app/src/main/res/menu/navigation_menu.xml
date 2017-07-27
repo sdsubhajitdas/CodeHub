@@ -17,6 +17,11 @@
             android:id="@+id/nav_bookmarks"
             android:icon="@drawable/ic_label_black_24dp"
             android:title="Bookmarks" />
+
+        <item
+            android:id="@+id/nav_notifications"
+            android:icon="@drawable/ic_notifications_black_24dp"
+            android:title="Notifications" />
     </group>
 
     <group

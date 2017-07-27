@@ -167,6 +167,14 @@ public class PostActivity extends AppCompatActivity {
                             .commit();
                     mDrawerLayout.closeDrawers();
 
+                } else if (id == R.id.nav_notifications) {
+                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    NotificationFragment notificationFragment = new NotificationFragment();
+                    getFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.main_container, notificationFragment)
+                            .commit();
+                    mDrawerLayout.closeDrawers();
                 } else if (id == R.id.nav_updates) {
                     PackageManager manager = getApplicationContext().getPackageManager();
                     PackageInfo info = null;
@@ -196,15 +204,14 @@ public class PostActivity extends AppCompatActivity {
                                     browserIntent.setData(Uri.parse(url21));
                                     startActivity(browserIntent);
 
-                                }
-                                else if(Build.VERSION.SDK_INT<=19){
+                                } else if (Build.VERSION.SDK_INT <= 19) {
                                     mProgressDialog.dismiss();
                                     Intent browserIntent = new Intent(Intent.ACTION_VIEW);
                                     browserIntent.setData(Uri.parse(url19));
                                     startActivity(browserIntent);
                                 }
-                            }else{
-                                Toast.makeText(PostActivity.this,"No updates available",Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(PostActivity.this, "No updates available", Toast.LENGTH_LONG).show();
                                 mProgressDialog.dismiss();
                             }
                         }

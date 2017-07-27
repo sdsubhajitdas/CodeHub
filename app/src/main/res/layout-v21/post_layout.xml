@@ -129,7 +129,7 @@
                 android:layout_weight="1"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="@string/likes"
-                />
+                android:elevation="12dp"/>
 
             <com.like.LikeButton
                 android:id="@+id/bookmark_button"
@@ -137,9 +137,13 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:layout_weight="1"
-                app:icon_type="star"
+                app:circle_end_color="@color/normalGrey"
+                app:circle_start_color="@android:color/black"
+                app:dots_primary_color="@android:color/black"
+                app:dots_secondary_color="@color/normalGrey"
                 app:icon_size="25dp"
-                />
+                app:like_drawable="@drawable/ic_bookmark_black_24px"
+                app:unlike_drawable="@drawable/ic_bookmark_border_black_24px" />
 
         </LinearLayout>
 

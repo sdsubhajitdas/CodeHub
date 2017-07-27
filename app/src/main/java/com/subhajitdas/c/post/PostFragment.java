@@ -241,7 +241,6 @@ public class PostFragment extends Fragment {
                  */
                 if(wasSearched){
                     mAdapter.setFilter(mDataSet);
-                    //wasSearched =false;
                     mSwipeRefreshLayout.setRefreshing(false);
                     mPostRecyclerView.scrollToPosition(mDataSet.size()-1);
                 }else{
@@ -249,7 +248,6 @@ public class PostFragment extends Fragment {
                     mDataSet.clear();
                     mAdapter.notifyDataSetChanged();
                     mPostRecyclerView.removeAllViews();
-                    //mPostRecyclerView.getRecycledViewPool().clear();
                     mDatasetRecord.clear();
                     mProgramRef.addChildEventListener(mProgramDataListener);
                 }
@@ -273,57 +271,6 @@ public class PostFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         getActivity().getMenuInflater().inflate(R.menu.post_activity_menu, menu);
-
-        /*
-        mSearchView = (SearchView) MenuItemCompat.getActionView((menu.findItem(R.id.post_action_search)));
-
-
-        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-
-                Log.e("SearchView:", "onClose");
-                mSearchView.onActionViewCollapsed();
-                return false;
-            }
-        });
-
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                query = query.toLowerCase();
-                ArrayList<PostData> newDataset = new ArrayList<PostData>();
-                for (int i = 0; i < mDataSet.size(); i++) {
-                    String dataName = mDataSet.get(i).data.title.toLowerCase();
-                    if (dataName.contains(query)) {
-                        newDataset.add(mDataSet.get(i));
-                    }
-                }
-                mAdapter.setFilter(newDataset);
-                newDataset.clear();
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
-        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                mProgramRef.removeEventListener(mProgramDataListener);
-                mDataSet.clear();
-                mAdapter.notifyDataSetChanged();
-                mPostRecyclerView.removeAllViews();
-                mDatasetRecord.clear();
-                mProgramRef.addChildEventListener(mProgramDataListener);
-                return false;
-            }
-        });
-        */
-
     }
 
     @Override
