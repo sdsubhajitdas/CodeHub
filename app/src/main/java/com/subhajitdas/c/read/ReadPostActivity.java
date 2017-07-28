@@ -355,9 +355,6 @@ public class ReadPostActivity extends AppCompatActivity {
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
                                                     public void onComplete(@NonNull Task<Void> task) {
-                                                        mCmmtText.setText(null);
-                                                        mShowImageChoosen.setImageDrawable(null);
-                                                        mShowImageChoosen.setVisibility(View.INVISIBLE);
                                                         int newCmmt = Integer.parseInt(mPostData.data.comments) + 1;
                                                         mPostData.data.comments = Integer.toString(newCmmt);
                                                         FirebaseDatabase.getInstance().getReference()
@@ -366,7 +363,10 @@ public class ReadPostActivity extends AppCompatActivity {
                                                                 .child(Constants.COMMENTS)
                                                                 .setValue(Integer.toString(newCmmt));
                                                         uploadImg = false;
-                                                        sendNoti();
+                                                        sendNoti(mCmmtText.getText().toString());
+                                                        mCmmtText.setText(null);
+                                                        mShowImageChoosen.setImageDrawable(null);
+                                                        mShowImageChoosen.setVisibility(View.GONE);
                                                         mProgress.dismiss();
                                                     }
                                                 })
@@ -410,9 +410,7 @@ public class ReadPostActivity extends AppCompatActivity {
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
-                                        mCmmtText.setText(null);
-                                        mShowImageChoosen.setImageDrawable(null);
-                                        mShowImageChoosen.setVisibility(View.INVISIBLE);
+
                                         int newCmmt = Integer.parseInt(mPostData.data.comments) + 1;
                                         mPostData.data.comments = Integer.toString(newCmmt);
                                         FirebaseDatabase.getInstance().getReference()
@@ -420,7 +418,10 @@ public class ReadPostActivity extends AppCompatActivity {
                                                 .child(mPostData.key)
                                                 .child(Constants.COMMENTS)
                                                 .setValue(Integer.toString(newCmmt));
-                                        sendNoti();
+                                        sendNoti(mCmmtText.getText().toString());
+                                        mCmmtText.setText(null);
+                                        mShowImageChoosen.setImageDrawable(null);
+                                        mShowImageChoosen.setVisibility(View.GONE);
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
@@ -458,26 +459,43 @@ public class ReadPostActivity extends AppCompatActivity {
 
     }
 
-    private void sendNoti() {
+    private void sendNoti(String msg) {
 
-        String tempTitleText=mPostData.data.title;
-        if(tempTitleText.length()>40){
-            tempTitleText = tempTitleText.substring(0,40)+"...";
+        if(TextUtils.isEmpty(msg)){
+            msg = " an image ";
+        }else{
+            msg="  \""+msg+"\"  ";
         }
-        String notiText = mCurrentUser.getDisplayName()+" commented on post \""+tempTitleText+"\"";
-        HashMap<String,String> uploadNoti = new HashMap<>();
-        uploadNoti.put(Constants.NOTI_TEXT,notiText);
-        uploadNoti.put(Constants.NOTI_READ,"false");
-        uploadNoti.put(Constants.NOTI_TYPE,"comment");
-        uploadNoti.put(Constants.NOTI_POST_KEY,mPostData.key);
 
-        for(int i=0;i<mNotiSendId.size();i++) {
-            if (!mNotiSendId.get(i).equals(mCurrentUser.getUid()))
+        String tempTitleText = mPostData.data.title;
+        if (tempTitleText.length() > 40) {
+            tempTitleText = tempTitleText.substring(0, 40) + "...";
+        }
+        String notiText = null;
+
+        for (int i = 0; i < mNotiSendId.size(); i++) {
+            //For not sending notification to myself.
+            if (!mNotiSendId.get(i).equals(mCurrentUser.getUid())) {
+                //noti sent to owner.
+                int index = mNotiSendId.indexOf(mCurrentUser.getUid());
+                if (mNotiSendId.get(i).equals(mPostData.data.userId)) {
+                    notiText = mCurrentUser.getDisplayName() + " commented " +  msg + "on your post \"" + tempTitleText + "\"";
+                } else if (index < mNotiSendId.size() && index >= 0) {
+                    notiText = mCurrentUser.getDisplayName() + " replied " + msg + "on post \"" + tempTitleText + "\"";
+                } else {
+                    notiText = mCurrentUser.getDisplayName() + " commented "+ msg +  "on post \"" + tempTitleText + "\"";
+                }
+                HashMap<String, String> uploadNoti = new HashMap<>();
+                uploadNoti.put(Constants.NOTI_TEXT, notiText);
+                uploadNoti.put(Constants.NOTI_READ, "false");
+                uploadNoti.put(Constants.NOTI_TYPE, "comment");
+                uploadNoti.put(Constants.NOTI_POST_KEY, mPostData.key);
                 FirebaseDatabase.getInstance().getReference()
                         .child(Constants.NOTI)
                         .child(mNotiSendId.get(i))
                         .push()
                         .setValue(uploadNoti);
+            }
         }
     }
 
