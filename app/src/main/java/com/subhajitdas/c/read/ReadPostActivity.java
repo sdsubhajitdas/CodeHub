@@ -185,7 +185,7 @@ public class ReadPostActivity extends AppCompatActivity {
                 CmmtData dataBlock = makeCmmtData(dataSnapshot);
                 mDataSet.add(dataBlock);
                 mCmmtAdapter.notifyItemInserted(mDataSet.size() - 1);
-                mCmmtReycyclerView.scrollToPosition(mDataSet.size() - 1);
+                //mCmmtReycyclerView.scrollToPosition(mDataSet.size() - 1);
                 if (mDataSet.size() == 1) {
                     mCmmtReycyclerView.setVisibility(View.VISIBLE);
                     mEmptyView.setVisibility(View.INVISIBLE);
@@ -574,7 +574,9 @@ public class ReadPostActivity extends AppCompatActivity {
         int id = item.getItemId();
         final String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
         switch (id) {
-
+            case android.R.id.home:
+                finish();
+                break;
             case R.id.read_action_edit:
                 // Opening the edit page
                 if (currentUser.equals(mPostData.data.userId)) {        //Checking if authorized to edit or not.
@@ -755,6 +757,12 @@ public class ReadPostActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     @Override

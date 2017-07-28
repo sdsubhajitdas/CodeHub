@@ -31,14 +31,14 @@
 
         <activity android:name=".post.PostActivity" />
         <activity
-            android:name=".read.ReadPostActivity"
-            android:parentActivityName=".post.PostActivity" />
+            android:name=".read.ReadPostActivity" />
         <activity
             android:name=".upload.UploadPost"
             android:parentActivityName=".post.PostActivity" />
         <activity
             android:name=".edit.EditPostActivity"
             android:parentActivityName=".read.ReadPostActivity" />
+
         <activity android:name=".profile.ProfileActivity" />
         <activity
             android:name=".editProfile.ProfileEdit"
