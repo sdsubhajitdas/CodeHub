@@ -30,4 +30,16 @@
         app:elevation="8dp"
         app:srcCompat="@drawable/ic_add_white_24px" />
 
+    <FrameLayout
+        android:id="@+id/noti_frag"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="100dp"
+        android:background="@color/LightPrimary"
+        android:clickable="true"
+        android:elevation="8dp" />
+
 </RelativeLayout>

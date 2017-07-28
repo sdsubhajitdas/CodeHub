@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="LightPrimary">#90CAF9</color>
     <color name="colorPrimary">#2196f3</color>
     <color name="colorPrimaryDark">#1976d2</color>
     <color name="colorAccent">#f9a825</color>
     <color name="darkGrey">#424242</color>
     <color name="normalGrey">#9E9E9E</color>
+    <color name="notiBackGroundTrue">#FFE0E0E0</color>
+    <color name="notiBackGroundFalse">#FFffffff</color>
     <color name="lightGrey">#BDBDBD</color>
     <color name="post_card_background">#eeeeee</color>
     <color name="postBackground">#2B303B</color>

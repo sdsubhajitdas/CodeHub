@@ -1,6 +1,8 @@
 package com.subhajitdas.c.post;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,16 +15,16 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -33,6 +35,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.subhajitdas.c.Constants;
 import com.subhajitdas.c.R;
+import com.subhajitdas.c.read.ReadPostActivity;
 import com.subhajitdas.c.upload.UploadPost;
 
 import java.util.ArrayList;
@@ -49,7 +52,8 @@ public class PostFragment extends Fragment {
     private DatabaseReference mProgramRef;
     private ChildEventListener mProgramDataListener;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private Boolean wasSearched = false;
+    private Boolean wasSearched = false, notiOpen = false;
+    private FrameLayout mNotiFrag;
 
     public PostFragment() {
         // Required empty public constructor
@@ -203,6 +207,11 @@ public class PostFragment extends Fragment {
         mSwipeRefreshLayout = (SwipeRefreshLayout) getActivity().findViewById(R.id.swiperefresh);
         if (mDataSet.size() == 0)
             mSwipeRefreshLayout.setRefreshing(true);
+        //Notifications fragment
+        mNotiFrag = (FrameLayout) getActivity().findViewById(R.id.noti_frag);
+        mNotiFrag.setVisibility(View.INVISIBLE);
+        mNotiFrag.setClickable(false);
+
 
         //App Toolbar work.
         Toolbar mToolbar = (Toolbar) getActivity().findViewById(R.id.post_toolbar);
@@ -216,6 +225,12 @@ public class PostFragment extends Fragment {
         mPostRecyclerView.setLayoutManager(linearLayoutManager);
         mAdapter = new PostDataAdapter(mDataSet);
         mPostRecyclerView.setAdapter(mAdapter);
+
+        //Notifications fragment attached.
+        if (getActivity().findViewById(R.id.noti_frag) != null) {
+            NotificationFragment notiFragment = new NotificationFragment();
+            getFragmentManager().beginTransaction().add(R.id.noti_frag, notiFragment).commit();
+        }
 
     }
 
@@ -239,11 +254,11 @@ public class PostFragment extends Fragment {
                  * 4th All views from the recycler view are removed.
                  * 5th Again the child event listener is added.
                  */
-                if(wasSearched){
+                if (wasSearched) {
                     mAdapter.setFilter(mDataSet);
                     mSwipeRefreshLayout.setRefreshing(false);
-                    mPostRecyclerView.scrollToPosition(mDataSet.size()-1);
-                }else{
+                    mPostRecyclerView.scrollToPosition(mDataSet.size() - 1);
+                } else {
                     mProgramRef.removeEventListener(mProgramDataListener);
                     mDataSet.clear();
                     mAdapter.notifyDataSetChanged();
@@ -251,7 +266,6 @@ public class PostFragment extends Fragment {
                     mDatasetRecord.clear();
                     mProgramRef.addChildEventListener(mProgramDataListener);
                 }
-
 
 
             }
@@ -264,13 +278,26 @@ public class PostFragment extends Fragment {
                 getActivity().startActivity(uploadPost);
             }
         });
+
+        mPostRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (notiOpen) {
+                    mNotiFrag.setClickable(true);
+                    mNotiFrag.setVisibility(View.INVISIBLE);
+                    notiOpen = false;
+                }
+            }
+        });
+
     }
 
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        getActivity().getMenuInflater().inflate(R.menu.post_activity_menu, menu);
+        getActivity().getMenuInflater().inflate(R.menu.post_frag_menu, menu);
     }
 
     @Override
@@ -285,7 +312,7 @@ public class PostFragment extends Fragment {
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT);
-                lp.setMargins(16,8,16,8);
+                lp.setMargins(16, 8, 16, 8);
                 searchField.setLayoutParams(lp);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -299,18 +326,18 @@ public class PostFragment extends Fragment {
                         searchText = searchText.toLowerCase();
                         ArrayList<PostData> newDataSet = new ArrayList<PostData>();
                         ArrayList<PostData> oldDataSet = new ArrayList<PostData>(mDataSet);
-                        for(int i =0;i<mDataSet.size();i++){
+                        for (int i = 0; i < mDataSet.size(); i++) {
                             String newText = mDataSet.get(i).data.title.toLowerCase();
-                            if(newText.contains(searchText)){
+                            if (newText.contains(searchText)) {
                                 newDataSet.add(mDataSet.get(i));
                             }
                         }
 
-                        if(!newDataSet.isEmpty()) {
+                        if (!newDataSet.isEmpty()) {
                             mAdapter.setFilter(newDataSet);
-                        }else {
+                        } else {
                             mAdapter.setFilter(newDataSet);
-                            Toast.makeText(getActivity(),"Sorry no results found",Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), "Sorry no results found", Toast.LENGTH_LONG).show();
                         }
                         mDataSet = new ArrayList<PostData>(oldDataSet);
                         dialog.dismiss();
@@ -327,9 +354,99 @@ public class PostFragment extends Fragment {
                 dialog.show();
 
                 break;
+
+            case R.id.post_action_noti:
+
+                if (!notiOpen) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        // get the center for the clipping circle
+                        int cx = mNotiFrag.getWidth();
+                        int cy = 0;
+
+                        // get the final radius for the clipping circle
+                        float finalRadius = (float) Math.hypot(cx, mNotiFrag.getHeight());
+
+                        // create the animator for this view (the start radius is zero)
+                        Animator anim = null;
+
+                        anim = ViewAnimationUtils.createCircularReveal(mNotiFrag, cx, cy, 0, finalRadius);
+
+                        // make the view visible and start the animation
+                        mNotiFrag.setVisibility(View.VISIBLE);
+                        mNotiFrag.setClickable(true);
+                        notiOpen = true;
+                        anim.start();
+                    }
+                    else{
+                        mNotiFrag.setVisibility(View.VISIBLE);
+                        mNotiFrag.setClickable(true);
+                        notiOpen = true;
+                    }
+                } else if (notiOpen) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                        // get the center for the clipping circle
+                        int cx = mNotiFrag.getWidth();
+                        int cy = 0;
+
+                        // get the initial radius for the clipping circle
+                        float initialRadius = (float) Math.hypot(cx, mNotiFrag.getHeight());
+
+                        // create the animation (the final radius is zero)
+                        Animator anim =
+                                ViewAnimationUtils.createCircularReveal(mNotiFrag, cx, cy, initialRadius, 0);
+
+                        // make the view invisible when the animation is done
+                        anim.addListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                mNotiFrag.setVisibility(View.INVISIBLE);
+                                mNotiFrag.setClickable(false);
+                                notiOpen = false;
+                            }
+                        });
+
+                        // start the animation
+                        anim.start();
+                    }else {
+                        mNotiFrag.setVisibility(View.INVISIBLE);
+                        mNotiFrag.setClickable(false);
+                        notiOpen = false;
+                    }
+                }
+                break;
         }
 
         return super.onOptionsItemSelected(item);
+
+    }
+
+    public void openPost(String postId){
+        int position =-1;
+        for(int i=0;i<mDataSet.size();i++){
+            if(postId.equals(mDataSet.get(i).key)){
+                position=i;
+                break;
+            }
+        }
+        if (position != -1) {
+            Intent readIntent = new Intent(getActivity(), ReadPostActivity.class);
+            readIntent.putExtra(Constants.KEY, mDataSet.get(position).key);
+            readIntent.putExtra(Constants.DATE, mDataSet.get(position).data.date);
+            readIntent.putExtra(Constants.FILEUID, mDataSet.get(position).data.fileUid);
+            readIntent.putExtra(Constants.FILEURI, mDataSet.get(position).data.fileUri);
+            readIntent.putExtra(Constants.LIKES, mDataSet.get(position).data.likes);
+            readIntent.putExtra(Constants.TITLE, mDataSet.get(position).data.title);
+            readIntent.putExtra(Constants.USERID, mDataSet.get(position).data.userId);
+            readIntent.putExtra(Constants.USERNAME, mDataSet.get(position).data.userName);
+            readIntent.putExtra(Constants.DESCRIPTION, mDataSet.get(position).data.description);
+            readIntent.putExtra(Constants.LANGUAGE, mDataSet.get(position).data.language);
+            readIntent.putExtra(Constants.COMMENTS, mDataSet.get(position).data.comments);
+            getActivity().startActivity(readIntent);
+        }else{
+            Toast.makeText(getActivity(),"Sorry post not found",Toast.LENGTH_SHORT).show();
+        }
+
 
     }
 }

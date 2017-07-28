@@ -18,11 +18,16 @@ public class Constants {
     //dev_dp branch
     public static final String DEV_DP="dev_dp";
 
-    //Follow branch
-    public static final String FOLLOW = "follow";
 
     //Like Branch
     public static final String LIKE = "like";
+
+    //Notifications branch
+    public static final String NOTI = "notifications";
+    public static final String NOTI_READ = "read";
+    public static final String NOTI_TEXT = "noti_text";
+    public static final String NOTI_TYPE = "noti_type";
+    public static final String NOTI_POST_KEY ="post_key";
 
     //Program Branch
     public static final String PROGRAM = "program";
@@ -74,11 +79,6 @@ public class Constants {
     //Activity names.
     public static final String POST_ACTIVITY = "PostActivity";
 
-    //Profile Activity FAB states
-    public static final String FAB_EDIT = "edit";
-    public static final String FAB_NONE = "none";
-    public static final String FAB_FOLLOW = "follow";
-    public static final String FAB_FOLLOWING = "following";
 
     //Shared preferences name
     public static final String LOGIN_STATE = "login_state";

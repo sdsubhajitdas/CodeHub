@@ -15,7 +15,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,6 +57,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 
@@ -75,6 +75,7 @@ public class ReadPostActivity extends AppCompatActivity {
     private ProgressDialog mProgress;
 
     private ArrayList<CmmtData> mDataSet;
+    private ArrayList<String> mNotiSendId;
     private CmmtAdapter mCmmtAdapter = new CmmtAdapter(mDataSet);
     private final int REQUEST_CODE = 123;
     private Boolean uploadImg = false;
@@ -165,8 +166,12 @@ public class ReadPostActivity extends AppCompatActivity {
         mCmmtReycyclerView.setHasFixedSize(false);
         mCmmtAdapter = new CmmtAdapter(mDataSet);
         mCmmtAdapter.setPostId(mPostData.key);
+
         mCmmtReycyclerView.setAdapter(mCmmtAdapter);
         mCmmtReycyclerView.setVisibility(View.INVISIBLE);
+
+        mNotiSendId = new ArrayList<>();
+        mNotiSendId.add(mPostData.data.userId);
 
         mUserRef = FirebaseDatabase.getInstance().getReference().child(Constants.USER);
         mCmmtRef = FirebaseDatabase.getInstance().getReference().child(Constants.COMMENT).child(mPostData.key);
@@ -185,6 +190,16 @@ public class ReadPostActivity extends AppCompatActivity {
                     mCmmtReycyclerView.setVisibility(View.VISIBLE);
                     mEmptyView.setVisibility(View.INVISIBLE);
                 }
+                boolean foundId = false;
+                for (int i = 0; i < mNotiSendId.size(); i++) {
+                    if (dataBlock.retriveData.userId.equals(mNotiSendId.get(i))) {
+                        foundId = true;
+                    }
+                }
+                if (foundId == false) {
+                    mNotiSendId.add(dataBlock.retriveData.userId);
+                }
+
             }
 
             @Override
@@ -335,7 +350,6 @@ public class ReadPostActivity extends AppCompatActivity {
                                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                     @Override
                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                        Log.e("UPLOAD", "Upload done");
                                         postCmmtBlock.cmmt_img_url = taskSnapshot.getDownloadUrl().toString();
                                         mCmmtRef.child(pushKey).setValue(postCmmtBlock)
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -352,6 +366,7 @@ public class ReadPostActivity extends AppCompatActivity {
                                                                 .child(Constants.COMMENTS)
                                                                 .setValue(Integer.toString(newCmmt));
                                                         uploadImg = false;
+                                                        sendNoti();
                                                         mProgress.dismiss();
                                                     }
                                                 })
@@ -405,6 +420,7 @@ public class ReadPostActivity extends AppCompatActivity {
                                                 .child(mPostData.key)
                                                 .child(Constants.COMMENTS)
                                                 .setValue(Integer.toString(newCmmt));
+                                        sendNoti();
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
@@ -417,6 +433,7 @@ public class ReadPostActivity extends AppCompatActivity {
                                     }
                                 });
                     }
+
                 } else {
                     if (Build.VERSION.SDK_INT >= 21)
                         Snackbar.make(findViewById(R.id.read_coordinator), "Can't post empty comment.", Snackbar.LENGTH_SHORT).show();
@@ -439,6 +456,29 @@ public class ReadPostActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void sendNoti() {
+
+        String tempTitleText=mPostData.data.title;
+        if(tempTitleText.length()>40){
+            tempTitleText = tempTitleText.substring(0,40)+"...";
+        }
+        String notiText = mCurrentUser.getDisplayName()+" commented on post \""+tempTitleText+"\"";
+        HashMap<String,String> uploadNoti = new HashMap<>();
+        uploadNoti.put(Constants.NOTI_TEXT,notiText);
+        uploadNoti.put(Constants.NOTI_READ,"false");
+        uploadNoti.put(Constants.NOTI_TYPE,"comment");
+        uploadNoti.put(Constants.NOTI_POST_KEY,mPostData.key);
+
+        for(int i=0;i<mNotiSendId.size();i++) {
+            if (!mNotiSendId.get(i).equals(mCurrentUser.getUid()))
+                FirebaseDatabase.getInstance().getReference()
+                        .child(Constants.NOTI)
+                        .child(mNotiSendId.get(i))
+                        .push()
+                        .setValue(uploadNoti);
+        }
     }
 
     //Displays a file already in storage.
@@ -615,13 +655,14 @@ public class ReadPostActivity extends AppCompatActivity {
                                                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                                                 @Override
                                                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                                                    if(dataSnapshot.getValue()!=null){
+                                                                    if (dataSnapshot.getValue() != null) {
                                                                         FirebaseDatabase.getInstance().getReference()
                                                                                 .child(Constants.COMMENT)
                                                                                 .child(mPostData.key)
                                                                                 .removeValue();
                                                                     }
                                                                 }
+
                                                                 @Override
                                                                 public void onCancelled(DatabaseError databaseError) {
 

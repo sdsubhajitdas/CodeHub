@@ -38,13 +38,14 @@ import com.subhajitdas.c.login.LoginActivity;
 import com.subhajitdas.c.profile.ProfileActivity;
 
 
-public class PostActivity extends AppCompatActivity {
+public class PostActivity extends AppCompatActivity implements NotiOpenInterface {
 
     private NavigationView mNavView;
     private DrawerLayout mDrawerLayout;
     private ImageView mCoverImg, mProfileImg;
     private ProgressDialog mProgressDialog;
     private DatabaseReference mUserRef, mUpdateRef;
+    PostFragment mPostFragment;
 
 
     @Override
@@ -84,13 +85,14 @@ public class PostActivity extends AppCompatActivity {
         mDrawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
-
+        mPostFragment = new PostFragment();
         //Attaching the fragments.
         //      Main list of posts fragment attached.
         if (findViewById(R.id.main_container) != null) {
-            PostFragment postFragment = new PostFragment();
-            getFragmentManager().beginTransaction().add(R.id.main_container, postFragment).commit();
+            getFragmentManager().beginTransaction().add(R.id.main_container, mPostFragment).commit();
         }
+
+
 
 
         mUserRef = FirebaseDatabase.getInstance().getReference()
@@ -151,10 +153,10 @@ public class PostActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_posts) {
 
                     getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    PostFragment postFragment = new PostFragment();
+                    mPostFragment = new PostFragment();
                     getFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.main_container, postFragment)
+                            .replace(R.id.main_container, mPostFragment)
                             .commit();
                     mDrawerLayout.closeDrawers();
 
@@ -167,14 +169,6 @@ public class PostActivity extends AppCompatActivity {
                             .commit();
                     mDrawerLayout.closeDrawers();
 
-                } else if (id == R.id.nav_notifications) {
-                    getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    NotificationFragment notificationFragment = new NotificationFragment();
-                    getFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.main_container, notificationFragment)
-                            .commit();
-                    mDrawerLayout.closeDrawers();
                 } else if (id == R.id.nav_updates) {
                     PackageManager manager = getApplicationContext().getPackageManager();
                     PackageInfo info = null;
@@ -274,6 +268,11 @@ public class PostActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void sendPostKey(String postKey) {
+        mPostFragment.openPost(postKey);
     }
 }
 
