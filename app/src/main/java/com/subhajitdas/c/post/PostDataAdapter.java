@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -187,7 +188,12 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
         holder.posterName.setText(mDataSet.get(position).data.userName);
         holder.postDate.setText(mDataSet.get(position).data.date);
         holder.postLike.setText(mDataSet.get(position).data.likes);
-        holder.postCmmt.setText(mDataSet.get(position).data.comments);
+        if(TextUtils.isEmpty(mDataSet.get(position).data.comments)){
+            holder.postCmmt.setText("0");
+        }else{
+            holder.postCmmt.setText(mDataSet.get(position).data.comments);
+        }
+
         //Setting up the two buttons.
         setLikeButton(holder, mDataSet.get(position).key);
         setBookmarkButton(holder, mDataSet.get(position).key);
