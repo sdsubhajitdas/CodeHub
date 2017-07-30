@@ -43,6 +43,7 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
     private ArrayList<UserDpLinks> mUserDataSet;
     private DataSnapshot mLikeDataSnapshot, mBookmarkDataSnapshot;
     private DatabaseReference mRootRef;
+    private boolean firstLikeUpdate=false,firstBookmarkUpdate=false;
 
     public static class UserDpLinks {
         String userId;
@@ -98,7 +99,10 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mLikeDataSnapshot = dataSnapshot;
-                notifyDataSetChanged();
+                if(!firstLikeUpdate) {
+                    firstLikeUpdate=true;
+                    notifyDataSetChanged();
+                }
             }
 
             @Override
@@ -112,7 +116,10 @@ public class PostDataAdapter extends RecyclerView.Adapter<PostDataAdapter.ViewHo
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mBookmarkDataSnapshot = dataSnapshot;
-                notifyDataSetChanged();
+                if(!firstBookmarkUpdate) {
+                    firstBookmarkUpdate=true;
+                    notifyDataSetChanged();
+                }
             }
 
             @Override
