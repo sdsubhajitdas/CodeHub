@@ -3,6 +3,7 @@ package com.subhajitdas.c.profile;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -91,7 +92,7 @@ public class ProfileActivity extends AppCompatActivity {
         mPostRecyclerView.setVisibility(View.GONE);
         mAdapter = new ProfilePostAdapter(mDataSet);
         mPostRecyclerView.setAdapter(mAdapter);
-
+        final NestedScrollView nestedScrollView = (NestedScrollView) findViewById(R.id.nestedscrollview);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         setEditFab();
@@ -185,17 +186,14 @@ public class ProfileActivity extends AppCompatActivity {
                         if (data.data.userId.equals(mProfileId)) {
                             mDataSet.add(data);
                             mAdapter.notifyItemInserted(mDataSet.size() - 1);
-                            Log.e("ADD", "\t" + data.data.title);
-                        } else {
-                            Log.e("NOT ADDED", "\t\t\t" + data.data.title);
+                            mPostRecyclerView.scrollToPosition(mDataSet.size()-1);
+                            nestedScrollView.scrollTo(0,0);
                         }
 
                         //Removing the empty text
                         if ((mEmptyText.getVisibility() == View.VISIBLE) && (!mDataSet.isEmpty())) {
-
                             mPostRecyclerView.setVisibility(View.VISIBLE);
                             mEmptyText.setVisibility(View.INVISIBLE);
-                            Log.e("Tag", "did");
                         }
 
                     }
@@ -220,8 +218,6 @@ public class ProfileActivity extends AppCompatActivity {
 
                     }
                 });
-
-        Log.e("Tag", "call 1");
         mProgramRef.removeEventListener(mProgramDataListener);
         mProgramRef.addChildEventListener(mProgramDataListener);
 
@@ -318,7 +314,6 @@ public class ProfileActivity extends AppCompatActivity {
             mEmptyText.setVisibility(View.VISIBLE);
             mDataSet.clear();
             mAdapter.notifyDataSetChanged();
-            Log.e("Tag", "call2");
             mProgramRef.addChildEventListener(mProgramDataListener);
         }
     }

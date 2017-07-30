@@ -186,6 +186,7 @@ public class LoginFragment extends Fragment {
 
         // Checking if the user previously in signed in state or not.
         if (mLoginState.getInt(Constants.LOGIN_STATE, 0) == 1) {
+            mProgress.setTitle("Please wait");
             mProgress.setMessage("Logging in your last session");
             mProgress.setCancelable(false);
             mProgress.show();
@@ -213,6 +214,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View v) {
                 // No empty postData.
                 if (!TextUtils.isEmpty(mEmail.getText().toString()) && !TextUtils.isEmpty(mPassword.getText().toString())) {
+                    mProgress.setTitle("Please wait");
                     mProgress.setMessage("Signing in");
                     mProgress.show();
                     mProgress.setCancelable(false);
@@ -265,7 +267,8 @@ public class LoginFragment extends Fragment {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 // Google signin was successful, authenticate with Firebase
-                mProgress.setMessage("Logging in");
+                mProgress.setTitle("Please wait");
+                mProgress.setMessage("Signing in");
                 mProgress.show();
                 mProgress.setCancelable(false);
 

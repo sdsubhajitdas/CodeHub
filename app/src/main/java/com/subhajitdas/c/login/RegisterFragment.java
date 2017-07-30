@@ -64,7 +64,7 @@ public class RegisterFragment extends Fragment {
                     FirebaseUser user = firebaseAuth.getCurrentUser();
                     if (user != null) {
                         // User is signed in
-
+                        mProgress.setTitle("Please wait");
                         mProgress.setMessage("Setting up your account ");
                         userRef.child(user.getUid()).child(Constants.USERNAME_PROFILE).setValue(mUsername.getText().toString());
                         userRef.child(user.getUid()).child(Constants.EMAIL).setValue(mEmail.getText().toString());
@@ -138,7 +138,8 @@ public class RegisterFragment extends Fragment {
                         !(TextUtils.isEmpty(mPassword.getText().toString())) &&
                         !(TextUtils.isEmpty(mUsername.getText().toString()))) {
                     mRegisterButtonClicked = true;
-                    mProgress.setMessage("Creating Account");
+                    mProgress.setTitle("Please wait");
+                    mProgress.setMessage("Creating your account");
                     mProgress.show();
                     mProgress.setCancelable(false);
                     mAuth.createUserWithEmailAndPassword(mEmail.getText().toString(), mPassword.getText().toString())

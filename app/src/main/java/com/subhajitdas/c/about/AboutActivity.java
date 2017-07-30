@@ -121,7 +121,7 @@ public class AboutActivity extends AppCompatActivity {
         web1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(AboutActivity.this, "Sorry no link found.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AboutActivity.this, "Link to be added in future.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -149,7 +149,7 @@ public class AboutActivity extends AppCompatActivity {
         web2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(AboutActivity.this, "Sorry no link found.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AboutActivity.this, "Link to be added in future.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -275,15 +275,16 @@ public class AboutActivity extends AppCompatActivity {
     }
 
     public void sendFeedback() {
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
         String[] TO = {"info.codehub@gmail.com"};
-        emailIntent.setData(Uri.parse("mailto:"));
-        emailIntent.setType("text/plain");
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+        emailIntent.setData(Uri.parse("mailto:")); // only email apps should handle this
         emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "CodeHub Feedback");
 
         try {
-            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+            if (emailIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+            }
             //finish();
 
         } catch (android.content.ActivityNotFoundException ex) {

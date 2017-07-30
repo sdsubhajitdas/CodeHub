@@ -44,7 +44,7 @@
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     tools:layout_editor_absoluteX="8dp"
                     tools:layout_editor_absoluteY="8dp">
 
@@ -70,6 +70,8 @@
                             android:hint="@string/title"
                             android:imeOptions="actionNext"
                             android:inputType="textMultiLine"
+                            android:maxLength="200"
+                            android:maxLines="10"
                             android:textColor="@android:color/white"
                             android:textColorHint="@android:color/white"
                             android:textSize="26sp" />
@@ -79,7 +81,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
-                        android:layout_marginTop="24dp"
+                        android:layout_marginTop="32dp"
                         android:textColorHint="@android:color/white"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="@+id/textInputLayout1"
@@ -94,6 +96,8 @@
                             android:hint="@string/description"
                             android:imeOptions="actionNext"
                             android:inputType="textMultiLine"
+                            android:maxLength="400"
+                            android:maxLines="30"
                             android:textColor="@android:color/white"
                             android:textColorHint="@android:color/white"
                             android:textSize="16sp" />

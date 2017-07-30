@@ -34,9 +34,10 @@ import com.subhajitdas.c.Constants;
 import com.subhajitdas.c.R;
 import com.subhajitdas.c.post.Post;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -197,7 +198,7 @@ public class UploadPost extends AppCompatActivity {
                             }
                         });
                 AlertDialog dialog = builder.create();
-               // dialog.getWindow().setBackgroundDrawableResource(R.color.colorPrimaryDark);
+                // dialog.getWindow().setBackgroundDrawableResource(R.color.colorPrimaryDark);
                 dialog.show();
             }
         });
@@ -269,7 +270,7 @@ public class UploadPost extends AppCompatActivity {
         if (requestCode == TEXT_REQUEST && resultCode == RESULT_OK && data != null) {
             File uploadFile = new File(data.getData().getPath());           // Getting the file.
             mFile.setText(uploadFile.getName());
-            displayFile(uploadFile);                                        // Displaying the contents of the file in editor.
+            displayFileSecond(uploadFile);                                        // Displaying the contents of the file in editor.
         } else {
             if (Build.VERSION.SDK_INT >= 21) {
                 Snackbar.make(findViewById(R.id.upload_coordinator),
@@ -280,6 +281,7 @@ public class UploadPost extends AppCompatActivity {
         }
     }
 
+    /*
     private void displayFile(File localFile) {
         // A file with the name of localFile is read.
         FileInputStream fis = null;
@@ -295,6 +297,7 @@ public class UploadPost extends AppCompatActivity {
             //Finally setting the content of the file in textView
             mEditor.setText(stringBuffer.toString());
         } catch (IOException e) {
+            mFile.setText(null);
             //Error msg shown.
             if (Build.VERSION.SDK_INT >= 21) {
                 Snackbar.make(findViewById(R.id.upload_coordinator),
@@ -318,6 +321,53 @@ public class UploadPost extends AppCompatActivity {
             }
         }
     }
+    */
+
+    private void displayFileSecond(File localFile) {
+        // A file with the name of localFile is read.
+        BufferedReader reader = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(mEditor.getText().toString());
+        stringBuilder.append("\n");
+        try {
+            reader = new BufferedReader(new FileReader(localFile));
+            String line;
+            //Reading the whole file till end.
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line);
+                stringBuilder.append("\n");
+            }
+            //Finally setting the content of the file in textView
+            mEditor.setText(stringBuilder.toString());
+        } catch (IOException e) {
+            mFile.setText(null);
+            //Error msg shown.
+            if (Build.VERSION.SDK_INT >= 21) {
+                Snackbar.make(findViewById(R.id.upload_coordinator),
+                        e.getMessage(),
+                        Snackbar.LENGTH_LONG)
+                        .show();
+
+            } else
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    //Error msg shown.
+                    if (Build.VERSION.SDK_INT >= 21) {
+                        Snackbar.make(findViewById(R.id.upload_coordinator),
+                                e.getMessage(),
+                                Snackbar.LENGTH_LONG)
+                                .show();
+                    } else
+                        Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
 
     // To choose a file to upload.
     public void openFile(String minmeType) {
