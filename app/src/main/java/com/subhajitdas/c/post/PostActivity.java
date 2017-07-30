@@ -220,7 +220,9 @@ public class PostActivity extends AppCompatActivity implements NotiOpenInterface
                     mDrawerLayout.closeDrawers();
 
                 } else if (id == R.id.nav_share) {
-                    String textToShare = "Download CodeHub from our website.Join our app today!!\nLink:- https://code-hub.tk";
+                    String textToShare = "CodeHub is an app which tends to make a community of coders and help each other with understanding code. " +
+                            "Download CodeHub from our website.Join our app today!!\n" +
+                            "Link:- http://code-hub.tk";
                     Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                     intent.setType("text/plain");
                     intent.putExtra(Intent.EXTRA_SUBJECT, "Share app");
@@ -228,15 +230,16 @@ public class PostActivity extends AppCompatActivity implements NotiOpenInterface
                     startActivity(Intent.createChooser(intent, "Share"));
                     mDrawerLayout.closeDrawers();
                 } else if (id == R.id.nav_contact) {
-                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
                     String[] TO = {"info.codehub@gmail.com"};
-                    emailIntent.setData(Uri.parse("mailto:"));
-                    emailIntent.setType("text/plain");
+                    Intent emailIntent = new Intent(Intent.ACTION_SENDTO);
+                    emailIntent.setData(Uri.parse("mailto:")); // only email apps should handle this
                     emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
                     emailIntent.putExtra(Intent.EXTRA_SUBJECT, "CodeHub Feedback");
 
                     try {
-                        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                        if (emailIntent.resolveActivity(getPackageManager()) != null) {
+                            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+                        }
                         //finish();
 
                     } catch (android.content.ActivityNotFoundException ex) {
