@@ -35,7 +35,7 @@ Ver 1.1.0 -------   9.2.2017
       
       
 Ver 2.0.0 -------   31.7.2017
-*Link - http://bit.ly/Code-Hub*
+*Link - http://bit.ly/2vg9caC*
 
       - Completely redesigned UI now using material desgin.
       - Partial offline support.
