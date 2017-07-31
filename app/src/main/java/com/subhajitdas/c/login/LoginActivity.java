@@ -85,19 +85,9 @@ public class LoginActivity extends AppCompatActivity implements Communicator {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        //Sending activity result to login fragment.
         mLoginFragment.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -106,15 +96,18 @@ public class LoginActivity extends AppCompatActivity implements Communicator {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             //resume tasks needing this permission
+            //Permissions requested were granted.
         }
     }
 
     // Interface method.
     @Override
     public void changeIntent() {
+        //Login state was changed to true (1)
         SharedPreferences.Editor editor = mLoginState.edit();
         editor.putInt(Constants.LOGIN_STATE, 1);
         editor.apply();
+        //Changing to post screen.
         Intent intent = new Intent(LoginActivity.this, PostActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

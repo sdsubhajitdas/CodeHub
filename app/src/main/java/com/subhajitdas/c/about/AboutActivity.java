@@ -42,19 +42,19 @@ public class AboutActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(true);
         }
 
-
+        //1st card layout
         mDp1 = (ImageView) findViewById(R.id.dev_dp);
         fb1 = (ImageView) findViewById(R.id.fb);
         github1 = (ImageView) findViewById(R.id.github);
         web1 = (ImageView) findViewById(R.id.web);
         linkedin1 = (ImageView) findViewById(R.id.link);
-
+        //2nd card layout
         mDp2 = (ImageView) findViewById(R.id.dev_dp2);
         fb2 = (ImageView) findViewById(R.id.fb2);
         github2 = (ImageView) findViewById(R.id.github2);
         web2 = (ImageView) findViewById(R.id.web2);
         linkedin2 = (ImageView) findViewById(R.id.link2);
-
+        //Other elements initialization.
         go1 = (ImageView) findViewById(R.id.go_link1);
         go2 = (ImageView) findViewById(R.id.go_link2);
         go3 = (ImageView) findViewById(R.id.go_link3);
@@ -104,6 +104,7 @@ public class AboutActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        //1st card click listeners.
         fb1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,6 +133,7 @@ public class AboutActivity extends AppCompatActivity {
             }
         });
 
+        //2nd card click listeners.
         fb2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,6 +162,7 @@ public class AboutActivity extends AppCompatActivity {
             }
         });
 
+        //Other elements listeners.
         go1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -259,14 +262,18 @@ public class AboutActivity extends AppCompatActivity {
         });
     }
 
+    //To open browser with a link
     public void openBrowser(String url) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW);
         browserIntent.setData(Uri.parse(url));
         startActivity(browserIntent);
     }
 
+    //Send a text msg.
     public void shareApp() {
-        String textToShare = "Download CodeHub from our website.Join our app today!!\nLink:- https://code-hub.tk";
+        String textToShare = "CodeHub is an app which tends to make a community of coders and help each other with understanding code. " +
+                "Download CodeHub from our website.Join our app today!!\n" +
+                "Link:- http://code-hub.tk";
         Intent intent = new Intent(android.content.Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(Intent.EXTRA_SUBJECT, "Share app");
@@ -274,6 +281,7 @@ public class AboutActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(intent, "Share"));
     }
 
+    //Send mail to us.
     public void sendFeedback() {
         String[] TO = {"info.codehub@gmail.com"};
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO);

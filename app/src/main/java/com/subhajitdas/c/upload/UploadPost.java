@@ -148,7 +148,6 @@ public class UploadPost extends AppCompatActivity {
                         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                             @Override
                             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                                //double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
 
                                 //Getting the progress number. only updates once 256KB
                                 double progress = ((100 * (taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount()))) / 1.1;
@@ -323,6 +322,7 @@ public class UploadPost extends AppCompatActivity {
     }
     */
 
+    //Displaying the choosen file in editor.
     private void displayFileSecond(File localFile) {
         // A file with the name of localFile is read.
         BufferedReader reader = null;
@@ -367,7 +367,6 @@ public class UploadPost extends AppCompatActivity {
             }
         }
     }
-
 
     // To choose a file to upload.
     public void openFile(String minmeType) {

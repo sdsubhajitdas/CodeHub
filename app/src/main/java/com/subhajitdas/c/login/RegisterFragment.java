@@ -2,7 +2,6 @@ package com.subhajitdas.c.login;
 
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -41,11 +40,6 @@ public class RegisterFragment extends Fragment {
 
     public RegisterFragment() {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
     }
 
     @Override

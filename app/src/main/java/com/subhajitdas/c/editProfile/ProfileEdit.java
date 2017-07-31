@@ -16,7 +16,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -69,11 +68,11 @@ public class ProfileEdit extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_edit);
-
+        //Getting data from the caller intent.
         Intent gotIntent = getIntent();
         mLastActivity = gotIntent.getStringExtra(Constants.ACTIVITY);
         mProfileId = gotIntent.getStringExtra(Constants.USERID);
-
+        //Toolbar work.
         Toolbar toolbar = (Toolbar) findViewById(R.id.edit_profile_toolbar);
         toolbar.setTitle("Edit Your Profile");
         setSupportActionBar(toolbar);
@@ -81,13 +80,13 @@ public class ProfileEdit extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
-
+        //Storing the intent data .
         mIntentData = getSharedPreferences(Constants.INTENT_DATA, MODE_PRIVATE);
         SharedPreferences.Editor editor = mIntentData.edit();
         editor.putString(Constants.ACTIVITY, mLastActivity);
         editor.putString(Constants.USERID, mProfileId);
         editor.apply();
-
+        //UI elements.
         mDp = (ImageView) findViewById(R.id.edit_profile_dp);
         mCoverImage = (ImageView) findViewById(R.id.edit_profile_cover);
         mProgress = new ProgressDialog(this);
@@ -101,7 +100,7 @@ public class ProfileEdit extends AppCompatActivity {
         SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.edit_profile_swiperefresh);
 
         mSwipeRefreshLayout.setEnabled(false);
-
+        //DB links.
         mProfileImagefRef = FirebaseStorage.getInstance().getReference().child(Constants.PROFILE_IMAGES);     //TODO Profile pic upload destination.
         mProfileThumRef = FirebaseStorage.getInstance().getReference().child(Constants.PROFILE_THUMB);          // TODO profile pic thumbnail.
         mCoverImageRef = FirebaseStorage.getInstance().getReference().child(Constants.COVER_IMAGES);          //TODO Cover pic upload destination.
@@ -109,6 +108,7 @@ public class ProfileEdit extends AppCompatActivity {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         mUserDataRef = FirebaseDatabase.getInstance().getReference().child(Constants.USER).child(userId);
         mUserDataRef.keepSynced(true);
+        //Displaying msg on loading.
         mProgress.setTitle("Please wait");
         mProgress.setMessage("Loading your details.");
         mProgress.setCancelable(false);
@@ -163,12 +163,11 @@ public class ProfileEdit extends AppCompatActivity {
         });
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
 
-
+        //Edit button handler.
         mDoneFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,6 +210,7 @@ public class ProfileEdit extends AppCompatActivity {
             }
         });
 
+        //DP click listener.
         mDp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,12 +224,11 @@ public class ProfileEdit extends AppCompatActivity {
                                 switch (which) {
 
                                     case 0:
+                                        //Showing the full quality image.
                                         final AlertDialog dialog2;
                                         AlertDialog.Builder builder1 = new AlertDialog.Builder(ProfileEdit.this);
-
                                         final View view = LayoutInflater.from(ProfileEdit.this)
                                                 .inflate(R.layout.see_profile_img, null);
-
                                         builder1.setView(view)
                                                 .setTitle("Profile Image");
                                         dialog2 = builder1.create();
@@ -239,12 +238,10 @@ public class ProfileEdit extends AppCompatActivity {
                                         mUserDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                                Log.e("REPORT",dataSnapshot.toString());
-
                                                 if(dataSnapshot.hasChild(Constants.DP_URL)){
                                                     RequestOptions requestOptions = new RequestOptions();
                                                     requestOptions.placeholder(getResources().getDrawable(R.drawable.ic_photo));
-
+                                                    //Loading the image.
                                                     Glide.with(ProfileEdit.this)
                                                             .load(dataSnapshot.child(Constants.DP_URL).getValue().toString())
                                                             .apply(requestOptions)
@@ -261,6 +258,7 @@ public class ProfileEdit extends AppCompatActivity {
                                         mDPPressed = false;
                                         break;
                                     case 1:
+                                        //Choosing new image for uploading
                                         CropImage.activity()
                                                 .setGuidelines(CropImageView.Guidelines.ON)
                                                 .setAspectRatio(1, 1)
@@ -268,6 +266,7 @@ public class ProfileEdit extends AppCompatActivity {
                                                 .start(ProfileEdit.this);
                                         break;
                                     case 2:
+                                        //Removing the DP pic values.
                                         mUserDataRef.child(Constants.DP_THUMB_URL).removeValue();
                                         mUserDataRef.child(Constants.DP_URL).removeValue()
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -295,6 +294,7 @@ public class ProfileEdit extends AppCompatActivity {
             }
         });
 
+        //Handling cover image click events.
         mCoverImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -308,12 +308,11 @@ public class ProfileEdit extends AppCompatActivity {
                                 switch (which) {
 
                                     case 0:
+                                        //Showing the full quality image.
                                         final AlertDialog dialog2;
                                         AlertDialog.Builder builder1 = new AlertDialog.Builder(ProfileEdit.this);
-
                                         final View view = LayoutInflater.from(ProfileEdit.this)
                                                 .inflate(R.layout.see_profile_img, null);
-
                                         builder1.setView(view)
                                                 .setTitle("Cover Image");
                                         dialog2 = builder1.create();
@@ -323,8 +322,6 @@ public class ProfileEdit extends AppCompatActivity {
                                         mUserDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                                Log.e("REPORT",dataSnapshot.toString());
-
                                                 if(dataSnapshot.hasChild(Constants.COVER_URL)){
                                                     RequestOptions requestOptions = new RequestOptions();
                                                     requestOptions.placeholder(getResources().getDrawable(R.drawable.ic_photo));
@@ -345,6 +342,7 @@ public class ProfileEdit extends AppCompatActivity {
                                         mCoverPressed = false;
                                         break;
                                     case 1:
+                                        //Choosing the cover image for upload.
                                         CropImage.activity()
                                                 .setGuidelines(CropImageView.Guidelines.ON)
                                                 .setAspectRatio(2, 1)
@@ -352,6 +350,7 @@ public class ProfileEdit extends AppCompatActivity {
                                                 .start(ProfileEdit.this);
                                         break;
                                     case 2:
+                                        //Removing the thumb image values.
                                         mUserDataRef.child(Constants.COVER_THUMB_URL).removeValue();
                                         mUserDataRef.child(Constants.COVER_URL).removeValue()
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -379,20 +378,22 @@ public class ProfileEdit extends AppCompatActivity {
         });
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         final String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        //Got the chosen image.
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
-
+                //Displaying Msg.
                 mProgress.setTitle("Please wait");
                 mProgress.setMessage("Please wait we are processing your image.");
                 mProgress.setCancelable(false);
                 mProgress.show();
 
+                //Creating a thumbnail with image compressor.
+                //thumbReady will be true when done.
                 Boolean thumbReady = false;
                 final Uri actualImageUri = result.getUri();
                 Uri tempUri = null;
@@ -408,8 +409,10 @@ public class ProfileEdit extends AppCompatActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                final Uri compressedImageUri = tempUri;
+                final Uri compressedImageUri = tempUri;     //Compressed image Uri
 
+                //If DP was pressed
+                    //mDPPressed will be true.
                 if (mDPPressed && thumbReady) {
                     mProgress.setMessage("Uploading your profile picture");
                     mProgress.show();
@@ -422,6 +425,7 @@ public class ProfileEdit extends AppCompatActivity {
                                     mProgress.show();
                                     mProgress.setMessage("Almost done.");
 
+                                    //Checking if image path is correct.
                                     if (compressedImageUri != null) {
                                         mProfileThumRef.child(userId + "-thumb.jpg")
                                                 .putFile(compressedImageUri)
@@ -453,9 +457,10 @@ public class ProfileEdit extends AppCompatActivity {
                                                     Snackbar.LENGTH_LONG).show();
                                         } else
                                             Toast.makeText(ProfileEdit.this, "Sorry some error occurred.", Toast.LENGTH_LONG).show();
-                                        mDPPressed = false;
+                                        mDPPressed = false; //needs to be false at the end.
                                         mProgress.dismiss();
                                     }
+                                    //Loading the DP.
                                     RequestOptions profileOptions = new RequestOptions();
                                     profileOptions.circleCrop();
                                     Glide.with(ProfileEdit.this)
@@ -478,9 +483,10 @@ public class ProfileEdit extends AppCompatActivity {
                                         Toast.makeText(ProfileEdit.this, "Profile picture was not updated", Toast.LENGTH_LONG).show();
                                 }
                             });
-
+                    //If cover pic was clicked.
+                        //mCoverPressed will be true.
                 } else if (mCoverPressed && thumbReady) {
-
+                    //Displaying msg.
                     mProgress.setMessage("Uploading your cover picture");
                     mProgress.show();
                     mCoverImageRef.child(userId + ".jpg")
@@ -491,6 +497,7 @@ public class ProfileEdit extends AppCompatActivity {
                                     mUserDataRef.child(Constants.COVER_URL).setValue(coverTaskSnapshot.getDownloadUrl().toString());
                                     mProgress.setMessage("Almost done");
                                     mProgress.show();
+                                    //Checking if image uri is correct.
                                     if (compressedImageUri != null) {
                                         mCoverThumRef.child(userId + "-thumb.jpg")
                                                 .putFile(compressedImageUri)
@@ -544,7 +551,7 @@ public class ProfileEdit extends AppCompatActivity {
                                 }
                             });
 
-
+                //If there was a problem in image compression.
                 } else {
                     mProgress.dismiss();
                     if (Build.VERSION.SDK_INT >= 21) {
@@ -554,11 +561,11 @@ public class ProfileEdit extends AppCompatActivity {
                     } else
                         Toast.makeText(ProfileEdit.this, "Sorry some internal error occurred.", Toast.LENGTH_LONG).show();
                 }
-
+                //Getting the saved intent data at the beg since there was a return back to UI.
                 SharedPreferences preferences = this.getSharedPreferences(Constants.INTENT_DATA, MODE_PRIVATE);
                 mLastActivity = preferences.getString(Constants.ACTIVITY, Constants.POST_ACTIVITY);
                 mProfileId = preferences.getString(Constants.USERID, null);
-
+            //Error in choosing.
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
                 if (Build.VERSION.SDK_INT >= 21) {
@@ -571,7 +578,6 @@ public class ProfileEdit extends AppCompatActivity {
         }
 
     }
-
 
     //If the hardware back button is pressed.
     @Override
@@ -592,7 +598,7 @@ public class ProfileEdit extends AppCompatActivity {
         }
         return false;
     }
-
+    //Returning back data to caller activity.
     private void sendBackData() {
         Intent backData = new Intent();
         backData.putExtra(Constants.ACTIVITY, mLastActivity);

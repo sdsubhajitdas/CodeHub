@@ -65,11 +65,6 @@ public class LoginFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -113,6 +108,7 @@ public class LoginFragment extends Fragment {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.hasChild(user.getUid())) {
                                 mProgress.dismiss();
+                                //Changing intent via interface.
                                 mCommunicator.changeIntent();
                             } else {// Checking if new user via google login
                                 UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder()

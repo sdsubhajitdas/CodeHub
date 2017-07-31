@@ -80,7 +80,6 @@ public class ReadPostActivity extends AppCompatActivity {
     private final int REQUEST_CODE = 123;
     private Boolean uploadImg = false;
 
-
     private StorageReference mProgramFile, mCmmtImg;
     private DatabaseReference mUserRef, mCmmtRef, mPostRef;
     private FirebaseUser mCurrentUser;
@@ -161,6 +160,7 @@ public class ReadPostActivity extends AppCompatActivity {
             mLangView.setVisibility(View.INVISIBLE);
         }
 
+        //Cmmt recycler view.
         mCmmtReycyclerView.setLayoutManager(new LinearLayoutManager(this));
         mCmmtReycyclerView.setNestedScrollingEnabled(false);
         mCmmtReycyclerView.setHasFixedSize(false);
@@ -169,7 +169,7 @@ public class ReadPostActivity extends AppCompatActivity {
 
         mCmmtReycyclerView.setAdapter(mCmmtAdapter);
         mCmmtReycyclerView.setVisibility(View.INVISIBLE);
-
+        //All the people who need notifications to be sent.
         mNotiSendId = new ArrayList<>();
         mNotiSendId.add(mPostData.data.userId);
 
@@ -178,7 +178,7 @@ public class ReadPostActivity extends AppCompatActivity {
         mCmmtRef.keepSynced(true);
 
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
-
+        //Cmmts data.
         mCmmtRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -190,6 +190,7 @@ public class ReadPostActivity extends AppCompatActivity {
                     mCmmtReycyclerView.setVisibility(View.VISIBLE);
                     mEmptyView.setVisibility(View.INVISIBLE);
                 }
+                //Getting ID's of people to whom noti will be sent.
                 boolean foundId = false;
                 for (int i = 0; i < mNotiSendId.size(); i++) {
                     if (dataBlock.retriveData.userId.equals(mNotiSendId.get(i))) {
@@ -249,6 +250,8 @@ public class ReadPostActivity extends AppCompatActivity {
             }
         });
 
+        //No of cmmts .
+            //Updating the value with each cmmt. or deletion.
         mPostRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -336,7 +339,7 @@ public class ReadPostActivity extends AppCompatActivity {
                         postCmmtBlock.cmmt_text = mCmmtText.getText().toString();
                     else
                         postCmmtBlock.cmmt_text = null;
-
+                    //If an image is chosen.
                     if (uploadImg) {
                         mProgress.setTitle("Please wait");
                         mProgress.setMessage("Uploading your image");
@@ -345,12 +348,13 @@ public class ReadPostActivity extends AppCompatActivity {
                         mProgress.setMax(100);
                         mProgress.show();
                         mProgress.setCancelable(false);
-                        mCmmtImg.child(pushKey + ".jpg")
+                        mCmmtImg.child(pushKey + ".jpg")            //Uploading image.
                                 .putFile(mUploadImgUri)
                                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                     @Override
                                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                                         postCmmtBlock.cmmt_img_url = taskSnapshot.getDownloadUrl().toString();
+                                        //Uploading data.
                                         mCmmtRef.child(pushKey).setValue(postCmmtBlock)
                                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                     @Override
@@ -361,8 +365,9 @@ public class ReadPostActivity extends AppCompatActivity {
                                                                 .child(Constants.PROGRAM)
                                                                 .child(mPostData.key)
                                                                 .child(Constants.COMMENTS)
-                                                                .setValue(Integer.toString(newCmmt));
+                                                                .setValue(Integer.toString(newCmmt));   //Increasing cmmt number.
                                                         uploadImg = false;
+                                                        //sending noti.
                                                         sendNoti(mCmmtText.getText().toString());
                                                         mCmmtText.setText(null);
                                                         mShowImageChoosen.setImageDrawable(null);
@@ -406,6 +411,7 @@ public class ReadPostActivity extends AppCompatActivity {
                                 });
                     } else {
                         postCmmtBlock.cmmt_img_url = null;
+                        //Uploading data.
                         mCmmtRef.child(pushKey).setValue(postCmmtBlock)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
@@ -417,7 +423,8 @@ public class ReadPostActivity extends AppCompatActivity {
                                                 .child(Constants.PROGRAM)
                                                 .child(mPostData.key)
                                                 .child(Constants.COMMENTS)
-                                                .setValue(Integer.toString(newCmmt));
+                                                .setValue(Integer.toString(newCmmt));   //Increasing cmmt number.
+                                        //sending noti.
                                         sendNoti(mCmmtText.getText().toString());
                                         mCmmtText.setText(null);
                                         mShowImageChoosen.setImageDrawable(null);
@@ -449,6 +456,7 @@ public class ReadPostActivity extends AppCompatActivity {
         mGetImageIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Choosing image.
                 CropImage.activity()
                         .setGuidelines(CropImageView.Guidelines.ON)
                         .setAutoZoomEnabled(true)
@@ -460,13 +468,14 @@ public class ReadPostActivity extends AppCompatActivity {
     }
 
     private void sendNoti(String msg) {
-
+        //If there is no cmmt text.
         if(TextUtils.isEmpty(msg)){
             msg = " an image ";
         }else{
             msg="  \""+msg+"\"  ";
         }
 
+        //Shortening the text.
         String tempTitleText = mPostData.data.title;
         if (tempTitleText.length() > 40) {
             tempTitleText = tempTitleText.substring(0, 40) + "...";
@@ -485,6 +494,7 @@ public class ReadPostActivity extends AppCompatActivity {
                 } else {
                     notiText = mCurrentUser.getDisplayName() + " commented "+ msg +  "on post \"" + tempTitleText + "\"";
                 }
+                //Uploading the data.
                 HashMap<String, String> uploadNoti = new HashMap<>();
                 uploadNoti.put(Constants.NOTI_TEXT, notiText);
                 uploadNoti.put(Constants.NOTI_READ, "false");
@@ -875,4 +885,5 @@ public class ReadPostActivity extends AppCompatActivity {
         }
         return returnData;
     }
+
 }
