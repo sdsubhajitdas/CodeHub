@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
+          "client_id": "125869526583-pm9aroh1j3heb7fhdot5p0tpplaf29bt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.subhajitdas.c",
+            "certificate_hash": "2105bd05113ad50deeff456c144bf23ee954def8"
+          }
+        },
+        {
           "client_id": "125869526583-upbqer1h4l46n5gc8177mk6gip1u3s88.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.subhajitdas.c",
-            "certificate_hash": "F5AF25042E7C90B75EF1CD205F4FB74880BBD3B2"
+            "certificate_hash": "f5af25042e7c90b75ef1cd205f4fb74880bbd3b2"
           }
         },
         {

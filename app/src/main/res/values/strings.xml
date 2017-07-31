@@ -1,13 +1,13 @@
 <resources>
     <string name="app_name">CodeHub</string>
-    <string name="login">Login.</string>
+    <string name="signin">Sign In</string>
     <string name="email_id">Email Id</string>
     <string name="password">Password</string>
     <string name="login_with">Login With</string>
     <string name="go">Go</string>
     <string name="forgot_password">Forgot Password</string>
 
-    <string name="register">REGISTER</string>
+    <string name="register">Register</string>
     <string name="username">Username</string>
     <string name="submit">Submit</string>
 
@@ -41,13 +41,27 @@
     <string name="options">Options</string>
 
 
-    <!-- Strings related to AdMob -->
-    <string name="banner_ad_unit_id">ca-app-pub-8238050563187834/4375349707</string>
-    <string name="interstitial_ad_unit_id">ca-app-pub-8238050563187834/5268170101</string>
+
     <string name="edit_post">Edit Post</string>
     <string name="delete_post">Delete Post</string>
     <string name="save_post">Save Post</string>
     <string name="good_practices_for_uploading_code">Good practices for uploading code</string>
     <string name="first_point">1.We suggest you use indentation in your code.\n\nDivide the code into different blocks with spaces and tabs for ease of readability.</string>
     <string name="second_point">2.We suggest you use code comments. \n\nComments help other people understand your code easily.</string>
+    <string name="continue_with_google">Continue With Google</string>
+    <string name="program_description">Program Description</string>
+    <string name="from">From :</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="language_used">Language Used</string>
+    <string name="upload_files">Upload Files</string>
+    <string name="editor">Editor</string>
+    <string name="nothing_to_show">Nothing to show</string>
+    <string name="ok">Ok</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="comment_date_and_time">Comment date and time</string>
+    <string name="comment_text">Comment Text</string>
+    <string name="name">Name</string>
+    <string name="search">Search</string>
 </resources>

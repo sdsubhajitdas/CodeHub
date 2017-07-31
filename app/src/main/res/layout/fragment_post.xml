@@ -1,46 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/darkGrey">
+    tools:context="com.subhajitdas.c.post.PostFragment">
 
-    <ScrollView
+    <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp">
 
-        <RelativeLayout
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/post_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 
-            <TextView
-                android:id="@+id/post_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:text="@string/post_title"
-                android:textColor="@android:color/white"
-                android:textStyle="normal|bold"
-                android:textSize="23sp"
-                android:layout_marginTop="5dp"
-                android:padding="5dp"
-                android:gravity="center" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:padding="8dp"
+        app:elevation="8dp"
+        app:srcCompat="@drawable/ic_add_white_24px" />
 
-            <TextView
-                android:text="@string/post_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/post_title"
-                android:id="@+id/post_content"
-                android:background="@color/postBackground"
-                android:layout_marginTop="10dp"
-                android:padding="10dp"
-                android:textColor="@color/postText"
-                android:textSize="13sp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginStart="5dp" />
-        </RelativeLayout>
-    </ScrollView>
+    <FrameLayout
+        android:id="@+id/noti_frag"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="100dp"
+        android:background="@color/LightPrimary"
+        android:clickable="true"
+        android:elevation="8dp" />
 
 </RelativeLayout>

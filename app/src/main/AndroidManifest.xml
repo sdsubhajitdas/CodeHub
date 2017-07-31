@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LoginActivity"
+            android:name=".login.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppTheme">
             <intent-filter>
@@ -26,14 +26,32 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/posts"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
 
         <!-- android:windowSoftInputMode="adjustResize" -->
 
+        <activity android:name=".post.PostActivity" />
+        <activity
+            android:name=".read.ReadPostActivity" />
+        <activity
+            android:name=".upload.UploadPost"
+            android:parentActivityName=".post.PostActivity" />
+        <activity
+            android:name=".edit.EditPostActivity"
+            android:parentActivityName=".read.ReadPostActivity" />
+
+        <activity android:name=".profile.ProfileActivity" />
+        <activity
+            android:name=".editProfile.ProfileEdit"
+            android:parentActivityName=".profile.ProfileActivity" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+        <activity
+            android:name=".profile.SearchUserActivity"
+            android:parentActivityName=".profile.ProfileActivity" />
+
+        <activity android:name=".about.AboutActivity"
+            android:parentActivityName=".post.PostActivity"/>
     </application>
 
 </manifest>
